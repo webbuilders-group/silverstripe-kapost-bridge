@@ -1,0 +1,9 @@
+---
+Name: kapostbridge
+After:
+    - "framework/*"
+    - "cms/*"
+---
+SiteTree:
+    extensions:
+        - "KapostSiteTreeExtension"

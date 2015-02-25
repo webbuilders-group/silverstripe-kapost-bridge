@@ -1,0 +1,7 @@
+---
+Name: kapostbridge_routes
+After: 'framework/routes#coreroutes'
+---
+Director:
+    rules:
+        "kapost-service": "KapostService"
