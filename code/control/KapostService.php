@@ -21,7 +21,7 @@ class KapostService extends Controller {
         
         //Disable Content Negotiator and send the text/xml header (which kapost expects)
         ContentNegotiator::config()->enabled=false;
-        $this->response->addHeader('Content-KapostChangeType', 'text/xml');
+        $this->response->addHeader('Content-Type', 'text/xml');
         
         $server=new xmlrpc_server($methods, false);
         $server->compress_response=true;
@@ -162,8 +162,18 @@ class KapostService extends Controller {
             return array_shift($results);
         }
         
+        
         //Assume we're looking for a page
+        //Switch Versioned to stage
+        $oldReadingStage=Versioned::current_stage();
+        Versioned::set_reading_mode('stage');
+        
         $page=SiteTree::get()->filter('KapostRefID', Convert::raw2sql($content_id))->first();
+        
+        //Switch Versioned back
+        Versioned::set_reading_mode($oldReadingStage);
+        
+        
         if(!empty($page) && $page!==false && $page->exists()) {
             $obj=new KapostPage();
             $obj->Title=$content['title'];
@@ -204,7 +214,16 @@ class KapostService extends Controller {
         }
         
         
+        //Switch Versioned to stage
+        $oldReadingStage=Versioned::current_stage();
+        Versioned::set_reading_mode('stage');
+        
         $page=SiteTree::get()->filter('KapostRefID', Convert::raw2sql($content_id))->first();
+        
+        //Switch Versioned back
+        Versioned::set_reading_mode($oldReadingStage);
+        
+        
         if(!empty($page) && $page!==false && $page->exists()) {
             return array(
                         'title'=>$page->Title,
@@ -212,7 +231,7 @@ class KapostService extends Controller {
                         'mt_keywords'=>$page->MetaKeywords,
                         'mt_excerpt'=>$page->MetaDescription,
                         'categories'=>array('ss_page'),
-                        'permaLink'=>$page->Link
+                        'permaLink'=>$page->AbsoluteLink()
                     );
         }else {
             $kapostObj=KapostObject::get()->byID(intval(preg_replace('/^([^0-9]*)/', '', $content_id)));

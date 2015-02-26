@@ -10,6 +10,12 @@ class KapostObject extends DataObject {
     
     private static $default_sort='Created';
     
+    private static $summary_fields=array(
+                                        'Title',
+                                        'KapostChangeType',
+                                        'ToPublish'
+                                    );
+    
     
     /**
      * Gets fields used in the cms
