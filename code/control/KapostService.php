@@ -2,6 +2,7 @@
 class KapostService extends Controller {
     private static $authenticator_class='MemberAuthenticator';
     private static $authenticator_username_field='Email';
+    private static $kapost_media_folder='kapost-media';
     
     private static $exposed_methods=array(
                                         'blogger.getUsersBlogs',
@@ -9,12 +10,12 @@ class KapostService extends Controller {
                                         'metaWeblog.editPost',
                                         'metaWeblog.getPost',
                                         'metaWeblog.getCategories',
-                                        //'metaWeblog.newMediaObject', //Not implemented
+                                        'metaWeblog.newMediaObject'
                                         //'metaWeblog.getPreview' //Not implemented
                                     );
     
     /**
-     * 
+     * Handles incoming requests to the kapost service
      */
     public function index() {
         $methods=array_fill_keys($this->config()->exposed_methods, array('function'=>array($this, 'handleRPCMethod')));
@@ -34,7 +35,8 @@ class KapostService extends Controller {
     }
     
     /**
-     * 
+     * Handles RPC request methods
+     * @param {xmlrpcmsg} $request XML-RPC Request Object
      */
     public function handleRPCMethod(xmlrpcmsg $request) {
         $username=$request->getParam(1)->getval();
@@ -52,8 +54,14 @@ class KapostService extends Controller {
             $params=array();
             for($i=0;$i<$request->getNumParams();$i++) {
                 if($i!=1 && $i!=2) {
-                    $params[]=$request->getParam($i)->getval();
+                    $params[]=php_xmlrpc_decode($request->getParam($i));
                 }
+            }
+            
+            
+            //Convert the custom fields to an associtive array
+            if(array_key_exists(1, $params) && is_array($params[1]) && array_key_exists('custom_fields', $params[1])) {
+                $params[1]['custom_fields']=$this->struct_to_assoc($params[1]['custom_fields']);
             }
             
             
@@ -72,7 +80,10 @@ class KapostService extends Controller {
     }
     
     /**
-     *
+     * Checks the authentication of the api request
+     * @param {string} $username Username to look up
+     * @param {string} $password Password to match against
+     * @return {bool} Returns boolean true if authentication passes false otherwise
      */
     protected function authenticate($username, $password) {
         $authenticator=$this->config()->authenticator_class;
@@ -86,7 +97,10 @@ class KapostService extends Controller {
     }
     
     /**
-     *
+     * Converts an error to an xmlrpc response
+     * @param {int} $errorCode Error code number for the error
+     * @param {string} $errorMessage Error message string
+     * @return {xmlrpcresp} XML-RPC response object
      */
     public function httpError($errorCode, $errorMessage=null) {
         return new xmlrpcresp(0, $errorCode+10000, $errorMessage);
@@ -131,6 +145,46 @@ class KapostService extends Controller {
      * 
      */
     protected function newPost($blog_id, $content, $publish) {
+        $results=$this->extend('newPost', $blog_id, $content, $publish);
+        if($results && is_array($results)) {
+            $results=array_filter($results, function($v) {return !is_null($v);});
+        
+            return array_shift($results);
+        }
+        
+        
+        if(array_key_exists('custom_fields', $content)) {
+            //Ensure the type is an extension of the KapostPage object
+            if(!class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) || !('Kapost'.$content['custom_fields']['kapost_custom_type'] instanceof KapostPage)) {
+                return $this->httpError(400, 'The type "'.$content['custom_fields']['kapost_custom_type'].'" is not a known type');
+            }
+            
+            $className='Kapost'.$content['custom_fields']['kapost_custom_type'];
+        }else {
+            //Assume we're creating a page and set the content as such
+            $className='KapostPage';
+        }
+        
+        $obj=new $className();
+        $obj->Title=$content['title'];
+        $obj->Content=$content['description'];
+        $obj->MetaDescription=(array_key_exists('mt_excerpt', $content) ? $content['mt_excerpt']:null);
+        $obj->KapostChangeType='new';
+        $obj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
+        $obj->ToPublish=$publish;
+        $obj->write();
+        
+        
+        //Allow extensions to adjust the new page
+        $this->extend('updateNewKapostPage', $obj, $blog_id, $content, $publish);
+        
+        return $className.'_'.$obj->ID;
+    }
+    
+    /**
+     * 
+     */
+    protected function editPost($content_id, $content, $publish) {
         $results=$this->extend('editPost', $content_id, $content, $publish);
         if($results && is_array($results)) {
             $results=array_filter($results, function($v) {return !is_null($v);});
@@ -139,27 +193,9 @@ class KapostService extends Controller {
         }
         
         
-        //Assume we're creating a page and set the content as such
-        $obj=new KapostPage();
-        $obj->Title=$content['title'];
-        $obj->Content=$content['description'];
-        $obj->MetaDescription=(array_key_exists('mt_excerpt', $content) ? $content['mt_excerpt']:null);
-        $obj->KapostChangeType='new';
-        $obj->ToPublish=$publish;
-        $obj->write();
-        
-        return 'kapost_'.$obj->ID;
-    }
-    
-    /**
-     *
-     */
-    protected function editPost($content_id, $content, $publish) {
-        $results=$this->extend('editPost', $content_id, $content, $publish);
-        if($results && is_array($results)) {
-            $results=array_filter($results, function($v) {return !is_null($v);});
-        
-            return array_shift($results);
+        //Ensure the type is an extension of the KapostPage object
+        if(array_key_exists('custom_fields', $content) && (!class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) || !('Kapost'.$content['custom_fields']['kapost_custom_type'] instanceof KapostPage))) {
+            return $this->httpError(400, 'The type "'.$content['custom_fields']['kapost_custom_type'].'" is not a known type');
         }
         
         
@@ -175,14 +211,20 @@ class KapostService extends Controller {
         
         
         if(!empty($page) && $page!==false && $page->exists()) {
-            $obj=new KapostPage();
+            $className=(array_key_exists('custom_fields', $content) ? 'Kapost'.$content['custom_fields']['kapost_custom_type']:'KapostPage');
+            $obj=new $className();
             $obj->Title=$content['title'];
             $obj->Content=$content['description'];
             $obj->MetaDescription=(array_key_exists('mt_excerpt', $content) ? $content['mt_excerpt']:null);
             $obj->KapostChangeType='edit';
             $obj->LinkedPageID=$page->ID;
+            $obj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
             $obj->ToPublish=$publish;
             $obj->write();
+            
+            
+            //Allow extensions to adjust the new page
+            $this->extend('updateEditKapostPage', $obj, $content_id, $content, $publish);
             
             return true;
         }else {
@@ -191,8 +233,12 @@ class KapostService extends Controller {
                 $kapostObj->Title=$content['title'];
                 $kapostObj->Content=$content['description'];
                 $kapostObj->MetaDescription=(array_key_exists('mt_excerpt', $content) ? $content['mt_excerpt']:null);
+                $kapostObj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
                 $kapostObj->ToPublish=$publish;
                 $kapostObj->write();
+                
+                //Allow extensions to adjust the existing object
+                $this->extend('updateEditKapostPage', $kapostObj, $content_id, $content, $publish);
                 
                 return true;
             }
@@ -203,7 +249,7 @@ class KapostService extends Controller {
     }
     
     /**
-     *
+     * 
      */
     protected function getPost($content_id) {
         $results=$this->extend('getPost', $content_id);
@@ -251,7 +297,9 @@ class KapostService extends Controller {
     }
     
     /**
-     * 
+     * Gets the categories
+     * @param {int} $blog_id ID of the blog
+     * @return {array} Array of categories
      */
     protected function getCategories($blog_id) {
         $categories=array();
@@ -280,6 +328,117 @@ class KapostService extends Controller {
         }
         
         return $categories;
+    }
+    
+    /**
+     * Handles media objects from kapost
+     * @param {int} $blog_id Site Config related to this content object
+     * @param {array} $content Content object to be handled
+     * @return {xmlrpcresp} XML-RPC Response object
+     */
+    protected function newMediaObject($blog_id, $content) {
+        $fileName=$content['name'];
+        $validator=new Upload_Validator(array('name'=>$fileName));
+        $validator->setAllowedExtensions(File::config()->allowed_extensions);
+        
+        //Verify we have a valid extension
+        if($validator->isValidExtension()==false) {
+            return $this->httpError(403, 'File extension is not allowed');
+        }
+        
+        
+        //Generate default filename
+		$nameFilter=FileNameFilter::create();
+		$file=$nameFilter->filter($fileName);
+		while($file[0]=='_' || $file[0]=='.') {
+			$file=substr($file, 1);
+		}
+		
+		$doubleBarrelledExts=array('.gz', '.bz', '.bz2');
+		
+		$ext="";
+		if(preg_match('/^(.*)(\.[^.]+)$/', $file, $matches)) {
+			$file=$matches[1];
+			$ext=$matches[2];
+			
+			// Special case for double-barrelled 
+			if(in_array($ext, $doubleBarrelledExts) && preg_match('/^(.*)(\.[^.]+)$/', $file, $matches)) {
+				$file=$matches[1];
+				$ext=$matches[2].$ext;
+			}
+		}
+		
+		$origFile=$file;
+		
+        
+		//Find the kapost media folder
+		$kapostMediaFolder=Folder::find_or_make($this->config()->kapost_media_folder);
+        
+		$i = 1;
+		while(file_exists($kapostMediaFolder->getFullPath().'/'.$file.$ext)) {
+			$i++;
+			$oldFile=$file;
+			
+			if(strpos($file, '.')!==false) {
+				$file = preg_replace('/[0-9]*(\.[^.]+$)/', $i.'\\1', $file);
+			}else if(strpos($file, '_')!==false) {
+				$file=preg_replace('/_([^_]+$)/', '_'.$i, $file);
+			}else {
+				$file.='_'.$i;
+			}
+
+			if($oldFile==$file && $i > 2) {
+			    return $this->httpError(500, "Couldn't fix $file$ext with $i");
+			}
+		}
+        
+        //Write the file to the file system
+        $f=fopen($kapostMediaFolder->getFullPath().'/'.$file.$ext, 'w');
+        fwrite($f, $content['bits']);
+        fclose($f);
+        
+        
+        //Write the file to the database
+        $className=File::get_class_for_file_extension($ext);
+        $obj=new $className();
+        $obj->Name=$file.$ext;
+        $obj->Title=$file.$ext;
+        $obj->FileName=$kapostMediaFolder->getRelativePath().'/'.$file.$ext;
+        $obj->ParentID=$kapostMediaFolder->ID;
+        
+        //If subsites is enabled add it to the correct subsite
+        if(File::has_extension('FileSubsites')) {
+            $obj->SubsiteID=$blog_id;
+        }
+        
+        $obj->write();
+        
+        
+        return array(
+                    'url'=>$obj->getAbsoluteURL() //@TODO Should this be the relative url? So we can look up the correct file when we get the data from kapost?
+                );
+    }
+    
+    /**
+     * Converts a struct to an associtive array based on the key value pair in the struct
+     * @param {array} $struct Input struct to be converted
+     * @return {array} Associtive array matching the struct
+     */
+    final protected function struct_to_assoc($struct) {
+        $result=array();
+        foreach($struct as $item) {
+            if(array_key_exists('key', $item) && array_key_exists('value', $item)) {
+                if(array_key_exists($item['key'], $result)) {
+                    user_error('Duplicate key detected in struct entry, content overwritten by the last entry: [New: '.print_r($item, true).'] [Previous: '.print_r($result[$item['key']], true).']', E_USER_WARNING);
+                }
+                
+                $result[$item['key']]=$item['value'];
+            }else {
+                user_error('Key/Value pair not detected in struct entry: '.print_r($item, true), E_USER_NOTICE);
+            }
+        }
+        
+        return $result;
     }
 }
 ?>
