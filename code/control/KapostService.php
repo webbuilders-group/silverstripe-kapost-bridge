@@ -46,7 +46,7 @@ class KapostService extends Controller {
             $method=str_replace(array('blogger.', 'metaWeblog.'), '', $request->methodname);
             
             if((!in_array('blogger.'.$method, $this->config()->exposed_methods) && !in_array('metaWeblog.'.$method, $this->config()->exposed_methods)) || !method_exists($this, $method)) {
-                return $this->httpError(403, 'Action "'.$method.'" isn\'t allowed on class Kapost Service.');
+                return $this->httpError(403, _t('KapostService.METHOD_NOT_ALLOWED', '_Action "{method}" is not allowed on class Kapost Service.', array('method'=>$method)));
             }
             
             
@@ -76,7 +76,7 @@ class KapostService extends Controller {
         }
         
         
-        return $this->httpError(401, _t('Member.ERRORWRONGCRED', 'The provided details don\'t seem to be correct. Please try again.'));
+        return $this->httpError(401, _t('KapostService.AUTH_FAILED', '_Authentication Failed, please check the App Center credentials for the SilverStripe end point.'));
     }
     
     /**
@@ -142,7 +142,10 @@ class KapostService extends Controller {
     }
     
     /**
-     * 
+     * Handles creation of a new post
+     * @param {int} $blog_id Identifier for the current site
+     * @param {array} $content Post details
+     * @param {int} $publish 0 or 1 depending on whether to publish the post or not
      */
     protected function newPost($blog_id, $content, $publish) {
         $results=$this->extend('newPost', $blog_id, $content, $publish);
@@ -156,7 +159,7 @@ class KapostService extends Controller {
         if(array_key_exists('custom_fields', $content)) {
             //Ensure the type is an extension of the KapostPage object
             if(!class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) || !('Kapost'.$content['custom_fields']['kapost_custom_type'] instanceof KapostPage)) {
-                return $this->httpError(400, 'The type "'.$content['custom_fields']['kapost_custom_type'].'" is not a known type');
+                return $this->httpError(400, _t('KapostService.TYPE_NOT_KNOWN', '_The type "{type}" is not a known type', array('type'=>$content['custom_fields']['kapost_custom_type'])));
             }
             
             $className='Kapost'.$content['custom_fields']['kapost_custom_type'];
@@ -182,7 +185,10 @@ class KapostService extends Controller {
     }
     
     /**
-     * 
+     * Handles editing of a given post
+     * @param {int} $content_id Identifier for the post
+     * @param {array} $content Post details
+     * @param {int} $publish 0 or 1 depending on whether to publish the post or not
      */
     protected function editPost($content_id, $content, $publish) {
         $results=$this->extend('editPost', $content_id, $content, $publish);
@@ -195,7 +201,7 @@ class KapostService extends Controller {
         
         //Ensure the type is an extension of the KapostPage object
         if(array_key_exists('custom_fields', $content) && (!class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) || !('Kapost'.$content['custom_fields']['kapost_custom_type'] instanceof KapostPage))) {
-            return $this->httpError(400, 'The type "'.$content['custom_fields']['kapost_custom_type'].'" is not a known type');
+            return $this->httpError(400, _t('KapostService.TYPE_NOT_KNOWN', '_The type "{type}" is not a known type', array('type'=>$content['custom_fields']['kapost_custom_type'])));
         }
         
         
@@ -245,11 +251,12 @@ class KapostService extends Controller {
         }
         
         //Can't find the object so return a 404 code
-        return new xmlrpcresp(0, 404, 'Invalid post ID.');
+        return new xmlrpcresp(0, 404, _t('KapostService.INVALID_POST_ID', '_Invalid post ID.'));
     }
     
     /**
-     * 
+     * Gets the details of a post from the system
+     * @param {int} $content_id ID of the post in the system
      */
     protected function getPost($content_id) {
         $results=$this->extend('getPost', $content_id);
@@ -271,29 +278,49 @@ class KapostService extends Controller {
         
         
         if(!empty($page) && $page!==false && $page->exists()) {
-            return array(
+            $postMeta=array(
                         'title'=>$page->Title,
                         'description'=>$page->Content,
-                        'mt_keywords'=>$page->MetaKeywords,
+                        'mt_keywords'=>'',
                         'mt_excerpt'=>$page->MetaDescription,
                         'categories'=>array('ss_page'),
                         'permaLink'=>$page->AbsoluteLink()
                     );
+            
+            //Allow extensions to modify the page meta
+            $results=$this->extend('updatePageMeta', $page);
+            if(count($results)>0) {
+                for($i=0;$i<count($results);$i++) {
+                    $postMeta=array_merge_recursive($postMeta, $result[$i]);
+                }
+            }
+            
+            return $postMeta;
         }else {
             $kapostObj=KapostObject::get()->byID(intval(preg_replace('/^([^0-9]*)/', '', $content_id)));
             if(!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
-                return array(
+                $postMeta=array(
                             'title'=>$kapostObj->Title,
                             'description'=>$kapostObj->Content,
-                            'mt_keywords'=>$kapostObj->MetaKeywords,
+                            'mt_keywords'=>'',
                             'mt_excerpt'=>$kapostObj->MetaDescription,
                             'categories'=>array('ss_page'),
                             'permaLink'=>Controller::join_links(Director::absoluteBaseURL(), 'admin/kapost/KapostObject/EditForm/field/KapostObject/item', $kapostObj->ID, 'edit')
                         );
+                
+                //Allow extensions to modify the page meta
+                $results=$this->extend('updatePageMeta', $page);
+                if(count($results)>0) {
+                    for($i=0;$i<count($results);$i++) {
+                        $postMeta=array_merge_recursive($postMeta, $result[$i]);
+                    }
+                }
+                
+                return $postMeta;
             }
         }
         
-        return new xmlrpcresp(0, 404, 'Invalid post ID.');
+        return new xmlrpcresp(0, 404, _t('KapostService.INVALID_POST_ID', '_Invalid post ID.'));
     }
     
     /**
@@ -343,7 +370,7 @@ class KapostService extends Controller {
         
         //Verify we have a valid extension
         if($validator->isValidExtension()==false) {
-            return $this->httpError(403, 'File extension is not allowed');
+            return $this->httpError(403, _t('KapostService.FILE_NOT_ALLOWED', '_File extension is not allowed'));
         }
         
         
@@ -388,7 +415,7 @@ class KapostService extends Controller {
 			}
 
 			if($oldFile==$file && $i > 2) {
-			    return $this->httpError(500, "Couldn't fix $file$ext with $i");
+			    return $this->httpError(500, _t('KapostService.FILE_RENAME_FAIL', '_Could not fix {filename} with {attempts} attempts', array('filename'=>$file.$ext, 'attempts'=>$i)));
 			}
 		}
         
@@ -415,7 +442,8 @@ class KapostService extends Controller {
         
         
         return array(
-                    'url'=>$obj->getAbsoluteURL() //@TODO Should this be the relative url? So we can look up the correct file when we get the data from kapost?
+                    'id'=>$obj->ID,
+                    'url'=>$obj->getAbsoluteURL()
                 );
     }
     

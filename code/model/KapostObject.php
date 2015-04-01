@@ -13,6 +13,8 @@ class KapostObject extends DataObject {
     
     private static $summary_fields=array(
                                         'Title',
+                                        'Created',
+                                        'ClassName',
                                         'KapostChangeType',
                                         'ToPublish'
                                     );
@@ -22,14 +24,12 @@ class KapostObject extends DataObject {
      * Gets fields used in the cms
      * @return {FieldList} Fields to be used
      */
-    public function getCMSFields() {
+    /* public function getCMSFields() {
         $fields=parent::getCMSFields();
         
         
-        $fields->removeByName('KapostChangeType');
-        
         
         return $fields;
-    }
+    } */
 }
 ?>

@@ -1,3 +1,24 @@
 en:
     KapostAdmin:
         MENU_TITLE: "Kapost Content"
+    KapostService:
+        AUTH_FAIL: "Authentication Failed, please check the App Center credentials for the SilverStripe end point."
+        METHOD_NOT_ALLOWED: 'Action "{method}" is not allowed on class Kapost Service.'
+        INVALID_POST_ID: "Invalid post ID."
+        TYPE_NOT_KNOWN: 'The type "{type}" is not a known type'
+        FILE_NOT_ALLOWED: "File extension is not allowed"
+        FILE_RENAME_FAIL: "Could not fix {filename} with {attempts} attempts"
+    KapostObject:
+        SINGULARNAME: "Generic Object"
+        db_Title: "Title"
+        db_Created: "Created"
+        db_ClassName: "Content Type"
+        db_KapostChangeType: "Change Type"
+        db_ToPublish: "Publish Type"
+    KapostPage:
+        SINGULARNAME: "Page"
+    KapostFieldCaster:
+        CHANGE_TYPE_NEW: "new"
+        CHANGE_TYPE_EDIT: "edit"
+        PUBLISH_TYPE_LIVE: "Live"
+        PUBLISH_TYPE_DRAFT: "Draft"
