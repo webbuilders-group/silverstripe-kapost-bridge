@@ -12,8 +12,8 @@ class KapostFieldCaster extends Enum {
      */
     public function NiceChangeType() {
         switch($this->value) {
-            case 'new': return _t('KapostFieldCaster.CHANGE_TYPE_NEW', '_new');
-            case 'edit': return _t('KapostFieldCaster.CHANGE_TYPE_EDIT', '_edit');
+            case 'new': return _t('KapostFieldCaster.CHANGE_TYPE_NEW', '_New');
+            case 'edit': return _t('KapostFieldCaster.CHANGE_TYPE_EDIT', '_Edit');
         }
         
         return $this->XML();

@@ -18,6 +18,7 @@ class KapostAdmin extends ModelAdmin {
         
         if($gridField=$form->Fields()->dataFieldByName('KapostObject')) {
             $gridField->getConfig()
+                                ->removeComponentsByType('GridFieldAddNewButton')
                                 ->getComponentByType('GridFieldDataColumns')
                                     ->setFieldCasting(array(
                                                             'Created'=>'SS_Datetime->FormatFromSettings',
@@ -25,6 +26,10 @@ class KapostAdmin extends ModelAdmin {
                                                             'KapostChangeType'=>'KapostFieldCaster->NiceChangeType',
                                                             'ToPublish'=>'KapostFieldCaster->NiceToPublish'
                                                         ));
+            
+            $gridField->getConfig()
+                                ->getComponentByType('GridFieldDetailForm')
+                                    ->setItemRequestClass('KapostGridFieldDetailForm_ItemRequest');
         }
         
         
