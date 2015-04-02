@@ -18,7 +18,7 @@ class KapostPage extends KapostObject {
         $fields=parent::getCMSFields();
         
         
-        $fields->addFieldToTab('Root.Main', new ReadonlyField('MenuTitle', $this->fieldLabel('MenuTitle')), 'Content');
+        $fields->insertAfter(new ReadonlyField('MenuTitle', $this->fieldLabel('MenuTitle')), 'Title');
         $fields->addFieldToTab('Root.Main', new ReadonlyField('MetaDescription', $this->fieldLabel('MetaDescription')));
         
         

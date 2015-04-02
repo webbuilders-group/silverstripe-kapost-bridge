@@ -1,5 +1,26 @@
 (function($) {
     $.entwine('ss', function($) {
+        $('.cms-edit-form.KapostAdmin').entwine({
+            panelRedirect: function (destination) {
+                //Close the dialog
+                $('#kapost-convert-object-dialog').ssdialog('close');
+                
+                //Load the destination panel
+                $('.cms-container').loadPanel(destination);
+                
+                if(destination.match(/^admin\/pages\//)) {
+                    var menu=$('.cms-menu-list');
+                    var item=menu.find('li#Menu-CMSPagesController');
+                    
+                    if(!item.hasClass('current')) {
+                        item.select();
+                    }
+                    
+                    menu.updateItems();
+                }
+            }
+        });
+        
         $('.cms-edit-form .Actions input.action[type=submit].kapost-action-convert, .cms-edit-form .Actions button.action.kapost-action-convert').entwine({
             onclick: function(e) {
                 //Get the post ID

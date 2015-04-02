@@ -7,6 +7,8 @@ class KapostAdmin extends ModelAdmin {
                                         'KapostObject'
                                     );
     
+    private static $extra_conversion_modes=array();
+    
     /**
      * Form used for displaying the gridfield in the model admin
      * @param {string} $id ID of the form

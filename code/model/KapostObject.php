@@ -96,6 +96,14 @@ class KapostObject extends DataObject {
     }
     
     /**
+     * Gets the destination class when converting to the final object, by default this simply removes Kapost form the class name
+     * @return {string} Class to convert to
+     */
+    public function getDestinationClass() {
+        return preg_replace('/^Kapost/', '', $this->ClassName);
+    }
+    
+    /**
      * Strips out not allowed tags, mainly this is to remove the kapost beacon script so it doesn't conflict with the cms
      * @param {string} $str String to be sanitized
      * @return {string} HTML to be used

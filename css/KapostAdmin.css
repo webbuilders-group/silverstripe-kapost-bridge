@@ -1,3 +1,65 @@
-.KapostAdmin .cms-content-actions .ss-ui-action-constructive .ui-icon.btn-icon-kapost-convert {
+.KapostAdmin .cms-content-actions .ss-ui-action-constructive .ui-icon.btn-icon-kapost-convert, .cms-dialog .KapostAdmin .ss-ui-action-constructive .ui-icon.btn-icon-kapost-convert {
     background-image: url(./../images/icons/arrow-switch.png);
+}
+
+html, body, .cms-dialog-content, .cms-dialog form.KapostAdmin {
+    height: 100%;
+}
+
+body.cms-dialog {
+    overflow: hidden;
+}
+
+.cms-dialog form.KapostAdmin .kapostConvertLeftSide {
+    float: left;
+    
+    width: 48%;
+}
+
+.cms-dialog form.KapostAdmin .kapostConvertRightSide {
+    float: right;
+    
+    width: 48%;
+}
+
+.cms-dialog form.KapostAdmin .field .middleColumn {
+    margin-left: 0;
+}
+
+.cms-dialog form.KapostAdmin .field label.left {
+    float: none;
+    
+    width: auto;
+}
+
+.cms-dialog hr {
+    display: block;
+    
+    border: 0;
+    border-bottom: 1px solid #d0d3d5;
+    
+    margin: 8px 0;
+    padding: 0 0 7px 0;
+    
+    box-shadow: 0 1px 0 rgba(245, 245, 245, 0.8);
+    -webkit-box-shadow: 0 1px 0 rgba(245, 245, 245, 0.8);
+    -moz-box-shadow: 0 1px 0 rgba(245, 245, 245, 0.8);
+    -o-box-shadow: 0 1px 0 rgba(245, 245, 245, 0.8);
+    
+    *zoom: 1;
+}
+
+.cms-dialog form.KapostAdmin .kapost-convert-dialog-content {
+    padding: 24px 0 0;
+}
+
+.cms-dialog form.KapostAdmin .south {
+    height: 28px;
+    
+    padding: 1em 0;
+    
+    border-top: 1px solid #cacacc;
+    box-shadow: 1px 0 0 #ECEFF1, rgba(248, 248, 248, 0.9) 0 1px 0px inset, rgba(201, 205, 206, 0.8) 0 0 1px;
+    -moz-box-shadow: 1px 0 0 #ECEFF1, rgba(248, 248, 248, 0.9) 0 1px 0px inset, rgba(201, 205, 206, 0.8) 0 0 1px;
+    -webkit-box-shadow: 1px 0 0 #ECEFF1, rgba(248, 248, 248, 0.9) 0 1px 0px inset, rgba(201, 205, 206, 0.8) 0 0 1px;
 }

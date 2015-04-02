@@ -2,6 +2,15 @@ en:
     KapostAdmin:
         MENU_TITLE: "Kapost Content"
         CONVERT_POST: "Convert Post"
+        CONVERT_DESC: "This will convert this Kapost object to a normal asset, you must choose from one of the following options."
+        REPLACES_AN_EXISTING_PAGE: "This replaces an existing page"
+        IS_NEW_PAGE: "This is a new page"
+        CONTINUE_CONVERT: "Continue"
+        NO_REPLACE_PAGE_TARGET: "You must select a page to replace"
+        ERROR_COULD_NOT_REPLACE: "Sorry an error occured and the target page could not be replaced."
+        ERROR_COULD_NOT_CREATE: "Sorry an error occured and the page could not be created."
+        UNKNOWN_CONVERSION_MODEL: "Unknown conversion mode: {mode}"
+        GENERIC_CONVERSION_ERROR: "Conversion method returns an error and no specific message"
     KapostService:
         AUTH_FAIL: "Authentication Failed, please check the App Center credentials for the SilverStripe end point."
         METHOD_NOT_ALLOWED: 'Action "{method}" is not allowed on class Kapost Service.'
