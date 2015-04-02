@@ -18,6 +18,8 @@ en:
         TYPE_NOT_KNOWN: 'The type "{type}" is not a known type'
         FILE_NOT_ALLOWED: "File extension is not allowed"
         FILE_RENAME_FAIL: "Could not fix {filename} with {attempts} attempts"
+        PERMISSION_API_ACCESS: "Kapost API Access"
+        PERMISSION_API_ACCESS_DESC: "Access the XML-RPC Endpoint for Kapost to communicate with"
     KapostObject:
         SINGULARNAME: "Generic Object"
         MAIN: "Main"

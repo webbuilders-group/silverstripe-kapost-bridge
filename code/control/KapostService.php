@@ -1,5 +1,5 @@
 <?php
-class KapostService extends Controller {
+class KapostService extends Controller implements PermissionProvider {
     private static $authenticator_class='MemberAuthenticator';
     private static $authenticator_username_field='Email';
     private static $kapost_media_folder='kapost-media';
@@ -93,7 +93,7 @@ class KapostService extends Controller {
                                                 'Password'=>$password
                                             ));
         
-        return (!empty($member) && $member!==false && $member->exists()==true);
+        return (!empty($member) && $member!==false && $member->exists()==true && Permission::check('KAPOST_API_ACCESS', 'any', $member));
     }
     
     /**
@@ -468,5 +468,19 @@ class KapostService extends Controller {
         
         return $result;
     }
+    
+    /**
+	 * Return a map of permission codes to add to the dropdown shown in the Security section of the CMS.
+	 * @return {array} Map of permission codes
+	 */
+	public function providePermissions() {
+	    return array(
+	               'KAPOST_API_ACCESS'=>array(
+	                                           'category'=>'Kapost Bridge',
+                                               'name'=>_t('KapostService.PERMISSION_API_ACCESS', '_Kapost API Access'),
+	                                           'help'=>_t('KapostService.PERMISSION_API_ACCESS_DESC', '_Access the XML-RPC Endpoint for Kapost to communicate with')
+	                                       ),
+	            );
+	}
 }
 ?>
