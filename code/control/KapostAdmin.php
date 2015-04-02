@@ -7,6 +7,10 @@ class KapostAdmin extends ModelAdmin {
                                         'KapostObject'
                                     );
     
+    /**
+     * Array of name's for extra conversion modes (see documentation for information on how to define these)
+     * @config KapostAdmin.extra_conversion_modes
+     */
     private static $extra_conversion_modes=array();
     
     /**

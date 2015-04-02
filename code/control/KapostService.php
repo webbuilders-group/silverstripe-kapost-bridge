@@ -1,24 +1,41 @@
 <?php
 class KapostService extends Controller implements PermissionProvider {
+    /**
+     * Authenticator to be used for authenticating the Kapost account
+     * @config KapostService.authenticator_class
+     * @default MemberAuthenticator
+     */
     private static $authenticator_class='MemberAuthenticator';
+    
+    /**
+     * Authenticator to be used for authenticating the Kapost account
+     * @config KapostService.authenticator_username_field
+     * @default Email
+     */
     private static $authenticator_username_field='Email';
+    
+    /**
+     * Authenticator to be used for authenticating the Kapost account
+     * @config KapostService.kapost_media_folder
+     * @default kapost-media
+     */
     private static $kapost_media_folder='kapost-media';
     
-    private static $exposed_methods=array(
-                                        'blogger.getUsersBlogs',
-                                        'metaWeblog.newPost',
-                                        'metaWeblog.editPost',
-                                        'metaWeblog.getPost',
-                                        'metaWeblog.getCategories',
-                                        'metaWeblog.newMediaObject'
-                                        //'metaWeblog.getPreview' //Not implemented
-                                    );
+    private $exposed_methods=array(
+                                    'blogger.getUsersBlogs',
+                                    'metaWeblog.newPost',
+                                    'metaWeblog.editPost',
+                                    'metaWeblog.getPost',
+                                    'metaWeblog.getCategories',
+                                    'metaWeblog.newMediaObject'
+                                    //'metaWeblog.getPreview' //Not implemented
+                                );
     
     /**
      * Handles incoming requests to the kapost service
      */
     public function index() {
-        $methods=array_fill_keys($this->config()->exposed_methods, array('function'=>array($this, 'handleRPCMethod')));
+        $methods=array_fill_keys($this->exposed_methods, array('function'=>array($this, 'handleRPCMethod')));
         
         //Disable Content Negotiator and send the text/xml header (which kapost expects)
         ContentNegotiator::config()->enabled=false;
@@ -45,7 +62,7 @@ class KapostService extends Controller implements PermissionProvider {
         if($this->authenticate($username, $password)) {
             $method=str_replace(array('blogger.', 'metaWeblog.'), '', $request->methodname);
             
-            if((!in_array('blogger.'.$method, $this->config()->exposed_methods) && !in_array('metaWeblog.'.$method, $this->config()->exposed_methods)) || !method_exists($this, $method)) {
+            if((!in_array('blogger.'.$method, $this->exposed_methods) && !in_array('metaWeblog.'.$method, $this->exposed_methods)) || !method_exists($this, $method)) {
                 return $this->httpError(403, _t('KapostService.METHOD_NOT_ALLOWED', '_Action "{method}" is not allowed on class Kapost Service.', array('method'=>$method)));
             }
             
