@@ -458,6 +458,9 @@ class KapostService extends Controller implements PermissionProvider {
         $obj->write();
         
         
+        $this->extend('updateNewMediaAsset', $blog_id, $content, $obj);
+        
+        
         return array(
                     'id'=>$obj->ID,
                     'url'=>$obj->getAbsoluteURL()
