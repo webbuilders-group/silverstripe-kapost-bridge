@@ -6,7 +6,15 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
                                         'ConvertObjectForm'
                                     );
     
+    private static $restricted_merge_fields=array(
+                                                'ID',
+                                                'ClassName'
+                                            );
     
+    
+    /**
+     *
+     */
     public function ItemEditForm() {
         $form=parent::ItemEditForm();
         
@@ -47,6 +55,10 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * 
      */
     public function ConvertObjectForm() {
+        //Reset the reading stage
+        Versioned::reset();
+        
+        
         $fields=new FieldList(
                             CompositeField::create(
                                     new OptionsetField('ConvertMode', '', array(
@@ -104,6 +116,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
                 $form->sessionMessage(_t('KapostAdmin.NO_REPLACE_PAGE_TARGET', '_You must select a page to replace'), 'error');
                 return $this->popupController->redirectBack();
             }
+            
             
             if(($redirectURL=$this->replacePage($data, $form))===false) {
                 $form->sessionMessage(_t('KapostAdmin.ERROR_COULD_NOT_REPLACE', '_Sorry an error occured and the target page could not be replaced.'), 'error');
@@ -205,7 +218,9 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             
             //Create the new page
             $destination=new $convertToClass();
-            $destination->write();
+            $destination->writeWithoutVersion();
+            $destination->flushCache();
+            
             
             //Merge the kapost object into the new page
             $this->merge($destination, $source, 'right', true, true);
@@ -226,7 +241,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             
             //If the kapost object is to be published publish it
             if($this->record->ToPublish==true) {
-                $destination->writeToStage('Stage', 'Live');
+                $destination->publish('Stage', 'Live');
             }
             
             
@@ -309,6 +324,10 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         $rightData=$rightObj->inheritedDatabaseFields();
         
         foreach($rightData as $key=>$rightVal) {
+            if(in_array($key, self::config()->restricted_merge_fields)) {
+                continue;
+            }
+            
             // don't merge conflicting values if priority is 'left'
             if($priority=='left' && $leftObj->{$key}!==$rightObj->{$key}) {
                 continue;

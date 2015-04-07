@@ -198,7 +198,7 @@ class KapostService extends Controller implements PermissionProvider {
         //Allow extensions to adjust the new page
         $this->extend('updateNewKapostPage', $obj, $blog_id, $content, $publish);
         
-        return $className.'_'.$obj->ID;
+        return (array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:$className.'_'.$obj->ID);
     }
     
     /**
@@ -251,7 +251,7 @@ class KapostService extends Controller implements PermissionProvider {
             
             return true;
         }else {
-            $kapostObj=KapostObject::get()->byID(intval(preg_replace('/^([^0-9]*)/', '', $content_id)));
+            $kapostObj=KapostObject::get()->filter('KapostRefID', Convert::raw2sql($content_id))->first();
             if(!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
                 $kapostObj->Title=$content['title'];
                 $kapostObj->Content=$content['description'];
@@ -314,7 +314,7 @@ class KapostService extends Controller implements PermissionProvider {
             
             return $postMeta;
         }else {
-            $kapostObj=KapostObject::get()->byID(intval(preg_replace('/^([^0-9]*)/', '', $content_id)));
+            $kapostObj=KapostObject::get()->filter('KapostRefID', Convert::raw2sql($content_id))->first();
             if(!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
                 $postMeta=array(
                             'title'=>$kapostObj->Title,
