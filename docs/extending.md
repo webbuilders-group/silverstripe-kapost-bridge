@@ -15,10 +15,10 @@ This module provides support for basic page types in SilverStripe, aka the defau
  - ``updateNewMediaAsset($blog_id, array $content, File $mediaFile)`` Allows for modification of the File object that represents the media asset from Kapost.
 
 #### KapostObject
- - ``updateCMSFields(FieldList $fields)`` Allows extensions to add cms fields to KapostObject and it's decendents.
+ - ``updateCMSFields(FieldList $fields)`` Allows extensions to add cms fields to KapostObject and it's decedents.
 
 #### KapostGridFieldDetailForm_ItemRequest
- - ``updateConvertObjectForm(Form $form)`` Allows extensions to adjust the form in the Convert Object lightbox.
- - ``doConvert{conversion_mode}(array $data, Form $form)`` Allows extensions to provide handing of conversions of custom KapostObject extensions. ``conversion_mode`` is replaced by the mode in the request, you must exlicitly allow this mode in the KapostAdmin.extra_conversion_modes configuration option. This extension point should return the cms relative url to edit the final object (ex. admin/pages/edit/show/1) and it is handled on a first returned basis. When the lightbox closes the user will be directed to this url in the cms.
+ - ``updateConvertObjectForm(Form $form, KapostObject $source)`` Allows extensions to adjust the form in the Convert Object lightbox.
+ - ``doConvert{conversion_mode}(KapostObject $source, array $data, Form $form)`` Allows extensions to provide handing of conversions of custom KapostObject extensions. ``conversion_mode`` is replaced by the mode in the request, you must explicitly allow this mode in the KapostAdmin.extra_conversion_modes configuration option. This extension point should return the cms relative url to edit the final object (ex. admin/pages/edit/show/1) and it is handled on a first returned basis. When the lightbox closes the user will be directed to this url in the cms.
  - ``updateNewPageConversion(Page $destination, KapostObject $source, array $data, Form $form)`` Allows extensions to alter the destination page when creating a new page from the Kapost Object. Note that you *must call write on the page* to save your changes.
  - ``updateReplacePageConversion(Page $destination, KapostObject $source, array $data, Form $form)`` Allows extensions to alter the destination page when replacing a new page with the Kapost Object. Note that you *must call write on the page* to save your changes.
