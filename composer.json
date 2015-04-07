@@ -1,6 +1,6 @@
 {
     "name": "webbuilders-group/silverstripe-kapost-bridge",
-    "description": "Bridge for Kapost driven content authoring",
+    "description": "Bridge for Kapost driven content authoring, provides support for basic content pages. But also provides a flexible api to allow for custom content types.",
     "type": "silverstripe-module",
     "keywords": ["silverstripe", "kapost", "content authoring"],
     "license": "BSD-3-Clause",
