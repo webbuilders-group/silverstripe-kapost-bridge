@@ -24,6 +24,8 @@
                 }else if(selectedVal=='NewPage') {
                     $('#Form_ConvertObjectForm #ParentPageID').show();
                     $('#Form_ConvertObjectForm #ReplacePageID').hide();
+                }else {
+                    $('#Form_ConvertObjectForm #ParentPageID, #Form_ConvertObjectForm #ReplacePageID').hide();
                 }
             }
         });
