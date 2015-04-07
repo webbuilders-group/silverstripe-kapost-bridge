@@ -6,14 +6,10 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
                                         'ConvertObjectForm'
                                     );
     
-    private static $restricted_merge_fields=array(
-                                                'ID',
-                                                'ClassName'
-                                            );
-    
     
     /**
-     *
+     * Builds an item edit form.  The arguments to getCMSFields() are the popupController and popupFormName, however this is an experimental API and may change.
+     * @return {Form}
      */
     public function ItemEditForm() {
         $form=parent::ItemEditForm();
@@ -41,7 +37,8 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
     }
     
     /**
-     * 
+     * Handles requests for the convert dialog
+     * @return {string} HTML to be sent to the browser
      */
     public function convert() {
         return $this->customise(array(
@@ -52,7 +49,8 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
     }
     
     /**
-     * 
+     * Form used for defining the conversion form
+     * @return {Form} Form to be used for configuring the conversion
      */
     public function ConvertObjectForm() {
         //Reset the reading stage
@@ -316,10 +314,6 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         $rightData=$rightObj->inheritedDatabaseFields();
         
         foreach($rightData as $key=>$rightVal) {
-            if(in_array($key, self::config()->restricted_merge_fields)) {
-                continue;
-            }
-            
             // don't merge conflicting values if priority is 'left'
             if($priority=='left' && $leftObj->{$key}!==$rightObj->{$key}) {
                 continue;
@@ -388,7 +382,15 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         return true;
     }
     
+    /**
+     * Gets the destination class for the record
+     * @return {string|bool} Returns the destination class name or false if it can't be found
+     */
     private function getDestinationClass() {
+        if(empty($this->record) || $this->record===false) {
+            return false;
+        }
+        
         $convertToClass=false;
         
         if(class_exists($this->record->DestinationClass) && is_subclass_of($this->record->DestinationClass, 'SiteTree')) {
