@@ -103,7 +103,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         
         
         //Allow extensions to adjust the form
-        $this->extend('updateConvertObjectForm', $form);
+        $this->extend('updateConvertObjectForm', $form, $this->record);
         
         
         Requirements::css(KAPOST_DIR.'/css/KapostAdmin.css');
@@ -160,7 +160,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         
         //Allow extensions to convert the object
         if(in_array($data['ConvertMode'], KapostAdmin::config()->extra_conversion_modes)) {
-            $results=$this->extend('doConvert'.$data['ConvertMode'], $data, $form, $this);
+            $results=$this->extend('doConvert'.$data['ConvertMode'], $this->record, $data, $form);
             if(count($results)>0) {
                 foreach($results as $result) {
                     if($result!==false) {
@@ -198,6 +198,11 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * @return {bool} Returns boolean true on success, false otherwise
      */
     public function newPage($data, Form $form) {
+        //Start a transaction if supported
+        if(DB::getConn()->supportsTransactions()) {
+            DB::getConn()->transactionStart();
+        }
+        
         $convertToClass=$this->getDestinationClass();
         
         
@@ -226,7 +231,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             
             
             //Allow extensions to update the object
-            $this->extend('updateNewPageConversion', $destination, $data, $form);
+            $this->extend('updateNewPageConversion', $destination, $this->record, $data, $form);
             
             
             //If the kapost object is to be published publish it
@@ -239,7 +244,18 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             $this->record->delete();
             
             
+            //End the transaction if supported
+            if(DB::getConn()->supportsTransactions()) {
+                DB::getConn()->transactionEnd();
+            }
+            
             return 'admin/pages/edit/show/'.$destination->ID;
+        }
+        
+        
+        //Rollback the transaction if supported
+        if(DB::getConn()->supportsTransactions()) {
+            DB::getConn()->transactionRollback();
         }
         
         return false;
@@ -252,6 +268,11 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * @return {bool} Returns boolean true on success, false otherwise
      */
     public function replacePage($data, Form $form) {
+        //Start a transaction if supported
+        if(DB::getConn()->supportsTransactions()) {
+            DB::getConn()->transactionStart();
+        }
+        
         $destinationClass=$this->getDestinationClass();
         $destination=SiteTree::get()->byID(intval($data['ReplacePageID']));
         
@@ -269,7 +290,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             
             
             //Allow extensions to update the object
-            $this->extend('updateReplacePageConversion', $destination, $data, $form);
+            $this->extend('updateReplacePageConversion', $destination, $this->record, $data, $form);
             
             
             //If the kapost object is to be published publish it
@@ -282,7 +303,18 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             $this->record->delete();
             
             
+            //End the transaction if supported
+            if(DB::getConn()->supportsTransactions()) {
+                DB::getConn()->transactionEnd();
+            }
+            
             return 'admin/pages/edit/show/'.$destination->ID;
+        }
+        
+        
+        //Rollback the transaction if supported
+        if(DB::getConn()->supportsTransactions()) {
+            DB::getConn()->transactionRollback();
         }
         
         return false;
