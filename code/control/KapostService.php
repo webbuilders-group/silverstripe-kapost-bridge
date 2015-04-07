@@ -195,6 +195,13 @@ class KapostService extends Controller implements PermissionProvider {
         $obj->write();
         
         
+        //Fallback for tests where the kapost_post_id is missing
+        if(!array_key_exists('custom_fields', $content)) {
+            $obj->KapostRefID=$className.'_'.$obj->ID;
+            $obj->write();
+        }
+        
+        
         //Allow extensions to adjust the new page
         $this->extend('updateNewKapostPage', $obj, $blog_id, $content, $publish);
         
@@ -443,7 +450,7 @@ class KapostService extends Controller implements PermissionProvider {
         
         
         //Write the file to the database
-        $className=File::get_class_for_file_extension($ext);
+        $className=File::get_class_for_file_extension(substr($ext, 1));
         $obj=new $className();
         $obj->Name=$file.$ext;
         $obj->Title=$file.$ext;
