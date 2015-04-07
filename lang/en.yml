@@ -11,6 +11,8 @@ en:
         ERROR_COULD_NOT_CREATE: "Sorry an error occured and the page could not be created."
         UNKNOWN_CONVERSION_MODEL: "Unknown conversion mode: {mode}"
         GENERIC_CONVERSION_ERROR: "Conversion method returns an error and no specific message"
+        REPLACE_PAGE: "Replace this page"
+        USE_AS_PARENT: "Use this page as the parent for the new page, leave empty for a top level page"
     KapostService:
         AUTH_FAIL: "Authentication Failed, please check the App Center credentials for the SilverStripe end point."
         METHOD_NOT_ALLOWED: 'Action "{method}" is not allowed on class Kapost Service.'

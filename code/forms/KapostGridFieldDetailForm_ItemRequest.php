@@ -61,13 +61,14 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         
         $fields=new FieldList(
                             CompositeField::create(
-                                    new OptionsetField('ConvertMode', '', array(
-                                                                                'ReplacePage'=>_t('KapostAdmin.REPLACES_AN_EXISTING_PAGE', '_This replaces an existing page'),
-                                                                                'NewPage'=>_t('KapostAdmin.IS_NEW_PAGE', '_This is a new page')
-                                                                            ), 'NewPage')
+                                    $convertModeField=new OptionsetField('ConvertMode', '', array(
+                                                                                                'ReplacePage'=>_t('KapostAdmin.REPLACES_AN_EXISTING_PAGE', '_This replaces an existing page'),
+                                                                                                'NewPage'=>_t('KapostAdmin.IS_NEW_PAGE', '_This is a new page')
+                                                                                            ), 'NewPage')
                                 )->addExtraClass('kapostConvertLeftSide'),
                             CompositeField::create(
-                                    new TreeDropdownField('TargetPageID', ' ', 'SiteTree')
+                                    $replacePageField=new TreeDropdownField('ReplacePageID', _t('KapostAdmin.REPLACE_PAGE', '_Replace this page'), 'SiteTree'),
+                                    new TreeDropdownField('ParentPageID', _t('KapostAdmin.USE_AS_PARENT', '_Use this page as the parent for the new page, leave empty for a top level page'), 'SiteTree')
                                 )->addExtraClass('kapostConvertRightSide')
                         );
         
@@ -92,6 +93,17 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             ->setTemplate('KapostAdmin_ConvertForm');
         
         
+        //Handle pages to see if the page exists
+        $convertToClass=$this->getDestinationClass();
+        if($convertToClass!==false && ($convertToClass=='SiteTree' || is_subclass_of($convertToClass, 'SiteTree'))) {
+            $obj=SiteTree::get()->filter('KapostRefID', Convert::raw2sql($this->record->KapostRefID))->first();
+            if(!empty($obj) && $obj!==false && $obj->ID>0) {
+                $convertModeField->setValue('ReplacePage');
+                $replacePageField->setValue($obj->ID);
+            }
+        }
+        
+        
         //Allow extensions to adjust the form
         $this->extend('updateConvertObjectForm', $form);
         
@@ -112,7 +124,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      */
     public function doConvertObject($data, Form $form) {
         if($data['ConvertMode']=='ReplacePage') {
-            if(empty($data['TargetPageID']) || $data['TargetPageID']==0) {
+            if(empty($data['ReplacePageID']) || $data['ReplacePageID']==0) {
                 $form->sessionMessage(_t('KapostAdmin.NO_REPLACE_PAGE_TARGET', '_You must select a page to replace'), 'error');
                 return $this->popupController->redirectBack();
             }
@@ -188,27 +200,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * @return {bool} Returns boolean true on success, false otherwise
      */
     public function newPage($data, Form $form) {
-        if(class_exists($this->record->DestinationClass) && is_subclass_of($this->record->DestinationClass, 'SiteTree')) {
-            $convertToClass=$this->record->DestinationClass;
-        }else {
-            $parentClasses=array_reverse(ClassInfo::dataClassesFor($this->record->ClassName));
-            unset($parentClasses[$this->record->ClassName]);
-            unset($parentClasses['KapostObject']);
-            
-            if(count($parentClasses)>0) {
-                foreach($parentClasses as $class) {
-                    $sng=singleton($class);
-                    if(class_exists($sng->DestinationClass) && is_subclass_of($sng->DestinationClass, 'SiteTree')) {
-                        $convertToClass=$sng->DestinationClass;
-                        break;
-                    }
-                }
-                
-                if(isset($sng)) {
-                    unset($sng);
-                }
-            }
-        }
+        $convertToClass=$this->getDestinationClass();
         
         
         //Verify we have a destination class
@@ -227,8 +219,8 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             
             
             //If a target was set and the parent has been found set the parent of the page
-            if(intval($data['TargetPageID']) && SiteTree::get()->filter('ID', intval($data['TargetPageID']))->count()>0) {
-                $destination->ParentID=intval($data['TargetPageID']);
+            if(intval($data['ParentPageID']) && SiteTree::get()->filter('ID', intval($data['ParentPageID']))->count()>0) {
+                $destination->ParentID=intval($data['ParentPageID']);
             }
             
             //Write the destination one more time to be sure
@@ -262,8 +254,8 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * @return {bool} Returns boolean true on success, false otherwise
      */
     public function replacePage($data, Form $form) {
-        $destinationClass=$this->record->DestinationClass;
-        $destination=SiteTree::get()->byID(intval($data['TargetPageID']));
+        $destinationClass=$this->getDestinationClass();
+        $destination=SiteTree::get()->byID(intval($data['ReplacePageID']));
         
         //Verify we have a destination class
         if(!empty($destination) && $destination!==false && $destination->exists() && ($destination->ClassName==$destinationClass || is_subclass_of($destination, $destinationClass))) {
@@ -394,6 +386,34 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         }
         
         return true;
+    }
+    
+    private function getDestinationClass() {
+        $convertToClass=false;
+        
+        if(class_exists($this->record->DestinationClass) && is_subclass_of($this->record->DestinationClass, 'SiteTree')) {
+            $convertToClass=$this->record->DestinationClass;
+        }else {
+            $parentClasses=array_reverse(ClassInfo::dataClassesFor($this->record->ClassName));
+            unset($parentClasses[$this->record->ClassName]);
+            unset($parentClasses['KapostObject']);
+        
+            if(count($parentClasses)>0) {
+                foreach($parentClasses as $class) {
+                    $sng=singleton($class);
+                    if(class_exists($sng->DestinationClass) && is_subclass_of($sng->DestinationClass, 'SiteTree')) {
+                        $convertToClass=$sng->DestinationClass;
+                        break;
+                    }
+                }
+        
+                if(isset($sng)) {
+                    unset($sng);
+                }
+            }
+        }
+        
+        return $convertToClass;
     }
 }
 ?>
