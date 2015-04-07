@@ -108,7 +108,7 @@ class KapostObject extends DataObject {
      * @param {string} $str String to be sanitized
      * @return {string} HTML to be used
      */
-    private function sanitizeHTML($str) {
+    final public function sanitizeHTML($str) {
         $htmlValue=Injector::inst()->create('HTMLValue', $str);
         $santiser=Injector::inst()->create('HtmlEditorSanitiser', HtmlEditorConfig::get_active());
         $santiser->sanitise($htmlValue);

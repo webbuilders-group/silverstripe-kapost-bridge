@@ -490,6 +490,23 @@ class KapostService extends Controller implements PermissionProvider {
     }
     
     /**
+     * Finds a file record based on the url of the file, this is needed because Kapost doesn't seem to send anything back other than the url in the cms
+     * @param {string} $url Absolute url to the file
+     * @return {File} Returns the file instance representing the url, or boolean false if it's not found
+     */
+    public static function find_file_by_url($url) {
+        $url=Director::makeRelative($url);
+        if($url) {
+            $file=File::get()->filter('Filename', Convert::raw2sql($url))->first();
+            if(!empty($file) && $file!==false && $file->ID>0) {
+                return $file;
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
 	 * Return a map of permission codes to add to the dropdown shown in the Security section of the CMS.
 	 * @return {array} Map of permission codes
 	 */
