@@ -39,3 +39,5 @@ en:
         CHANGE_TYPE_EDIT: "Edit"
         PUBLISH_TYPE_LIVE: "Live"
         PUBLISH_TYPE_DRAFT: "Draft"
+    KapostSiteTreeExtension:
+        KAPOST_CONTENT_WARNING: "Warning this Page's content is being populated by Kapost"
