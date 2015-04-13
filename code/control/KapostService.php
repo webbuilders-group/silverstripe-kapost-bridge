@@ -299,7 +299,9 @@ class KapostService extends Controller implements PermissionProvider {
         if($results && is_array($results)) {
             $results=array_filter($results, function($v) {return !is_null($v);});
             
-            return array_shift($results);
+            if(count($results)>0) {
+                return array_shift($results);
+            }
         }
         
         
