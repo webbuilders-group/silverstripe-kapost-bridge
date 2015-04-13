@@ -102,14 +102,15 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         }
         
         
-        //Allow extensions to adjust the form
-        $this->extend('updateConvertObjectForm', $form, $this->record);
-        
-        
         Requirements::css(KAPOST_DIR.'/css/KapostAdmin.css');
         
         Requirements::add_i18n_javascript(KAPOST_DIR.'/javascript/lang/');
         Requirements::javascript(KAPOST_DIR.'/javascript/KapostAdmin_convertPopup.js');
+        
+        
+        //Allow extensions to adjust the form
+        $this->extend('updateConvertObjectForm', $form, $this->record);
+        
         
         return $form;
     }

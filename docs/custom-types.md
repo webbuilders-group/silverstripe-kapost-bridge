@@ -51,10 +51,10 @@ class KapostResourceSupport extends Extension {
         }
 
         $form->Fields()->insertAfter($resourceIDField=new DropdownField('ReplaceResourceID', 'Replaces this resource', Resource::get()->map()), 'ParentPageID');
-
+        $resourceIDField->setForm($form);
 
         if($source instanceof KapostResource) {
-            $resource=Resource::get()->filter('KapostRefID', Convert::raw2sql($ource->KapostRefID))->first();
+            $resource=Resource::get()->filter('KapostRefID', Convert::raw2sql($source->KapostRefID))->first();
             if(!empty($resource) && $resource!==false && $resource->ID>0) {
                 $resourceIDField->setValue($resource->ID);
                 $convertTypeRadio->setValue('ReplaceResource');
@@ -70,19 +70,23 @@ class KapostResourceSupport extends Extension {
 
 ```javascript
 //ResourceFormScript.js
-$('#Form_ConvertObjectForm_ConvertMode').entwine({
-    updateVisibleFields: function() {
-        var selectedVal=$('#Form_ConvertObjectForm_ConvertMode input.radio:checked').val();
+(function($) {
+    $.entwine('kapost', function($) {
+        $('#Form_ConvertObjectForm_ConvertMode').entwine({
+            updateVisibleFields: function() {
+                var selectedVal=$('#Form_ConvertObjectForm_ConvertMode input.radio:checked').val();
 
-        if(selectedVal=='ReplaceResource') {
-            $('#Form_ConvertObjectForm #ReplaceResourceID').show();
-        }else {
-            $('#Form_ConvertObjectForm #ReplaceResourceID').hide();
-        }
+                if(selectedVal=='ReplaceResource') {
+                    $('#Form_ConvertObjectForm #ReplaceResourceID').show();
+                }else {
+                    $('#Form_ConvertObjectForm #ReplaceResourceID').hide();
+                }
 
-        this._super();
-    }
-});
+                this._super();
+            }
+        });
+    });
+})(jQuery);
 ```
 
 Now once the form has been updated to support what we need we'll need to allow the conversion modes in the config layer.

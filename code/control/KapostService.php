@@ -175,7 +175,7 @@ class KapostService extends Controller implements PermissionProvider {
         
         if(array_key_exists('custom_fields', $content)) {
             //Ensure the type is an extension of the KapostPage object
-            if(!class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) || !('Kapost'.$content['custom_fields']['kapost_custom_type'] instanceof KapostPage)) {
+            if(!class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) || !('Kapost'.$content['custom_fields']['kapost_custom_type']=='KapostPage' || is_subclass_of('Kapost'.$content['custom_fields']['kapost_custom_type'], 'KapostPage'))) {
                 return $this->httpError(400, _t('KapostService.TYPE_NOT_KNOWN', '_The type "{type}" is not a known type', array('type'=>$content['custom_fields']['kapost_custom_type'])));
             }
             
@@ -224,7 +224,7 @@ class KapostService extends Controller implements PermissionProvider {
         
         
         //Ensure the type is an extension of the KapostPage object
-        if(array_key_exists('custom_fields', $content) && (!class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) || !('Kapost'.$content['custom_fields']['kapost_custom_type'] instanceof KapostPage))) {
+        if(array_key_exists('custom_fields', $content) && (!class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) || !('Kapost'.$content['custom_fields']['kapost_custom_type']=='KapostPage' || is_subclass_of('Kapost'.$content['custom_fields']['kapost_custom_type'], 'KapostPage')))) {
             return $this->httpError(400, _t('KapostService.TYPE_NOT_KNOWN', '_The type "{type}" is not a known type', array('type'=>$content['custom_fields']['kapost_custom_type'])));
         }
         
