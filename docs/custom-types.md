@@ -102,7 +102,11 @@ That being done and the manifest flushed we now need to write the handlers for t
 ```php
 /**
  * Used to use the Kapost object to replace an existing resource
- * @param {}
+ * @param {KapostObject} $source Source Kapost Object
+ * @param {array} $data Submitted form data
+ * @param {Form} $form Submitting form
+ * @return {string} URL to redirect to on completion, returns nothing on error but sets a message on the form
+ */
 public function doConvertReplaceResource(KapostObject $source, $data, Form $form) {
     //@TODO Handle merging of the Kapost object to the existing resource, do not return anything if there is an error. Simply set the error on the form for the user
 
@@ -112,7 +116,11 @@ public function doConvertReplaceResource(KapostObject $source, $data, Form $form
 
 /**
  * Used to use the Kapost object to create a new resource
- * @param {}
+ * @param {KapostObject} $source Source Kapost Object
+ * @param {array} $data Submitted form data
+ * @param {Form} $form Submitting form
+ * @return {string} URL to redirect to on completion, returns nothing on error but sets a message on the form
+ */
 public function doConvertNewResource(KapostObject $source, $data, Form $form) {
     //@TODO Handle converting of the Kapost object to the existing resource, do not return anything if there is an error. Simply set the error on the form for the user
 
