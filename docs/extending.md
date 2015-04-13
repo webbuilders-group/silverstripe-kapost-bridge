@@ -11,6 +11,7 @@ This module provides support for basic page types in SilverStripe, aka the defau
  - ``updateEditKapostPage(KapostObject $kapostObj, $content_id, array $content, int $publish)`` Allows for setting of custom page extension fields based on the data from Kapost. Note that *you must call write* on the KapostObject to save your changes.
  - ``getPost($content_id)`` Allows for overriding the metaWeblog.getPost handling & response to Kapost about the requested content. This can be used for sending information about non-page extension Kapost objects it should return an array similar to what is [defined here](https://gist.github.com/icebreaker/546f4223dc07a9e2e6e9#metawebloggetpost). What is returned to Kapost is the first non-empty result from extensions.
  - ``updatePageMeta(Page $page)`` Allows for modification of the page meta data to be added to the response to Kapost. This should return a map of field's to it's content.
+ - ``updateObjectMeta(KapostObject $object)`` Allows for modification of the KapostObject's meta data to be added to the response to Kapost. This should return a map of field's to it's content.
  - ``getCategories($blog_id)`` Allows for adding in of additional categories to be sent to Kapost, this should return an array of categories similar to what is [defined here](https://gist.github.com/icebreaker/546f4223dc07a9e2e6e9#metawebloggetcategories).
  - ``updateNewMediaAsset($blog_id, array $content, File $mediaFile)`` Allows for modification of the File object that represents the media asset from Kapost.
 

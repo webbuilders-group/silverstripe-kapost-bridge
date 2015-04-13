@@ -315,7 +315,7 @@ class KapostService extends Controller implements PermissionProvider {
             $results=$this->extend('updatePageMeta', $page);
             if(count($results)>0) {
                 for($i=0;$i<count($results);$i++) {
-                    $postMeta=array_merge_recursive($postMeta, $result[$i]);
+                    $postMeta=array_merge_recursive($postMeta, $results[$i]);
                 }
             }
             
@@ -333,10 +333,10 @@ class KapostService extends Controller implements PermissionProvider {
                         );
                 
                 //Allow extensions to modify the page meta
-                $results=$this->extend('updatePageMeta', $page);
+                $results=$this->extend('updateObjectMeta', $kapostObj);
                 if(count($results)>0) {
                     for($i=0;$i<count($results);$i++) {
-                        $postMeta=array_merge_recursive($postMeta, $result[$i]);
+                        $postMeta=array_merge_recursive($postMeta, $results[$i]);
                     }
                 }
                 
