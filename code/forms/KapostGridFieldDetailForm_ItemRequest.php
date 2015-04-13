@@ -336,7 +336,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * @param $overwriteWithEmpty Boolean Overwrite existing left values with empty right values. Only applicable with $priority='right'. (optional)
      * @return Boolean
      */
-    private function merge($leftObj, $rightObj, $priority = 'right', $includeRelations = true, $overwriteWithEmpty = false) {
+    public function merge($leftObj, $rightObj, $priority = 'right', $includeRelations = true, $overwriteWithEmpty = false) {
         if(!$rightObj->ID) {
             user_error("DataObject->merge(): Please write your merged-in object to the database before merging, to make sure all relations are transferred properly.').", E_USER_WARNING);
             return false;
