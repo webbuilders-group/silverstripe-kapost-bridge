@@ -514,17 +514,16 @@ class KapostService extends Controller implements PermissionProvider {
      * Merges two arrays, overwriting the keys in the left array with the right array recurrsivly. Meaning that if a value in the right array is it self an array and the key exists in the left array it recurses into it.
      * @param {array} $leftArray Left array to merge into
      * @param {array} $rightArray Right array to merge from
-     * @param {int} $depth Recurrsion depth
      * @return {array} Resulting array
      */
-    private function mergeResultArray($leftArray, $rightArray, $depth=0) {
+    private function mergeResultArray($leftArray, $rightArray) {
         if($depth>10) {
             user_error('Too much recurrsion', E_USER_ERROR);
         }
         
         foreach($rightArray as $key=>$value) {
             if(is_array($value) && array_key_exists($key, $leftArray)) {
-                $leftArray[$key]=$this->mergeResultArray($leftArray[$key], $value, $depth+1);
+                $leftArray[$key]=array_merge($leftArray[$key], $value);
             }else {
                 $leftArray[$key]=$value;
             }
