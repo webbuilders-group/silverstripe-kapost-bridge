@@ -34,6 +34,7 @@ KapostAdmin:
     extra_conversion_modes: (empty) #Array of name's for extra conversion modes (see documentation for information on how to define these)
 
 KapostService:
+    check_user_agent: true #If set to true when the service is called the user agent of the request is checked to see if it is Kapost's XML-RPC user agent
     authenticator_class: "MemberAuthenticator" #Authenticator to be used for authenticating the Kapost account
     authenticator_username_field: "Email" #Field the authenticator is expecting the username to be in
     kapost_media_folder: "kapost-media" #Assets folder to place the Kapost attached media assets

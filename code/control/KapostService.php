@@ -1,6 +1,13 @@
 <?php
 class KapostService extends Controller implements PermissionProvider {
     /**
+     * If set to true when the service is called the user agent of the request is checked to see if it is Kapost's XML-RPC user agent
+     * @config KapostService.check_user_agent
+     * @default true
+     */
+    private static $check_user_agent=true;
+    
+    /**
      * Authenticator to be used for authenticating the Kapost account
      * @config KapostService.authenticator_class
      * @default MemberAuthenticator
@@ -35,6 +42,11 @@ class KapostService extends Controller implements PermissionProvider {
      * Handles incoming requests to the kapost service
      */
     public function index() {
+        //If the request is not the kapost user agent 404
+        if(self::config()->check_user_agent==true && (!array_key_exists('HTTP_USER_AGENT', $_SERVER) || $_SERVER['HTTP_USER_AGENT']!='Kapost XMLRPC::Client')) {
+            return ErrorPage::response_for(404);
+        }
+        
         $methods=array_fill_keys($this->exposed_methods, array('function'=>array($this, 'handleRPCMethod')));
         
         //Disable Content Negotiator and send the text/xml header (which kapost expects)
