@@ -89,7 +89,15 @@ class KapostService extends Controller implements PermissionProvider {
             }
             
             //Encode the response
-            return php_xmlrpc_encode($response);
+            $response=php_xmlrpc_encode($response);
+            if(is_object($response) && $response instanceof xmlrpcval) {
+                return new xmlrpcresp($response);
+            }
+            
+            return $this->httpError(500, _t('KapostService.INVALID_RESPONSE', '_Invalid response returned from {method}, response was: {response}', array(
+                                                                                                                                                        'method'=>$method,
+                                                                                                                                                        'response'=>print_r($response, true)
+                                                                                                                                                    )));
         }
         
         
@@ -168,8 +176,10 @@ class KapostService extends Controller implements PermissionProvider {
         $results=$this->extend('newPost', $blog_id, $content, $publish);
         if($results && is_array($results)) {
             $results=array_filter($results, function($v) {return !is_null($v);});
-        
-            return array_shift($results);
+            
+            if(count($results)>0) {
+                return array_shift($results);
+            }
         }
         
         
@@ -218,8 +228,10 @@ class KapostService extends Controller implements PermissionProvider {
         $results=$this->extend('editPost', $content_id, $content, $publish);
         if($results && is_array($results)) {
             $results=array_filter($results, function($v) {return !is_null($v);});
-        
-            return array_shift($results);
+            
+            if(count($results)>0) {
+                return array_shift($results);
+            }
         }
         
         

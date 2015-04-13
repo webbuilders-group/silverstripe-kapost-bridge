@@ -22,6 +22,7 @@ en:
         FILE_RENAME_FAIL: "Could not fix {filename} with {attempts} attempts"
         PERMISSION_API_ACCESS: "Kapost API Access"
         PERMISSION_API_ACCESS_DESC: "Access the XML-RPC Endpoint for Kapost to communicate with"
+        INVALID_RESPONSE: "Invalid response returned from {method}, response was: {response}"
     KapostObject:
         SINGULARNAME: "Generic Object"
         MAIN: "Main"
