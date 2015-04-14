@@ -47,7 +47,7 @@ class KapostService extends Controller implements PermissionProvider {
                                     'metaWeblog.getPost',
                                     'metaWeblog.getCategories',
                                     'metaWeblog.newMediaObject'
-                                    //'metaWeblog.getPreview' //Not implemented
+                                    //'kapost.getPreview' //Not implemented
                                 );
     
     /**
