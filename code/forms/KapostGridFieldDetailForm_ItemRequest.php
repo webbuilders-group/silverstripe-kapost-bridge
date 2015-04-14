@@ -277,8 +277,19 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         $destinationClass=$this->getDestinationClass();
         $destination=SiteTree::get()->byID(intval($data['ReplacePageID']));
         
+        
         //Verify we have a destination class
-        if(!empty($destination) && $destination!==false && $destination->exists() && ($destination->ClassName==$destinationClass || is_subclass_of($destination, $destinationClass))) {
+        if(!empty($destination) && $destination!==false && $destination->exists() && is_subclass_of($destinationClass, 'SiteTree')) {
+            //Ensure the classes are the same if they're not change and re-load
+            if($destination->ClassName!=$destinationClass) {
+                $destination->setClassName($destinationClass);
+                $destination->write();
+                $destination->flushCache();
+                
+                //Refetch the destination
+                $destination=SiteTree::get()->byID(intval($data['ReplacePageID']));
+            }
+            
             $source=clone $this->record; //Create a clone of the record to be safe
             
             
