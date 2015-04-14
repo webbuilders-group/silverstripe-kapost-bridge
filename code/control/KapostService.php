@@ -220,12 +220,12 @@ class KapostService extends Controller implements PermissionProvider {
         
         
         $pageTitle=$content['title'];
-        if(array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']['SS_Title']) && !empty($content['custom_fields']['SS_Title'])) {
+        if(array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']) && !empty($content['custom_fields']['SS_Title'])) {
             $pageTitle=$content['custom_fields']['SS_Title'];
         }
         
         $menuTitle=$content['title'];
-        if(empty($content['title']) && array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']['SS_Title']) && !empty($content['custom_fields']['SS_Title'])) {
+        if(empty($content['title']) && array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']) && !empty($content['custom_fields']['SS_Title'])) {
             $menuTitle=$content['custom_fields']['SS_Title'];
         }
         
@@ -288,12 +288,12 @@ class KapostService extends Controller implements PermissionProvider {
         
         
         $pageTitle=$content['title'];
-        if(array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']['SS_Title']) && !empty($content['custom_fields']['SS_Title'])) {
+        if(array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']) && !empty($content['custom_fields']['SS_Title'])) {
             $pageTitle=$content['custom_fields']['SS_Title'];
         }
         
         $menuTitle=$content['title'];
-        if(empty($content['title']) && array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']['SS_Title']) && !empty($content['custom_fields']['SS_Title'])) {
+        if(empty($content['title']) && array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']) && !empty($content['custom_fields']['SS_Title'])) {
             $menuTitle=$content['custom_fields']['SS_Title'];
         }
         
