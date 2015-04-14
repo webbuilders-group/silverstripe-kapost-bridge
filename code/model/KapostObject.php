@@ -13,7 +13,7 @@ class KapostObject extends DataObject {
     private static $summary_fields=array(
                                         'Title',
                                         'Created',
-                                        'ClassName',
+                                        'ClassNameNice',
                                         'KapostChangeType',
                                         'ToPublish'
                                     );
@@ -48,7 +48,7 @@ class KapostObject extends DataObject {
                                         new ReadonlyField('Created', $this->fieldLabel('Created')),
                                         new ReadonlyField('KapostChangeTypeNice', $this->fieldLabel('KapostChangeType')),
                                         new ReadonlyField('ToPublishNice', $this->fieldLabel('ToPublish')),
-                                        new ReadonlyField('ClassNameNice', $this->fieldLabel('ClassName')),
+                                        new ReadonlyField('ClassNameNice', _t('KapostObject.CONTENT_TYPE', '_Content Type')),
                                         new ReadonlyField('Title', $this->fieldLabel('Title')),
                                         HtmlEditorField_Readonly::create('ContentNice', $this->fieldLabel('Content'), $this->sanitizeHTML($this->Content))
                                     )
@@ -114,6 +114,42 @@ class KapostObject extends DataObject {
         $santiser->sanitise($htmlValue);
         
         return $htmlValue->getContent();
+    }
+    
+    /**
+     * Ensures the content type appears in the searchable fields
+     * @param {array} $_params
+     * @return {FieldList} Form fields to use in searching
+     */
+    public function scaffoldSearchFields($_params=null) {
+        $fields=parent::scaffoldSearchFields($_params);
+        
+        if(!$fields->dataFieldByName('ClassNameNice')) {
+            $classMap=ClassInfo::subclassesFor('KapostObject');
+            unset($classMap['KapostObject']);
+            
+            foreach($classMap as $key=>$value) {
+                $classMap[$key]=_t($key.'.SINGULARNAME', $value);
+            }
+            
+            $fields->push(DropdownField::create('ClassNameNice', _t('KapostObject.CONTENT_TYPE', '_Content Type'), $classMap)->setEmptyString('('._t('Enum.ANY', 'Any').')'));
+        }
+        
+        return $fields;
+    }
+    
+    /**
+     * Gets the summary fields for this object
+     * @return {array} Map of fields to labels
+     */
+    public function summaryFields() {
+        $fields=parent::summaryFields();
+        
+        if(array_key_exists('ClassNameNice', $fields)) {
+            $fields['ClassNameNice']=_t('KapostObject.CONTENT_TYPE', '_Content Type');
+        }
+        
+        return $fields;
     }
 }
 ?>
