@@ -47,7 +47,6 @@ class KapostService extends Controller implements PermissionProvider {
                                     'metaWeblog.getPost',
                                     'metaWeblog.getCategories',
                                     'metaWeblog.newMediaObject'
-                                    //'kapost.getPreview' //Not implemented
                                 );
     
     /**
@@ -398,8 +397,8 @@ class KapostService extends Controller implements PermissionProvider {
                             'categories'=>array('ss_page'),
                             'permaLink'=>Controller::join_links(Director::absoluteBaseURL(), 'admin/kapost/KapostObject/EditForm/field/KapostObject/item', $kapostObj->ID, 'edit'),
                             'custom_fields'=>array(
-                                    array('id'=>'SS_Title', 'key'=>'SS_Title', 'value'=>$page->Title),
-                                    array('id'=>'SS_MetaDescription', 'key'=>'SS_MetaDescription', 'value'=>$page->MetaDescription)
+                                    array('id'=>'SS_Title', 'key'=>'SS_Title', 'value'=>$kapostObj->Title),
+                                    array('id'=>'SS_MetaDescription', 'key'=>'SS_MetaDescription', 'value'=>$kapostObj->MetaDescription)
                                 )
                         );
                 
