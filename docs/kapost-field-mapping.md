@@ -2,8 +2,9 @@ Kapost Field Mapping for Page extensions
 ----
 This is a list of the mapping of the basic fields from Kapost to SilverStripe.
 
-| Kapost | SilverStripe |
-| ------------- | ------------- |
-| Title | Title, MenuTitle |
-| Excerpt | MetaDescription |
+| Kapost        | SilverStripe  |
+|---------------|---------------|
+| Title | Title (if SS_Title is missing or empty), MenuTitle |
 | Content WYSYWIG/Description | Content |
+| SS_Title ([custom field](configuring-kapost.md#defining-seo-fields)) | Title, MenuTitle (if Kapost's Title field is empty) |
+| SS_MetaDescription ([custom field](configuring-kapost.md#defining-seo-fields)) | MetaDescription |

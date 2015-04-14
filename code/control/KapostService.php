@@ -207,10 +207,22 @@ class KapostService extends Controller implements PermissionProvider {
             $className='KapostPage';
         }
         
+        
+        $pageTitle=$content['title'];
+        if(array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']['SS_Title']) && !empty($content['custom_fields']['SS_Title'])) {
+            $pageTitle=$content['custom_fields']['SS_Title'];
+        }
+        
+        $menuTitle=$content['title'];
+        if(empty($content['title']) && array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']['SS_Title']) && !empty($content['custom_fields']['SS_Title'])) {
+            $menuTitle=$content['custom_fields']['SS_Title'];
+        }
+        
         $obj=new $className();
-        $obj->Title=$content['title'];
+        $obj->Title=$pageTitle;
+        $obj->MenuTitle=$menuTitle;
         $obj->Content=$content['description'];
-        $obj->MetaDescription=(array_key_exists('mt_excerpt', $content) ? $content['mt_excerpt']:null);
+        $obj->MetaDescription=(array_key_exists('custom_fields', $content) && array_key_exists('SS_MetaDescription', $content['custom_fields']) ? $content['custom_fields']['SS_MetaDescription']:null);
         $obj->KapostChangeType='new';
         $obj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
         $obj->ToPublish=$publish;
@@ -264,12 +276,25 @@ class KapostService extends Controller implements PermissionProvider {
         Versioned::set_reading_mode($oldReadingStage);
         
         
+        $pageTitle=$content['title'];
+        if(array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']['SS_Title']) && !empty($content['custom_fields']['SS_Title'])) {
+            $pageTitle=$content['custom_fields']['SS_Title'];
+        }
+        
+        $menuTitle=$content['title'];
+        if(empty($content['title']) && array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']['SS_Title']) && !empty($content['custom_fields']['SS_Title'])) {
+            $menuTitle=$content['custom_fields']['SS_Title'];
+        }
+        
+        
         if(!empty($page) && $page!==false && $page->exists()) {
             $className=(array_key_exists('custom_fields', $content) ? 'Kapost'.$content['custom_fields']['kapost_custom_type']:'KapostPage');
+            
             $obj=new $className();
-            $obj->Title=$content['title'];
+            $obj->Title=$pageTitle;
+            $obj->MenuTitle=$menuTitle;
             $obj->Content=$content['description'];
-            $obj->MetaDescription=(array_key_exists('mt_excerpt', $content) ? $content['mt_excerpt']:null);
+            $obj->MetaDescription=(array_key_exists('custom_fields', $content) && array_key_exists('SS_MetaDescription', $content['custom_fields']) ? $content['custom_fields']['SS_MetaDescription']:null);
             $obj->KapostChangeType='edit';
             $obj->LinkedPageID=$page->ID;
             $obj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
@@ -284,9 +309,9 @@ class KapostService extends Controller implements PermissionProvider {
         }else {
             $kapostObj=KapostObject::get()->filter('KapostRefID', Convert::raw2sql($content_id))->first();
             if(!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
-                $kapostObj->Title=$content['title'];
-                $kapostObj->Content=$content['description'];
-                $kapostObj->MetaDescription=(array_key_exists('mt_excerpt', $content) ? $content['mt_excerpt']:null);
+                $kapostObj->Title=$pageTitle;
+                $kapostObj->MenuTitle=$menuTitle;
+                $kapostObj->MetaDescription=(array_key_exists('custom_fields', $content) && array_key_exists('SS_MetaDescription', $content['custom_fields']) ? $content['custom_fields']['SS_MetaDescription']:null);
                 $kapostObj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
                 $kapostObj->ToPublish=$publish;
                 $kapostObj->write();
@@ -332,9 +357,13 @@ class KapostService extends Controller implements PermissionProvider {
                         'title'=>$page->Title,
                         'description'=>$page->Content,
                         'mt_keywords'=>'',
-                        'mt_excerpt'=>$page->MetaDescription,
+                        'mt_excerpt'=>'',
                         'categories'=>array('ss_page'),
-                        'permaLink'=>$page->AbsoluteLink()
+                        'permaLink'=>$page->AbsoluteLink(),
+                        'custom_fields'=>array(
+                                array('id'=>'SS_Title', 'key'=>'SS_Title', 'value'=>$page->Title),
+                                array('id'=>'SS_MetaDescription', 'key'=>'SS_MetaDescription', 'value'=>$page->MetaDescription)
+                            )
                     );
             
             //Allow extensions to modify the page meta
@@ -353,9 +382,13 @@ class KapostService extends Controller implements PermissionProvider {
                             'title'=>$kapostObj->Title,
                             'description'=>$kapostObj->Content,
                             'mt_keywords'=>'',
-                            'mt_excerpt'=>$kapostObj->MetaDescription,
+                            'mt_excerpt'=>'',
                             'categories'=>array('ss_page'),
-                            'permaLink'=>Controller::join_links(Director::absoluteBaseURL(), 'admin/kapost/KapostObject/EditForm/field/KapostObject/item', $kapostObj->ID, 'edit')
+                            'permaLink'=>Controller::join_links(Director::absoluteBaseURL(), 'admin/kapost/KapostObject/EditForm/field/KapostObject/item', $kapostObj->ID, 'edit'),
+                            'custom_fields'=>array(
+                                    array('id'=>'SS_Title', 'key'=>'SS_Title', 'value'=>$page->Title),
+                                    array('id'=>'SS_MetaDescription', 'key'=>'SS_MetaDescription', 'value'=>$page->MetaDescription)
+                                )
                         );
                 
                 //Allow extensions to modify the page meta
