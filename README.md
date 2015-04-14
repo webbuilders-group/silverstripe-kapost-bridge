@@ -38,5 +38,14 @@ KapostService:
     authenticator_class: "MemberAuthenticator" #Authenticator to be used for authenticating the Kapost account
     authenticator_username_field: "Email" #Field the authenticator is expecting the username to be in
     kapost_media_folder: "kapost-media" #Assets folder to place the Kapost attached media assets
+    duplicate_assets: "rename" #What to do with duplicate assets valid options rename, overwrite, ignore see bellow for more information
 
 ```
+
+
+### Handling Duplicate Assets
+Kapost sends a any attached asset everytime a page is published, so there are three options for handling files with a duplicate name under the KapostService.duplicate_assets configuration option.
+
+* ``rename`` Rename the asset until a unique name is found
+* ``overwrite`` Overwrite the existing file with the new file, _be warned you may end up overwriting an asset you don't want overwritten_.
+* ``ignore`` The service simply ignores the asset and tells Kapost that there was an error explaining to rename the file and try again.

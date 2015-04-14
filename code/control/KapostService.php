@@ -28,6 +28,18 @@ class KapostService extends Controller implements PermissionProvider {
      */
     private static $kapost_media_folder='kapost-media';
     
+    /**
+     * Tells the service what to do with duplicate media assets
+     * Options:
+     *    rename: Rename the file to make it unique
+     *    overwrite: Overwrite the duplicate resource
+     *    ignore: Ignore's the duplicate resource and returns an error to Kapost
+     * 
+     * @config KapostService.duplicate_assets
+     * @default rename
+     */
+    private static $duplicate_assets='rename';
+    
     private $exposed_methods=array(
                                     'blogger.getUsersBlogs',
                                     'metaWeblog.newPost',
@@ -458,79 +470,130 @@ class KapostService extends Controller implements PermissionProvider {
         
         
         //Generate default filename
-		$nameFilter=FileNameFilter::create();
-		$file=$nameFilter->filter($fileName);
-		while($file[0]=='_' || $file[0]=='.') {
-			$file=substr($file, 1);
-		}
-		
-		$doubleBarrelledExts=array('.gz', '.bz', '.bz2');
-		
-		$ext="";
-		if(preg_match('/^(.*)(\.[^.]+)$/', $file, $matches)) {
-			$file=$matches[1];
-			$ext=$matches[2];
-			
-			// Special case for double-barrelled 
-			if(in_array($ext, $doubleBarrelledExts) && preg_match('/^(.*)(\.[^.]+)$/', $file, $matches)) {
-				$file=$matches[1];
-				$ext=$matches[2].$ext;
-			}
-		}
-		
-		$origFile=$file;
-		
-        
-		//Find the kapost media folder
-		$kapostMediaFolder=Folder::find_or_make($this->config()->kapost_media_folder);
-        
-		$i = 1;
-		while(file_exists($kapostMediaFolder->getFullPath().'/'.$file.$ext)) {
-			$i++;
-			$oldFile=$file;
-			
-			if(strpos($file, '.')!==false) {
-				$file = preg_replace('/[0-9]*(\.[^.]+$)/', $i.'\\1', $file);
-			}else if(strpos($file, '_')!==false) {
-				$file=preg_replace('/_([^_]+$)/', '_'.$i, $file);
-			}else {
-				$file.='_'.$i;
-			}
-
-			if($oldFile==$file && $i > 2) {
-			    return $this->httpError(500, _t('KapostService.FILE_RENAME_FAIL', '_Could not fix {filename} with {attempts} attempts', array('filename'=>$file.$ext, 'attempts'=>$i)));
-			}
-		}
-        
-        //Write the file to the file system
-        $f=fopen($kapostMediaFolder->getFullPath().'/'.$file.$ext, 'w');
-        fwrite($f, $content['bits']);
-        fclose($f);
-        
-        
-        //Write the file to the database
-        $className=File::get_class_for_file_extension(substr($ext, 1));
-        $obj=new $className();
-        $obj->Name=$file.$ext;
-        $obj->Title=$file.$ext;
-        $obj->FileName=$kapostMediaFolder->getRelativePath().'/'.$file.$ext;
-        $obj->ParentID=$kapostMediaFolder->ID;
-        
-        //If subsites is enabled add it to the correct subsite
-        if(File::has_extension('FileSubsites')) {
-            $obj->SubsiteID=$blog_id;
+        $nameFilter=FileNameFilter::create();
+        $file=$nameFilter->filter($fileName);
+        while($file[0]=='_' || $file[0]=='.') {
+            $file=substr($file, 1);
         }
         
-        $obj->write();
+        $doubleBarrelledExts=array('.gz', '.bz', '.bz2');
+        
+        $ext="";
+        if(preg_match('/^(.*)(\.[^.]+)$/', $file, $matches)) {
+            $file=$matches[1];
+            $ext=$matches[2];
+            
+            // Special case for double-barrelled 
+            if(in_array($ext, $doubleBarrelledExts) && preg_match('/^(.*)(\.[^.]+)$/', $file, $matches)) {
+                $file=$matches[1];
+                $ext=$matches[2].$ext;
+            }
+        }
+        
+        $origFile=$file;
         
         
-        $this->extend('updateNewMediaAsset', $blog_id, $content, $obj);
+        //Find the kapost media folder
+        $kapostMediaFolder=Folder::find_or_make($this->config()->kapost_media_folder);
         
-        
-        return array(
-                    'id'=>$obj->ID,
-                    'url'=>$obj->getAbsoluteURL()
-                );
+        if(file_exists($kapostMediaFolder->getFullPath().'/'.$file.$ext)) {
+            if(self::config()->duplicate_assets=='overwrite') {
+                //Write the file to the file system
+                $f=fopen($kapostMediaFolder->getFullPath().'/'.$file.$ext, 'w');
+                fwrite($f, $content['bits']);
+                fclose($f);
+                
+                
+                $obj=File::get()->filter('Filename', Convert::raw2sql($kapostMediaFolder->Filename.$file.$ext))->first();
+                if(!empty($obj) && $obj!==false && $obj->ID>0) {
+                    return array(
+                                'id'=>$obj->ID,
+                                'url'=>$obj->getAbsoluteURL()
+                            );
+                }
+                
+                return $this->httpError(404, _t('KapostService.FILE_NOT_FOUND', '_File not found'));
+            }else if(self::config()->duplicate_assets=='ignore') {
+                return $this->httpError(409, _t('KapostService.DUPLICATE_FILE', '_Duplicate file detected, please rename the file and try again'));
+            }else {
+                $i = 1;
+                while(file_exists($kapostMediaFolder->getFullPath().'/'.$file.$ext)) {
+                    $i++;
+                    $oldFile=$file;
+                     
+                    if(strpos($file, '.')!==false) {
+                        $file = preg_replace('/[0-9]*(\.[^.]+$)/', $i.'\\1', $file);
+                    }else if(strpos($file, '_')!==false) {
+                        $file=preg_replace('/_([^_]+$)/', '_'.$i, $file);
+                    }else {
+                        $file.='_'.$i;
+                    }
+                
+                    if($oldFile==$file && $i > 2) {
+                        return $this->httpError(500, _t('KapostService.FILE_RENAME_FAIL', '_Could not fix {filename} with {attempts} attempts', array('filename'=>$file.$ext, 'attempts'=>$i)));
+                    }
+                }
+                
+                //Write the file to the file system
+                $f=fopen($kapostMediaFolder->getFullPath().'/'.$file.$ext, 'w');
+                fwrite($f, $content['bits']);
+                fclose($f);
+                
+                
+                //Write the file to the database
+                $className=File::get_class_for_file_extension(substr($ext, 1));
+                $obj=new $className();
+                $obj->Name=$file.$ext;
+                $obj->Title=$file.$ext;
+                $obj->FileName=$kapostMediaFolder->getRelativePath().'/'.$file.$ext;
+                $obj->ParentID=$kapostMediaFolder->ID;
+                
+                //If subsites is enabled add it to the correct subsite
+                if(File::has_extension('FileSubsites')) {
+                    $obj->SubsiteID=$blog_id;
+                }
+                
+                $obj->write();
+                
+                
+                $this->extend('updateNewMediaAsset', $blog_id, $content, $obj);
+                
+                
+                return array(
+                            'id'=>$obj->ID,
+                            'url'=>$obj->getAbsoluteURL()
+                        );
+            }
+        }else {
+            //Write the file to the file system
+            $f=fopen($kapostMediaFolder->getFullPath().'/'.$file.$ext, 'w');
+            fwrite($f, $content['bits']);
+            fclose($f);
+            
+            
+            //Write the file to the database
+            $className=File::get_class_for_file_extension(substr($ext, 1));
+            $obj=new $className();
+            $obj->Name=$file.$ext;
+            $obj->Title=$file.$ext;
+            $obj->FileName=$kapostMediaFolder->getRelativePath().'/'.$file.$ext;
+            $obj->ParentID=$kapostMediaFolder->ID;
+            
+            //If subsites is enabled add it to the correct subsite
+            if(File::has_extension('FileSubsites')) {
+                $obj->SubsiteID=$blog_id;
+            }
+            
+            $obj->write();
+            
+            
+            $this->extend('updateNewMediaAsset', $blog_id, $content, $obj);
+            
+            return array(
+                        'id'=>$obj->ID,
+                        'url'=>$obj->getAbsoluteURL()
+                    );
+        }
     }
     
     /**
@@ -595,17 +658,17 @@ class KapostService extends Controller implements PermissionProvider {
     }
     
     /**
-	 * Return a map of permission codes to add to the dropdown shown in the Security section of the CMS.
-	 * @return {array} Map of permission codes
-	 */
-	public function providePermissions() {
-	    return array(
-	               'KAPOST_API_ACCESS'=>array(
-	                                           'category'=>'Kapost Bridge',
+     * Return a map of permission codes to add to the dropdown shown in the Security section of the CMS.
+     * @return {array} Map of permission codes
+     */
+    public function providePermissions() {
+        return array(
+                   'KAPOST_API_ACCESS'=>array(
+                                               'category'=>'Kapost Bridge',
                                                'name'=>_t('KapostService.PERMISSION_API_ACCESS', '_Kapost API Access'),
-	                                           'help'=>_t('KapostService.PERMISSION_API_ACCESS_DESC', '_Access the XML-RPC Endpoint for Kapost to communicate with')
-	                                       ),
-	            );
-	}
+                                               'help'=>_t('KapostService.PERMISSION_API_ACCESS_DESC', '_Access the XML-RPC Endpoint for Kapost to communicate with')
+                                           ),
+                );
+    }
 }
 ?>

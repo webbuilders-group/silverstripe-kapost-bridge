@@ -23,6 +23,8 @@ en:
         PERMISSION_API_ACCESS: "Kapost API Access"
         PERMISSION_API_ACCESS_DESC: "Access the XML-RPC Endpoint for Kapost to communicate with"
         INVALID_RESPONSE: "Invalid response returned from {method}, response was: {response}"
+        DUPLICATE_FILE: "Duplicate file detected, please rename the file and try again"
+        FILE_NOT_FOUND: "File not found"
     KapostObject:
         SINGULARNAME: "Generic Object"
         MAIN: "Main"
