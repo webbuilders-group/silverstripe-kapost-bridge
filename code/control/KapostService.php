@@ -625,10 +625,6 @@ class KapostService extends Controller implements PermissionProvider {
      * @return {array} Resulting array
      */
     private function mergeResultArray($leftArray, $rightArray) {
-        if($depth>10) {
-            user_error('Too much recurrsion', E_USER_ERROR);
-        }
-        
         foreach($rightArray as $key=>$value) {
             if(is_array($value) && array_key_exists($key, $leftArray)) {
                 $leftArray[$key]=array_merge($leftArray[$key], $value);
