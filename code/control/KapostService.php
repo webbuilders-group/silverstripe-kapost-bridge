@@ -83,7 +83,7 @@ class KapostService extends Controller implements PermissionProvider {
         $password=$request->getParam(2)->getval();
         
         if($this->authenticate($username, $password)) {
-            $method=str_replace(array('blogger.', 'metaWeblog.'), '', $request->methodname);
+            $method=str_replace(array('blogger.', 'metaWeblog.', 'kapost.'), '', $request->methodname);
             
             if((!in_array('blogger.'.$method, $this->exposed_methods) && !in_array('metaWeblog.'.$method, $this->exposed_methods)) || !method_exists($this, $method)) {
                 return $this->httpError(403, _t('KapostService.METHOD_NOT_ALLOWED', '_Action "{method}" is not allowed on class Kapost Service.', array('method'=>$method)));
