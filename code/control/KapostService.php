@@ -54,7 +54,7 @@ class KapostService extends Controller implements PermissionProvider {
      */
     public function index() {
         //If the request is not the kapost user agent 404
-        if(self::config()->check_user_agent==true && (!array_key_exists('HTTP_USER_AGENT', $_SERVER) || $_SERVER['HTTP_USER_AGENT']!='Kapost XMLRPC::Client')) {
+        if(self::config()->check_user_agent==true && $this->request->getHeader('User-Agent')!='Kapost XMLRPC::Client') {
             return ErrorPage::response_for(404);
         }
         
@@ -71,7 +71,8 @@ class KapostService extends Controller implements PermissionProvider {
             $server->setDebug(3);
         }
         
-        $server->service();
+        
+        return $server->service($this->request->getBody(), true);
     }
     
     /**
