@@ -1,0 +1,51 @@
+Group:
+    admingroup:
+        Name: "Admin Group"
+
+
+Permission:
+    admingroup:
+        Code: "ADMIN"
+        Type: 1
+        Group: =>Group.admingroup
+
+
+Member:
+    kapostmember:
+        FirstName: "Admin"
+        Email: "admin"
+        Password: "admin"
+        Groups: =>Group.admingroup
+
+
+Page:
+    parentpage:
+        Title: "Test Parent"
+        Content: "<p>Test Content</p>"
+
+
+KapostPage:
+    newpage:
+        Title: "Test Post"
+        Content: "<p>This is test content</p>"
+        KapostChangeType: "new"
+        KapostRefID: "test-reference"
+        ToPublish: false
+        MenuTitle: "Test Post [menu]"
+        MetaDescription: "This is a test meta description"
+    newpage2:
+        Title: "Test Post"
+        Content: "<p>This is test content</p>"
+        KapostChangeType: "new"
+        KapostRefID: "test-reference-2"
+        ToPublish: false
+        MenuTitle: "Test Post [menu]"
+        MetaDescription: "This is a test meta description"
+    editpage:
+        Title: "Test Post (edited)"
+        Content: "<p>This is test content (edited)</p>"
+        KapostChangeType: "edit"
+        KapostRefID: "test-reference"
+        ToPublish: true
+        MenuTitle: "Test Post [menu] (edited)"
+        MetaDescription: "This is a test meta description (edited)"

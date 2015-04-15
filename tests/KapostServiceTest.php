@@ -3,6 +3,9 @@ class KapostServiceTest extends FunctionalTest {
     const USER_AGENT='Kapost XMLRPC::Client';
     
     private static $configured=false;
+    private static $_fixtureFactory;
+    private static $_fixtures;
+    
     private $exposed_methods=array(
                                     'blogger.getUsersBlogs',
                                     'metaWeblog.newPost',
@@ -64,12 +67,19 @@ class KapostServiceTest extends FunctionalTest {
                         if($i == 0) $this->fixture = $fixture;
                         $i++;
                     }
+                    
+                    
+                    self::$_fixtureFactory=$this->getFixtureFactory();
+                    self::$_fixtures=$this->fixtures;
                 }
                 
                 $this->logInWithPermission("ADMIN");
             }
             
             self::$configured=true;
+        }else {
+            $this->fixtureFactory=self::$_fixtureFactory;
+            $this->fixtures=self::$_fixtures;
         }
     }
     
