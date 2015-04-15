@@ -103,7 +103,7 @@ class KapostServiceTest extends FunctionalTest {
         
         
         //Make sure the fault code is 0
-        $this->assertEmpty($rpcResponse->faultCode());
+        $this->assertEmpty($rpcResponse->faultCode(), 'Fault: '.$rpcResponse->faultString());
         
         
         //Process the response data
@@ -137,7 +137,7 @@ class KapostServiceTest extends FunctionalTest {
         
         
         //Make sure we had a 404
-        $this->assertEquals(404, $rpcResponse->faultCode());
+        $this->assertEquals(404, $rpcResponse->faultCode(), 'Fault: '.$rpcResponse->faultString());
     }
     
     /**
@@ -198,7 +198,7 @@ class KapostServiceTest extends FunctionalTest {
         
         
         //Make sure we didn't get a 404
-        $this->assertNotEquals(404, $rpcResponse->faultCode());
+        $this->assertNotEquals(404, $rpcResponse->faultCode(), 'Fault: '.$rpcResponse->faultString());
         
         //Process the response data
         $responseData=$rpcResponse->value();
@@ -438,7 +438,7 @@ class KapostServiceTest extends FunctionalTest {
         
         
         //Validate the response
-        $this->assertEquals(10409, $rpcResponse->faultCode());
+        $this->assertEquals(10409, $rpcResponse->faultCode(), 'Fault: '.$rpcResponse->faultString());
     }
     
     
@@ -448,7 +448,7 @@ class KapostServiceTest extends FunctionalTest {
      * @return {SS_HTTPResponse} Response Object
      */
     protected function call_service($mockRequest) {
-        return $response=$this->post('kapost-service', array(), array('User-Agent'=>self::USER_AGENT), null, file_get_contents(dirname(__FILE__).'/mock_requests/'.$mockRequest.'.xml'));
+        return $this->post('kapost-service', array(), array('User-Agent'=>self::USER_AGENT), null, file_get_contents(dirname(__FILE__).'/mock_requests/'.$mockRequest.'.xml'));
     }
     
     /**
