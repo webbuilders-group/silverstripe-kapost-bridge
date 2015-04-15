@@ -1,5 +1,7 @@
 Kapost Bridge
 =================
+[![Build Status](https://travis-ci.org/webbuilders-group/silverstripe-kapost-bridge.png)](https://travis-ci.org/webbuilders-group/silverstripe-kapost-bridge)
+
 Bridge for Kapost driven content authoring, provides support for basic content pages. But also provides a flexible api to allow for custom content types.
 
 ## Maintainer Contact
