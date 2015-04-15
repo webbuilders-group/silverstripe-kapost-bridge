@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<methodCall>
+    <methodName>metaWeblog.getPost</methodName>
+    <params>
+        <param>
+            <value>
+                <string>55241502b83cb77d1f0004d9</string>
+            </value>
+        </param>
+        <param>
+            <value>
+                <string>kapost</string>
+            </value>
+        </param>
+        <param>
+            <value>
+                <string>123456</string>
+            </value>
+        </param>
+    </params>
+</methodCall>

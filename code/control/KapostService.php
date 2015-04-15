@@ -498,14 +498,13 @@ class KapostService extends Controller implements PermissionProvider {
         
         if(file_exists($kapostMediaFolder->getFullPath().'/'.$file.$ext)) {
             if(self::config()->duplicate_assets=='overwrite') {
-                //Write the file to the file system
-                $f=fopen($kapostMediaFolder->getFullPath().'/'.$file.$ext, 'w');
-                fwrite($f, $content['bits']);
-                fclose($f);
-                
-                
                 $obj=File::get()->filter('Filename', Convert::raw2sql($kapostMediaFolder->Filename.$file.$ext))->first();
                 if(!empty($obj) && $obj!==false && $obj->ID>0) {
+                    //Write the file to the file system
+                    $f=fopen($kapostMediaFolder->getFullPath().'/'.$file.$ext, 'w');
+                    fwrite($f, $content['bits']);
+                    fclose($f);
+                
                     return array(
                                 'id'=>$obj->ID,
                                 'url'=>$obj->getAbsoluteURL()

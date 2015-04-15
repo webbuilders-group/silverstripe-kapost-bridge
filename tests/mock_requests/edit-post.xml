@@ -1,0 +1,336 @@
+<?xml version="1.0" ?>
+<methodCall>
+    <methodName>metaWeblog.editPost</methodName>
+    <params>
+        <param>
+            <value>
+                <string>55241502b83cb77d1f0004d9</string>
+            </value>
+        </param>
+        <param>
+            <value>
+                <string>kapost</string>
+            </value>
+        </param>
+        <param>
+            <value>
+                <string>123456</string>
+            </value>
+        </param>
+        <param>
+            <value>
+                <struct>
+                    <member>
+                        <name>method</name>
+                        <value>
+                            <string>metaWeblog.editPost</string>
+                        </value>
+                    </member>
+                    <member>
+                        <name>categories</name>
+                        <value>
+                            <array>
+                                <data/>
+                            </array>
+                        </value>
+                    </member>
+                    <member>
+                        <name>publish</name>
+                        <value>
+                            <i4>0</i4>
+                        </value>
+                    </member>
+                    <member>
+                        <name>title</name>
+                        <value>
+                            <string>Full Test</string>
+                        </value>
+                    </member>
+                    <member>
+                        <name>description</name>
+                        <value>
+                            <string>&lt;h1&gt;Cum autem venissemus in Academiae non sine causa nobilitata spatia, solitudo erat ea, quam volueramus.&lt;/h1&gt;
+&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duo Reges: constructio interrete. Aliena dixit in physicis nec ea ipsa, quae tibi probarentur; Bestiarum vero nullum iudicium puto.&lt;strong&gt;Quo tandem modo?&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Idem etiam dolorem saepe perpetiuntur, ne, si id non faciant, incidant in maiorem.&lt;/li&gt;
+&lt;li&gt;Est enim effectrix multarum et magnarum voluptatum.&lt;/li&gt;
+&lt;li&gt;Eaedem res maneant alio modo.&lt;/li&gt;
+&lt;li&gt;Nam illud quidem adduci vix possum, ut ea, quae senserit ille, tibi non vera videantur.&lt;/li&gt;
+&lt;li&gt;Sin tantum modo ad indicia veteris memoriae cognoscenda, curiosorum.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;em&gt;Memini vero, inquam;&lt;/em&gt; Hoc etsi multimodis reprehendi potest, tamen accipio, quod dant. Duo enim genera quae erant, fecit tria. &lt;a href="http://loripsum.net/" target="_blank"&gt;Efficiens dici potest.&lt;/a&gt; Eam tum adesse, cum dolor omnis absit; Sed tamen est aliquid, quod nobis non liceat, liceat illis. Ita enim vivunt quidam, ut eorum vita refellatur oratio. Qui enim existimabit posse se miserum esse beatus non erit.&lt;/p&gt;
+&lt;p&gt;Nunc de hominis summo bono quaeritur; Praeteritis, inquit, gaudeo.&lt;/p&gt;
+&lt;blockquote cite="http://loripsum.net"&gt;An tu me de L.&lt;/blockquote&gt;
+&lt;p&gt;Quid enim tanto opus est instrumento in optimis artibus comparandis? Certe non potest.&lt;strong&gt;Praeclarae mortes sunt imperatoriae;&lt;/strong&gt; At iam decimum annum in spelunca iacet. Inde sermone vario sex illa a Dipylo stadia confecimus. &lt;em&gt;Hunc vos beatum;&lt;/em&gt; An vero, inquit, quisquam potest probare, quod perceptfum, quod. Oratio me istius philosophi non offendit;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Omnes, qui non sint sapientes, aeque miseros esse, sapientes omnes summe beatos, recte facta omnia aequalia, omnia peccata paria;&lt;/li&gt;
+&lt;li&gt;Sed quid attinet de rebus tam apertis plura requirere?&lt;/li&gt;
+&lt;li&gt;Tertium autem omnibus aut maximis rebus iis, quae secundum naturam sint, fruentem vivere.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;Quoniam, si dis placet, ab Epicuro loqui discimus.&lt;/h2&gt;
+&lt;p&gt;Quis enim est, qui non videat haec esse in natura rerum tria? Efficiens dici potest. Easdemne res? Videamus animi partes, quarum est conspectus illustrior; Propter nos enim illam, non propter eam nosmet ipsos diligimus. Nobis aliter videtur, recte secusne, postea; Occultum facinus esse potuerit, gaudebit; Est enim effectrix multarum et magnarum voluptatum. Egone quaeris, inquit, quid sentiam? Sed quid attinet de rebus tam apertis plura requirere?&lt;/p&gt;&lt;!-- BEGIN KAPOST ANALYTICS CODE --&gt;
+&lt;script type="text/javascript"&gt;
+&lt;!--
+var _kaq = _kaq || [];
+_kaq.push([2, "zzzzzzzzz", "zzzzzzzzz"]);
+(function(){
+var ka = document.createElement('script'); ka.async=true; ka.id="ka_tracker"; ka.src="http://analytics.kapost.com/ka.js";
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ka, s);
+})();
+//--&gt;
+&lt;/script&gt;
+&lt;!-- END KAPOST ANALYTICS CODE --&gt;
+                            </string>
+                        </value>
+                    </member>
+                    <member>
+                        <name>custom_fields</name>
+                        <value>
+                            <array>
+                                <data>
+                                    <value>
+                                        <struct>
+                                            <member>
+                                                <name>key</name>
+                                                <value>
+                                                    <string>SS_Panel1Background</string>
+                                                </value>
+                                            </member>
+                                            <member>
+                                                <name>value</name>
+                                                <value>
+                                                    <string>http://www.example.com/assets/kapost-media/test.png</string>
+                                                </value>
+                                            </member>
+                                        </struct>
+                                    </value>
+                                    <value>
+                                        <struct>
+                                            <member>
+                                                <name>key</name>
+                                                <value>
+                                                    <string>SS_Title</string>
+                                                </value>
+                                            </member>
+                                            <member>
+                                                <name>value</name>
+                                                <value>
+                                                    <string>Full Test Title 2</string>
+                                                </value>
+                                            </member>
+                                            <member>
+                                                <name>id</name>
+                                                <value>
+                                                    <string>SS_Title</string>
+                                                </value>
+                                            </member>
+                                        </struct>
+                                    </value>
+                                    <value>
+                                        <struct>
+                                            <member>
+                                                <name>key</name>
+                                                <value>
+                                                    <string>SS_MetaDescription</string>
+                                                </value>
+                                            </member>
+                                            <member>
+                                                <name>value</name>
+                                                <value>
+                                                    <string>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nec urna commodo, volutpat urna ac, placerat sapien. Integer sagittis libero eu arcu accumsan, facilisis volutpat orci posuere. Pellentesque iaculis ligula eu nibh pulvinar, sit amet suscipit nisl aliquet.</string>
+                                                </value>
+                                            </member>
+                                            <member>
+                                                <name>id</name>
+                                                <value>
+                                                    <string>SS_MetaDescription</string>
+                                                </value>
+                                            </member>
+                                        </struct>
+                                    </value>
+                                    <value>
+                                        <struct>
+                                            <member>
+                                                <name>key</name>
+                                                <value>
+                                                    <string>_kapost_protected</string>
+                                                </value>
+                                            </member>
+                                            <member>
+                                                <name>value</name>
+                                                <value>
+                                                    <string>aioseop:title,description,keywords|external:permalink|wp:page_template|clickthru:url|cbs_businesses:image_1,description_1,enable_foursquare_1,url2_text_1,closing,image_caption_1,url2_1,url_text_1,url_1,phone_1,zipcode_1,state_1,city_1,address2_1,address_1,heading_1,name_1|yoast_wpseo:focuskw,title,metadesc,metakeywords,meta-robots-noindex,meta-robots-nofollow,meta-robots-adv,sitemap-include,sitemap-prio,canonical,redirect,opengraph-description,google-plus-description|genesis:title,description,keywords,canonical_uri,noindex,nofollow,noarchive,scripts,layout,custom_body_class|su:title,description,keywords|custom:tweet|subheading:</string>
+                                                </value>
+                                            </member>
+                                        </struct>
+                                    </value>
+                                    <value>
+                                        <struct>
+                                            <member>
+                                                <name>key</name>
+                                                <value>
+                                                    <string>kapost_post_timestamp</string>
+                                                </value>
+                                            </member>
+                                            <member>
+                                                <name>value</name>
+                                                <value>
+                                                    <string>2015-04-07 17:33:54 UTC</string>
+                                                </value>
+                                            </member>
+                                        </struct>
+                                    </value>
+                                    <value>
+                                        <struct>
+                                            <member>
+                                                <name>key</name>
+                                                <value>
+                                                    <string>kapost_post_id</string>
+                                                </value>
+                                            </member>
+                                            <member>
+                                                <name>value</name>
+                                                <value>
+                                                    <string>55241502b83cb77d1f0004d9</string>
+                                                </value>
+                                            </member>
+                                        </struct>
+                                    </value>
+                                    <value>
+                                        <struct>
+                                            <member>
+                                                <name>key</name>
+                                                <value>
+                                                    <string>kapost_author</string>
+                                                </value>
+                                            </member>
+                                            <member>
+                                                <name>value</name>
+                                                <value>
+                                                    <string></string>
+                                                </value>
+                                            </member>
+                                        </struct>
+                                    </value>
+                                    <value>
+                                        <struct>
+                                            <member>
+                                                <name>key</name>
+                                                <value>
+                                                    <string>kapost_author_email</string>
+                                                </value>
+                                            </member>
+                                            <member>
+                                                <name>value</name>
+                                                <value>
+                                                    <string></string>
+                                                </value>
+                                            </member>
+                                        </struct>
+                                    </value>
+                                    <value>
+                                        <struct>
+                                            <member>
+                                                <name>key</name>
+                                                <value>
+                                                    <string>kapost_author_profile</string>
+                                                </value>
+                                            </member>
+                                            <member>
+                                                <name>value</name>
+                                                <value>
+                                                    <string></string>
+                                                </value>
+                                            </member>
+                                        </struct>
+                                    </value>
+                                    <value>
+                                        <struct>
+                                            <member>
+                                                <name>key</name>
+                                                <value>
+                                                    <string>kapost_author_avatar</string>
+                                                </value>
+                                            </member>
+                                            <member>
+                                                <name>value</name>
+                                                <value>
+                                                    <string>http://kapost.com/assets/default-avatar.png</string>
+                                                </value>
+                                            </member>
+                                        </struct>
+                                    </value>
+                                    <value>
+                                        <struct>
+                                            <member>
+                                                <name>key</name>
+                                                <value>
+                                                    <string>_kapost_personas</string>
+                                                </value>
+                                            </member>
+                                            <member>
+                                                <name>value</name>
+                                                <value>
+                                                    <string></string>
+                                                </value>
+                                            </member>
+                                        </struct>
+                                    </value>
+                                    <value>
+                                        <struct>
+                                            <member>
+                                                <name>key</name>
+                                                <value>
+                                                    <string>_kapost_stages</string>
+                                                </value>
+                                            </member>
+                                            <member>
+                                                <name>value</name>
+                                                <value>
+                                                    <string></string>
+                                                </value>
+                                            </member>
+                                        </struct>
+                                    </value>
+                                    <value>
+                                        <struct>
+                                            <member>
+                                                <name>key</name>
+                                                <value>
+                                                    <string>kapost_custom_type</string>
+                                                </value>
+                                            </member>
+                                            <member>
+                                                <name>value</name>
+                                                <value>
+                                                    <string>Page</string>
+                                                </value>
+                                            </member>
+                                        </struct>
+                                    </value>
+                                </data>
+                            </array>
+                        </value>
+                    </member>
+                    <member>
+                        <name>mt_excerpt</name>
+                        <value>
+                            <string>Nunc feugiat velit a nibh congue, vel euismod neque suscipit. In vel vehicula justo. Pellentesque sagittis nibh et ante sodales, eget elementum lacus mattis. Fusce posuere, tortor sit amet gravida volutpat, libero velit mollis ligula, sed rutrum dui turpis et mauris. Nam sagittis vulputate mollis.</string>
+                        </value>
+                    </member>
+                    <member>
+                        <name>post_id</name>
+                        <value>
+                            <string>55241502b83cb77d1f0004d9</string>
+                        </value>
+                    </member>
+                </struct>
+            </value>
+        </param>
+        <param>
+            <value>
+                <boolean>0</boolean>
+            </value>
+        </param>
+    </params>
+</methodCall>

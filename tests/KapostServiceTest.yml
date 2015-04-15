@@ -1,0 +1,18 @@
+Group:
+    kapostgroup:
+        Name: "Kapost API Group"
+
+
+Permission:
+    kapostperm:
+        Code: "KAPOST_API_ACCESS"
+        Type: 1
+        Group: =>Group.kapostgroup
+
+
+Member:
+    kapostmember:
+        FirstName: "Kapost"
+        Email: "kapost"
+        Password: "123456"
+        Groups: =>Group.kapostgroup
