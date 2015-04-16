@@ -43,4 +43,4 @@ en:
         PUBLISH_TYPE_LIVE: "Live"
         PUBLISH_TYPE_DRAFT: "Draft"
     KapostSiteTreeExtension:
-        KAPOST_CONTENT_WARNING: "Warning this Page's content is being populated by Kapost"
+        KAPOST_CONTENT_WARNING: "This Page's content is being populated by Kapost"
