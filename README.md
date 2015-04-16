@@ -46,7 +46,7 @@ KapostService:
 
 
 ### Handling Duplicate Assets
-Kapost sends a any attached asset everytime a page is published, so there are three options for handling files with a duplicate name under the KapostService.duplicate_assets configuration option.
+Kapost sends an attached asset everytime a page is published, so there are three options for handling files with a duplicate name under the KapostService.duplicate_assets configuration option.
 
 * ``rename`` Rename the asset until a unique name is found
 * ``overwrite`` Overwrite the existing file with the new file, _be warned you may end up overwriting an asset you don't want overwritten_.

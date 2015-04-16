@@ -10,11 +10,11 @@ Configuring Kapost
 ### Creating the content type in Kapost
 1. In Kapost go to Settings > Content Types and click the New Type button.
 2. In the Field Name field, you need to put ``Page`` by default, if you are using a custom Kapost Object ([see here for instructions](custom-types.md)) you should put the name of your custom type you are using in your code.
-3. After filling out the tombstone information for the new type set the primary destination to the App you configured in the process above.
+3. After filling out the base information for the new type set the primary destination to the App you configured in the process above.
 
 
 ### Defining SEO Fields
-Because of how Kapost handles/supports the SEO fields it has built in this module cannot use them. So in order to have Kapost populate SilverStripe's ``MetaDescription`` field as well as have the ``MenuTitle`` be different from ``Title`` for basic pages you need to create two custom fields text fields under Settings > Custom Fields. Set the field name's based on the table bellow.
+Because of how Kapost handles/supports the SEO fields it has built in, this module cannot use or access them. So in order to have Kapost populate SilverStripe's ``MetaDescription`` field as well as have the ``MenuTitle`` be different from ``Title`` for basic pages you need to create two custom fields text fields under Settings > Custom Fields. Set the field name's based on the table bellow.
 
 | Kapost Field Name  | Maps to SilverStripe field |
 |--------------------|----------------------------|
