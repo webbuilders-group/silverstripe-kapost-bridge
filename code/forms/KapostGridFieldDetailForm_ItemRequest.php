@@ -15,7 +15,18 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         $form=parent::ItemEditForm();
         
         if($this->record && $this->record->exists()) {
-            $form->Fields()->addFieldToTab('Root.Main', ReadonlyField::create('KapostRefID', $this->record->fieldLabel('KapostRefID'), $this->record->KapostRefID)->setForm($form));
+            $kapostBase=KapostAdmin::config()->kapost_base_url;
+            if($kapostBase[strlen($kapostBase)-1]!='/') {
+                $kapostBase.='/';
+            }
+            
+            $form->Fields()->addFieldToTab('Root.Main', $field=ReadonlyField::create(
+                                                                'KapostRefID_linked',
+                                                                $this->record->fieldLabel('KapostRefID'),
+                                                                (!empty($kapostBase) ? '<a href="'.htmlentities($kapostBase.'posts/'.$this->record->KapostRefID).'" target="_blank">'.htmlentities($this->record->KapostRefID).'</a>':$this->record->KapostRefID)
+                                                            )->setForm($form));
+            $field->dontEscape=true;
+            
             
             $form->Actions()->insertBefore(
                                             FormAction::create('doConvertPost', _t('KapostAdmin.CONVERT_POST', '_Convert Post'))

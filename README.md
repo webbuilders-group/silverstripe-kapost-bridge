@@ -34,6 +34,7 @@ The documentation for the module (including how to add custom types and the exte
 ```yml
 KapostAdmin:
     extra_conversion_modes: (empty) #Array of name's for extra conversion modes (see documentation for information on how to define these)
+    kapost_base_url: null #Set this to a string of the base url for your Kapost account for example https://example.kapost.com/
 
 KapostService:
     check_user_agent: true #If set to true when the service is called the user agent of the request is checked to see if it is Kapost's XML-RPC user agent

@@ -14,6 +14,13 @@ class KapostAdmin extends ModelAdmin {
     private static $extra_conversion_modes=array();
     
     /**
+     * Set this to a string of the base url for your Kapost account for example https://example.kapost.com/
+     * @config KapostAdmin.kapost_base_url
+     */
+    private static $kapost_base_url=null;
+    
+    
+    /**
      * Form used for displaying the gridfield in the model admin
      * @param {string} $id ID of the form
      * @param {FieldList} $fields Fields to use in the form
