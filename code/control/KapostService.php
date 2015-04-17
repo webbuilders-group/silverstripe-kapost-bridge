@@ -241,6 +241,7 @@ class KapostService extends Controller implements PermissionProvider {
         $obj->Content=$content['description'];
         $obj->MetaDescription=(array_key_exists('custom_fields', $content) && array_key_exists('SS_MetaDescription', $content['custom_fields']) ? $content['custom_fields']['SS_MetaDescription']:null);
         $obj->KapostChangeType='new';
+        $obj->KapostAuthor=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author']:null);
         $obj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
         $obj->ToPublish=$publish;
         $obj->write();
@@ -315,6 +316,7 @@ class KapostService extends Controller implements PermissionProvider {
             $obj->KapostChangeType='edit';
             $obj->LinkedPageID=$page->ID;
             $obj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
+            $obj->KapostAuthor=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author']:null);
             $obj->ToPublish=$publish;
             $obj->write();
             
@@ -330,6 +332,7 @@ class KapostService extends Controller implements PermissionProvider {
                 $kapostObj->MenuTitle=$menuTitle;
                 $kapostObj->MetaDescription=(array_key_exists('custom_fields', $content) && array_key_exists('SS_MetaDescription', $content['custom_fields']) ? $content['custom_fields']['SS_MetaDescription']:null);
                 $kapostObj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
+                $kapostObj->KapostAuthor=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author']:null);
                 $kapostObj->ToPublish=$publish;
                 $kapostObj->write();
                 

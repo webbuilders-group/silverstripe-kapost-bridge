@@ -33,6 +33,7 @@ en:
         db_KapostChangeType: "Change Type"
         db_ToPublish: "Publish Type"
         db_KapostRefID: "Kapost Reference ID"
+        db_KapostAuthor: "Kapost Author"
         CONTENT_TYPE: "Content Type"
     KapostPage:
         SINGULARNAME: "Page"

@@ -5,6 +5,7 @@ class KapostObject extends DataObject {
                             'Content'=>'HTMLText',
                             'KapostChangeType'=>"Enum(array('new', 'edit'), 'new')",
                             'KapostRefID'=>'Varchar(255)',
+                            'KapostAuthor'=>'Varchar(255)',
                             'ToPublish'=>'Boolean'
                          );
     
@@ -47,6 +48,7 @@ class KapostObject extends DataObject {
                                     new Tab('Main', _t('KapostObject.MAIN', '_Main'),
                                         new ReadonlyField('Created', $this->fieldLabel('Created')),
                                         new ReadonlyField('KapostChangeTypeNice', $this->fieldLabel('KapostChangeType')),
+                                        new ReadonlyField('KapostAuthor', $this->fieldLabel('KapostAuthor')),
                                         new ReadonlyField('ToPublishNice', $this->fieldLabel('ToPublish')),
                                         new ReadonlyField('ClassNameNice', _t('KapostObject.CONTENT_TYPE', '_Content Type')),
                                         new ReadonlyField('Title', $this->fieldLabel('Title')),
