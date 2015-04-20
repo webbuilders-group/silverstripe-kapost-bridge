@@ -38,11 +38,6 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         }
         
         
-        
-        Requirements::css(KAPOST_DIR.'/css/KapostAdmin.css');
-        Requirements::javascript(KAPOST_DIR.'/javascript/KapostAdmin.js');
-        
-        
         $form->addExtraClass('KapostAdmin');
         return $form;
     }
@@ -252,6 +247,10 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             }
             
             
+            //Create the conversion history record
+            $this->record->createConversionHistory($destination->ID);
+            
+            
             //Delete the current record
             $this->record->delete();
             
@@ -320,6 +319,10 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             if($this->record->ToPublish==true) {
                 $destination->publish('Stage', 'Live');
             }
+            
+            
+            //Create the conversion history record
+            $this->record->createConversionHistory($destination->ID);
             
             
             //Delete the current record

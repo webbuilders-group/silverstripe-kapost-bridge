@@ -24,5 +24,23 @@ class KapostPage extends KapostObject {
         
         return $fields;
     }
+    
+    /**
+     * Used for recording a conversion history record
+     * @param {int} $destinationID ID of the destination object when converting
+     * @return {KapostConversionHistory}
+     */
+    public function createConversionHistory($destinationID) {
+        $obj=new KapostPageConversionHistory();
+        $obj->Title=$this->Title;
+        $obj->KapostChangeType=$this->KapostChangeType;
+        $obj->KapostRefID=$this->KapostRefID;
+        $obj->KapostAuthor=$this->KapostAuthor;
+        $obj->DestinationType=$this->ClassNameNice;
+        $obj->DestinationID=$destinationID;
+        $obj->write();
+        
+        return $obj;
+    }
 }
 ?>

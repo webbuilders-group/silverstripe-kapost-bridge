@@ -26,7 +26,7 @@ en:
         DUPLICATE_FILE: "Duplicate file detected, please rename the file and try again"
         FILE_NOT_FOUND: "File not found"
     KapostObject:
-        SINGULARNAME: "Generic Object"
+        SINGULARNAME: "Kapost Object"
         MAIN: "Main"
         db_Title: "Title"
         db_Created: "Created"
@@ -45,3 +45,14 @@ en:
         PUBLISH_TYPE_DRAFT: "Draft"
     KapostSiteTreeExtension:
         KAPOST_CONTENT_WARNING: "This Page's content is being populated by Kapost"
+    KapostConversionHistory:
+        SINGULARNAME: "Conversion History"
+        PLURALNAME: "Conversions"
+        db_Title: "Title"
+        db_KapostChangeType: "Change Type"
+        db_KapostRefID: "Kapost Reference ID"
+        db_KapostAuthor: "Kapost Author"
+        db_DestinationID: "Destination"
+        db_DestinationType: "Destination Type"
+        CONVERSION_DATE: "Conversion Date"
+        CONVERTED_TO_OBJECT: "Converted to Object"

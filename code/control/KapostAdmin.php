@@ -4,7 +4,8 @@ class KapostAdmin extends ModelAdmin {
     
     private static $url_segment='kapost';
     private static $managed_models=array(
-                                        'KapostObject'
+                                        'KapostObject',
+                                        'KapostConversionHistory'
                                     );
     
     /**
@@ -29,7 +30,11 @@ class KapostAdmin extends ModelAdmin {
     public function getEditForm($id=null, $fields=null) {
         $form=parent::getEditForm($id, $fields);
         
-        if($gridField=$form->Fields()->dataFieldByName('KapostObject')) {
+        Requirements::css(KAPOST_DIR.'/css/KapostAdmin.css');
+        Requirements::javascript(KAPOST_DIR.'/javascript/KapostAdmin.js');
+        
+        
+        if($this->modelClass=='KapostObject' && $gridField=$form->Fields()->dataFieldByName('KapostObject')) {
             $gridField->getConfig()
                                 ->removeComponentsByType('GridFieldAddNewButton')
                                 ->getComponentByType('GridFieldDataColumns')
@@ -43,10 +48,32 @@ class KapostAdmin extends ModelAdmin {
             $gridField->getConfig()
                                 ->getComponentByType('GridFieldDetailForm')
                                     ->setItemRequestClass('KapostGridFieldDetailForm_ItemRequest');
+        }else if($this->modelClass=='KapostConversionHistory' && $gridField=$form->Fields()->dataFieldByName('KapostConversionHistory')) {
+            $gridField->getConfig()
+                                ->removeComponentsByType('GridFieldAddNewButton')
+                                ->addComponent(new KapostDestinationAction(), 'GridFieldEditButton')
+                                ->getComponentByType('GridFieldDataColumns')
+                                        ->setFieldCasting(array(
+                                                                'Created'=>'SS_Datetime->FormatFromSettings',
+                                                                'KapostChangeType'=>'KapostFieldCaster->NiceChangeType',
+                                                            ));
+            
+            
+            $gridField->getConfig()->getComponentByType('GridFieldDetailForm')->setItemEditFormCallback(array($this, 'addKapostAdminStyle'));
         }
         
         
+        $this->addKapostAdminStyle($form);
+        
         return $form;
+    }
+    
+    /**
+     * Adds the callback to the item edit form
+     * @param {Form} $form Form to add the style too
+     */
+    public function addKapostAdminStyle(Form $form) {
+        $form->addExtraClass('KapostAdmin');
     }
 }
 ?>

@@ -153,5 +153,13 @@ class KapostObject extends DataObject {
         
         return $fields;
     }
+    
+    /**
+     * Used for recording a conversion history record
+     * @return {KapostConversionHistory}
+     */
+    public function createConversionHistory($destinationID) {
+        user_error('You should implement the createConversionHistory() method on your decendent of KapostObject', E_USER_WARNING);
+    }
 }
 ?>

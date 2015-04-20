@@ -2,6 +2,9 @@ Extending the Basics
 ----
 This module provides support for basic page types in SilverStripe, aka the default Page class in a raw installer. This documentation will help you get to the point were you have custom page types as well as support for more advanced extensions such as non-page data objects. It assumes you understand how to use the SilverStripe [extensions api](http://docs.silverstripe.org/en/developer_guides/extending/extensions/).
 
+### Conversion History
+If you are using a custom ``KapostObject`` extension and you want version history you will need to create your own history record see the [custom types documentation](custom-types.md#for-custom-objects) for more information.
+
 
 ### Available Extension Points
 #### KapostService

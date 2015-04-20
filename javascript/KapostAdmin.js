@@ -47,5 +47,11 @@
                 return false;
             }
         });
+        
+        $('.cms-edit-form.KapostAdmin a.kapost-panel-link').entwine({
+            onclick: function(e) {
+                $('.cms-container').loadPanel($(this).attr('href'));
+            }
+        });
     });
 })(jQuery);

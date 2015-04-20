@@ -43,6 +43,9 @@ KapostService:
     kapost_media_folder: "kapost-media" #Assets folder to place the Kapost attached media assets
     duplicate_assets: "rename" #What to do with duplicate assets valid options rename, overwrite, ignore see bellow for more information
 
+KapostConversionHistory:
+    expires_days: 30 #Number of days that conversion history records are kept
+
 ```
 
 

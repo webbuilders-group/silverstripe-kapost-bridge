@@ -72,3 +72,16 @@ body.cms-dialog {
     -webkit-box-shadow: none;
     box-shadow: none;
 }
+
+.cms table.ss-gridfield-table tbody td a.kapost-destination-action {
+    display: inline-block;
+    
+    width: 20px;
+    height: 20px;
+    
+    vertical-align: middle;
+    
+    margin-right: 10px;
+    
+    overflow: hidden;
+}

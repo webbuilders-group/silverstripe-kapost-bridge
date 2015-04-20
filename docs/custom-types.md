@@ -129,3 +129,40 @@ public function doConvertNewResource(KapostObject $source, $data, Form $form) {
 ```
 
 That should be it, you should now have a new custom object that can have it's content delivered from Kapost.
+
+#### Conversion History Records
+In your custom object if you want conversion history tracking you based on our example you must call ``KapostResource->createConversionHistory($destinationID)`` to create the version record. So we need to create a new class and define this method on our ``KapostResource`` class.
+
+```php
+class KapostResourceConversionHistory extends KapostConversionHistory {
+    /**
+     * Gets the link to the desination in the cms
+     * @return {string} Relative link to the destination page
+     */
+    public function getDestinationLink() {
+        return 'admin/resources/Resource/EditForm/field/Resource/item/'.$this->DestinationID.'/edit';
+    }
+}
+```
+
+In our ``KapostResource`` class we need to add the following method, which handles the creating the conversion history. You will need to call this method in your conversion handler passing in the destination object's ID.
+
+```php
+/**
+ * Used for recording a conversion history record
+ * @param {int} $destinationID ID of the destination object when converting
+ * @return {KapostConversionHistory}
+ */
+public function createConversionHistory($destinationID) {
+    $obj=new KapostResourceConversionHistory();
+    $obj->Title=$this->Title;
+    $obj->KapostChangeType=$this->KapostChangeType;
+    $obj->KapostRefID=$this->KapostRefID;
+    $obj->KapostAuthor=$this->KapostAuthor;
+    $obj->DestinationType=$this->ClassNameNice;
+    $obj->DestinationID=$destinationID;
+    $obj->write();
+
+    return $obj;
+}
+```
