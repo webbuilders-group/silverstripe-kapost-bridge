@@ -12,7 +12,8 @@ class KapostServiceTest extends FunctionalTest {
                                     'metaWeblog.editPost',
                                     'metaWeblog.getPost',
                                     'metaWeblog.getCategories',
-                                    'metaWeblog.newMediaObject'
+                                    'metaWeblog.newMediaObject',
+                                    'kapost.getPreview'
                                 );
     
     /**
@@ -301,6 +302,10 @@ class KapostServiceTest extends FunctionalTest {
         $rpcResponse=$this->parseRPCResponse($response->getBody());
         
         
+        //Make sure the fault code is 0
+        $this->assertEmpty($rpcResponse->faultCode(), 'Fault: '.$rpcResponse->faultString());
+        
+        
         //Process the response data
         $responseData=$rpcResponse->value();
         
@@ -339,6 +344,10 @@ class KapostServiceTest extends FunctionalTest {
         
         //Parse data
         $rpcResponse=$this->parseRPCResponse($response->getBody());
+        
+        
+        //Make sure the fault code is 0
+        $this->assertEmpty($rpcResponse->faultCode(), 'Fault: '.$rpcResponse->faultString());
         
         
         //Process the response data
@@ -387,6 +396,10 @@ class KapostServiceTest extends FunctionalTest {
         
         //Parse data
         $rpcResponse=$this->parseRPCResponse($response->getBody());
+        
+        
+        //Make sure the fault code is 0
+        $this->assertEmpty($rpcResponse->faultCode(), 'Fault: '.$rpcResponse->faultString());
         
         
         //Process the response data
@@ -441,6 +454,88 @@ class KapostServiceTest extends FunctionalTest {
         $this->assertEquals(10409, $rpcResponse->faultCode(), 'Fault: '.$rpcResponse->faultString());
     }
     
+    /**
+     * Tests to see if the preview functionality is working correctly
+     */
+    public function testPreviewObject() {
+        $response=$this->call_service('get-preview');
+        
+        
+        //Make sure the response is a 200
+        $this->assertEquals(200, $response->getStatusCode());
+        
+        
+        //Make sure the content type is text/xml
+        $this->assertEquals('text/xml', $response->getHeader('Content-Type'));
+        
+        
+        //Parse data
+        $rpcResponse=$this->parseRPCResponse($response->getBody());
+        
+        
+        //Make sure the fault code is 0
+        $this->assertEmpty($rpcResponse->faultCode(), 'Fault: '.$rpcResponse->faultString());
+        
+        
+        //Parse data
+        $rpcResponse=$this->parseRPCResponse($response->getBody());
+        
+        
+        //Make sure the fault code is 0
+        $this->assertEmpty($rpcResponse->faultCode(), 'Fault: '.$rpcResponse->faultString());
+        
+        
+        //Process the response data
+        $responseData=$rpcResponse->value();
+        
+        
+        //Make sure the id is present and is not empty
+        $this->assertArrayHasKey('id', $responseData);
+        $this->assertNotEmpty($responseData['id']);
+        
+        
+        //Make sure the url is present and is not empty
+        $this->assertArrayHasKey('url', $responseData);
+        $this->assertNotEmpty($responseData['url']);
+        
+        
+        //Make the url relative
+        $url=Director::makeRelative($responseData['url']);
+        
+        //Test the preview
+        $response=$this->get($url);
+        
+        
+        //Ensure we recieved a 200 back
+        $this->assertEquals(200, $response->getStatusCode());
+        
+        
+        //Make sure the response contains Kapost Tracking code this should be a good guage to see if the response is correct
+        $this->assertContains('_kaq.push([2, "zzzzzzzzz", "zzzzzzzzz"]);', $response->getBody());
+    }
+    
+    /**
+     * Tests to see if the expired token returns a 404 as expected
+     */
+    public function testPreviewExpiredToken() {
+        $token=new KapostPreviewToken();
+        $token->Code='testcode';
+        $token->write();
+        
+        
+        //Modify the created date of the token, we do it this way because write will remove it 
+        DB::query('UPDATE "KapostPreviewToken" '.
+                'SET "Created"=\''.date('Y-m-d H:i:s', strtotime('-'.(KapostService::config()->preview_expiry+1).' minutes')).'\''.
+                'WHERE "ID"='.$token->ID);
+        
+        
+        //Get the preview
+        $response=$this->get('kapost-service/preview/55241502b83cb77d1f0004d9?auth=testcode');
+        
+        
+        //Ensure we recieved a 404 back
+        $this->assertEquals(404, $response->getStatusCode());
+    }
     
     /**
      * Calls the api and returns the response
