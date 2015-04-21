@@ -518,15 +518,8 @@ class KapostServiceTest extends FunctionalTest {
      * Tests to see if the expired token returns a 404 as expected
      */
     public function testPreviewExpiredToken() {
-        $token=new KapostPreviewToken();
-        $token->Code='testcode';
-        $token->write();
-        
-        
-        //Modify the created date of the token, we do it this way because write will remove it 
-        DB::query('UPDATE "KapostPreviewToken" '.
-                'SET "Created"=\'2015-02-25 17:29:43\''.
-                'WHERE "ID"='.$token->ID);
+        DB::query('INSERT INTO "KapostPreviewToken" ("Created", "Code")'.
+                'VALUES(\'2015-02-25 17:29:43\', \'testcode\'');
         
         
         //Get the preview
