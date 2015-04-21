@@ -234,7 +234,7 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {array} $content Post details
      * @param {int} $publish 0 or 1 depending on whether to publish the post or not
      */
-    protected function newPost($blog_id, $content, $publish, $isPreview) {
+    protected function newPost($blog_id, $content, $publish, $isPreview=false) {
         $results=$this->extend('newPost', $blog_id, $content, $publish, $isPreview);
         if($results && is_array($results)) {
             $results=array_filter($results, function($v) {return !is_null($v);});
@@ -300,7 +300,7 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {array} $content Post details
      * @param {int} $publish 0 or 1 depending on whether to publish the post or not
      */
-    protected function editPost($content_id, $content, $publish, $isPreview) {
+    protected function editPost($content_id, $content, $publish, $isPreview=false) {
         $results=$this->extend('editPost', $content_id, $content, $publish, $isPreview);
         if($results && is_array($results)) {
             $results=array_filter($results, function($v) {return !is_null($v);});
