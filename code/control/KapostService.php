@@ -109,8 +109,14 @@ class KapostService extends Controller implements PermissionProvider {
             }
         }
         
+        
         //Token expired or object not found
-        return ErrorPage::response_for(404);
+        $response=ErrorPage::response_for(404);
+        if(!empty($response)) {
+            return $response;
+        }
+        
+        return parent::httpError(404);
     }
     
     /**
