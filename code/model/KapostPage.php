@@ -42,5 +42,15 @@ class KapostPage extends KapostObject {
         
         return $obj;
     }
+    
+    /**
+     * Handles rendering of the preview for this object
+     * @return {string} Preview to be rendered
+     */
+    public function renderPreview() {
+        return Page_Controller::create($this)->customise(array(
+                                                                'IsPreview'=>true
+                                                            ))->renderWith('Page');
+    }
 }
 ?>

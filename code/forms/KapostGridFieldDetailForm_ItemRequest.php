@@ -142,6 +142,9 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
                 Requirements::clear();
                 Requirements::customScript('window.parent.jQuery(\'.cms-edit-form.KapostAdmin\').entwine(\'ss\').panelRedirect('.json_encode($redirectURL).')');
                 
+                //Clean up the expired previews
+                $this->cleanUpExpiredPreviews();
+                
                 return $this->customise(array(
                                             'Title'=>null,
                                             'Content'=>null,
@@ -155,6 +158,9 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             }else {
                 Requirements::clear();
                 Requirements::customScript('window.parent.jQuery(\'.cms-edit-form.KapostAdmin\').entwine(\'ss\').panelRedirect('.json_encode($redirectURL).')');
+                
+                //Clean up the expired previews
+                $this->cleanUpExpiredPreviews();
                 
                 return $this->customise(array(
                                             'Title'=>null,
@@ -173,6 +179,9 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
                     if($result!==false) {
                         Requirements::clear();
                         Requirements::customScript('window.parent.jQuery(\'.cms-edit-form.KapostAdmin\').entwine(\'ss\').panelRedirect('.json_encode($result).')');
+                        
+                        //Clean up the expired previews
+                        $this->cleanUpExpiredPreviews();
                         
                         return $this->customise(array(
                                                     'Title'=>null,
@@ -474,6 +483,18 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         }
         
         return $convertToClass;
+    }
+    
+    /**
+     * Cleans up expired Kapost previews after twice the token expiry
+     */
+    private function cleanUpExpiredPreviews() {
+        $expiredPreviews=KapostObject::get()->filter('IsPreview', true)->filter('Created:LessThan', date('Y-m-d H:i:s', strtotime('-'.(KapostService::config()->preview_expiry*2).' minutes')));
+        if($expiredPreviews->count()>0) {
+            foreach($expiredPreviews as $kapostObj) {
+                $kapostObj->delete();
+            }
+        }
     }
 }
 ?>

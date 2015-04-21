@@ -6,7 +6,8 @@ class KapostObject extends DataObject {
                             'KapostChangeType'=>"Enum(array('new', 'edit'), 'new')",
                             'KapostRefID'=>'Varchar(255)',
                             'KapostAuthor'=>'Varchar(255)',
-                            'ToPublish'=>'Boolean'
+                            'ToPublish'=>'Boolean',
+                            'IsPreview'=>'Boolean'
                          );
     
     private static $default_sort='Created';
@@ -160,6 +161,40 @@ class KapostObject extends DataObject {
      */
     public function createConversionHistory($destinationID) {
         user_error('You should implement the createConversionHistory() method on your decendent of KapostObject', E_USER_WARNING);
+    }
+    
+    /**
+     * Handles rendering of the preview for this object
+     * @return {string} Preview to be rendered
+     */
+    public function renderPreview() {
+        if(Director::isDev()) {
+            user_error('You should implement the renderPreview() method on your decendent of KapostObject', E_USER_WARNING);
+        }
+        
+        return $this->renderWith(array('KapostPreviewUnsupported', 'Page'));
+    }
+    
+    /**
+     * Calls the cleanup expired previews after writing
+     */
+    protected function onAfterWrite() {
+        parent::onAfterWrite();
+        
+        
+        $this->cleanUpExpiredPreviews();
+    }
+    
+    /**
+     * Cleans up expired Kapost previews after twice the token expiry
+     */
+    protected function cleanUpExpiredPreviews() {
+        $expiredPreviews=KapostObject::get()->filter('IsPreview', true)->filter('Created:LessThan', date('Y-m-d H:i:s', strtotime('-'.(KapostService::config()->preview_expiry*2).' minutes')));
+        if($expiredPreviews->count()>0) {
+            foreach($expiredPreviews as $kapostObj) {
+                $kapostObj->delete();
+            }
+        }
     }
 }
 ?>

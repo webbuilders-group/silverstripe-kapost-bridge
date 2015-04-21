@@ -40,14 +40,27 @@ class KapostService extends Controller implements PermissionProvider {
      */
     private static $duplicate_assets='rename';
     
+    /**
+     * Preview expiry window in minutes
+     * @config KapostService.preview_expiry
+     * @default 10
+     */
+    private static $preview_expiry=10;
+    
     private $exposed_methods=array(
                                     'blogger.getUsersBlogs',
                                     'metaWeblog.newPost',
                                     'metaWeblog.editPost',
                                     'metaWeblog.getPost',
                                     'metaWeblog.getCategories',
-                                    'metaWeblog.newMediaObject'
+                                    'metaWeblog.newMediaObject',
+                                    'kapost.getPreview'
                                 );
+    
+    private static $allowed_actions=array(
+                                        'preview'
+                                    );
+    
     
     /**
      * Handles incoming requests to the kapost service
@@ -81,6 +94,26 @@ class KapostService extends Controller implements PermissionProvider {
     }
     
     /**
+     * Handles rendering of the preview for an object
+     * @return {string} Response to send to the object
+     */
+    public function preview() {
+        $auth=$this->request->getVar('auth');
+        $token=KapostPreviewToken::get()->filter('Code', Convert::raw2xml($auth))->first();
+        
+        //Verify the token exists and hasn't expired yet
+        if(!empty($token) && $token!==false && $token->exists() && time()-strtotime($token->Created)<self::config()->preview_expiry*60) {
+            $kapostObj=KapostObject::get()->filter('KapostRefID', Convert::raw2xml($this->urlParams['ID']))->sort('"Created" DESC')->first();
+            if(!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
+                return $kapostObj->renderPreview();
+            }
+        }
+        
+        //Token expired or object not found
+        return ErrorPage::response_for(404);
+    }
+    
+    /**
      * Handles RPC request methods
      * @param {xmlrpcmsg} $request XML-RPC Request Object
      */
@@ -91,7 +124,7 @@ class KapostService extends Controller implements PermissionProvider {
         if($this->authenticate($username, $password)) {
             $method=str_replace(array('blogger.', 'metaWeblog.', 'kapost.'), '', $request->methodname);
             
-            if((!in_array('blogger.'.$method, $this->exposed_methods) && !in_array('metaWeblog.'.$method, $this->exposed_methods)) || !method_exists($this, $method)) {
+            if((!in_array('blogger.'.$method, $this->exposed_methods) && !in_array('metaWeblog.'.$method, $this->exposed_methods) && !in_array('kapost.'.$method, $this->exposed_methods)) || !method_exists($this, $method)) {
                 return $this->httpError(403, _t('KapostService.METHOD_NOT_ALLOWED', '_Action "{method}" is not allowed on class Kapost Service.', array('method'=>$method)));
             }
             
@@ -197,12 +230,12 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Handles creation of a new post
-     * @param {int} $blog_id Identifier for the current site
+     * @param {mixed} $blog_id Identifier for the current site
      * @param {array} $content Post details
      * @param {int} $publish 0 or 1 depending on whether to publish the post or not
      */
-    protected function newPost($blog_id, $content, $publish) {
-        $results=$this->extend('newPost', $blog_id, $content, $publish);
+    protected function newPost($blog_id, $content, $publish, $isPreview) {
+        $results=$this->extend('newPost', $blog_id, $content, $publish, $isPreview);
         if($results && is_array($results)) {
             $results=array_filter($results, function($v) {return !is_null($v);});
             
@@ -244,6 +277,7 @@ class KapostService extends Controller implements PermissionProvider {
         $obj->KapostAuthor=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author']:null);
         $obj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
         $obj->ToPublish=$publish;
+        $obj->IsPreview=$isPreview;
         $obj->write();
         
         
@@ -255,19 +289,19 @@ class KapostService extends Controller implements PermissionProvider {
         
         
         //Allow extensions to adjust the new page
-        $this->extend('updateNewKapostPage', $obj, $blog_id, $content, $publish);
+        $this->extend('updateNewKapostPage', $obj, $blog_id, $content, $publish, $isPreview);
         
         return (array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:$className.'_'.$obj->ID);
     }
     
     /**
      * Handles editing of a given post
-     * @param {int} $content_id Identifier for the post
+     * @param {mixed} $content_id Identifier for the post
      * @param {array} $content Post details
      * @param {int} $publish 0 or 1 depending on whether to publish the post or not
      */
-    protected function editPost($content_id, $content, $publish) {
-        $results=$this->extend('editPost', $content_id, $content, $publish);
+    protected function editPost($content_id, $content, $publish, $isPreview) {
+        $results=$this->extend('editPost', $content_id, $content, $publish, $isPreview);
         if($results && is_array($results)) {
             $results=array_filter($results, function($v) {return !is_null($v);});
             
@@ -318,11 +352,12 @@ class KapostService extends Controller implements PermissionProvider {
             $obj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
             $obj->KapostAuthor=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author']:null);
             $obj->ToPublish=$publish;
+            $obj->IsPreview=$isPreview;
             $obj->write();
             
             
             //Allow extensions to adjust the new page
-            $this->extend('updateEditKapostPage', $obj, $content_id, $content, $publish);
+            $this->extend('updateEditKapostPage', $obj, $content_id, $content, $publish, $isPreview);
             
             return true;
         }else {
@@ -334,10 +369,11 @@ class KapostService extends Controller implements PermissionProvider {
                 $kapostObj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
                 $kapostObj->KapostAuthor=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author']:null);
                 $kapostObj->ToPublish=$publish;
+                $kapostObj->IsPreview=$isPreview;
                 $kapostObj->write();
                 
                 //Allow extensions to adjust the existing object
-                $this->extend('updateEditKapostPage', $kapostObj, $content_id, $content, $publish);
+                $this->extend('updateEditKapostPage', $kapostObj, $content_id, $content, $publish, $isPreview);
                 
                 return true;
             }
@@ -349,7 +385,7 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Gets the details of a post from the system
-     * @param {int} $content_id ID of the post in the system
+     * @param {mixed} $content_id ID of the post in the system
      */
     protected function getPost($content_id) {
         $results=$this->extend('getPost', $content_id);
@@ -428,7 +464,7 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Gets the categories
-     * @param {int} $blog_id ID of the blog
+     * @param {mixed} $blog_id ID of the blog
      * @return {array} Array of categories
      */
     protected function getCategories($blog_id) {
@@ -462,7 +498,7 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Handles media objects from kapost
-     * @param {int} $blog_id Site Config related to this content object
+     * @param {mixed} $blog_id Site Config related to this content object
      * @param {array} $content Content object to be handled
      * @return {xmlrpcresp} XML-RPC Response object
      */
@@ -601,6 +637,52 @@ class KapostService extends Controller implements PermissionProvider {
                         'url'=>$obj->getAbsoluteURL()
                     );
         }
+    }
+    
+    /**
+     * Handles rendering of the preview
+     * @param {mixed} $blog_id Identifier for the current site
+     * @param {array} $content Post details
+     * @param {mixed} $content_id Identifier for the post
+     */
+    protected function getPreview($blog_id, $content, $content_id) {
+        $results=$this->extend('getPreview', $blog_id, $content, $content_id);
+        if($results && is_array($results)) {
+            $results=array_filter($results, function($v) {return !is_null($v);});
+        
+            if(count($results)>0) {
+                return array_shift($results);
+            }
+        }
+        
+        
+        //Detect if the record already exists or not so we can decide whether to create a new record or edit an existing
+        $existing=KapostObject::get()->filter('KapostRefID', Convert::raw2xml($content_id))->first();
+        if(!empty($existing) && $existing!==false && $existing->exists()) {
+            $resultID=$content_id;
+            
+            $this->editPost($content_id, $content, false, true);
+        }else {
+            $resultID=$this->newPost($blog_id, $content, false, true);
+        }
+        
+        //Make sure we got the kapost hash back or an id if we got an object back we assume that it's a response
+        if(is_object($resultID)) {
+            return $resultID;
+        }
+        
+        
+        //Generate a preview token record
+        $token=new KapostPreviewToken();
+        $token->Code=sha1(uniqid(time().$resultID));
+        $token->write();
+        
+        
+        //Return the details to kapost
+        return array(
+                    'url'=>Controller::join_links(Director::absoluteBaseURL(), 'kapost-service/preview', $resultID, '?auth='.$token->Code),
+                    'id'=>$resultID
+                );
     }
     
     /**

@@ -25,6 +25,8 @@ en:
         INVALID_RESPONSE: "Invalid response returned from {method}, response was: {response}"
         DUPLICATE_FILE: "Duplicate file detected, please rename the file and try again"
         FILE_NOT_FOUND: "File not found"
+        PREVIEW_NOT_SUPPORTED: "Preview Not Supported"
+        PREVIEW_NOT_SUPPORTED_DESC: "Preview is not supported for this content type."
     KapostObject:
         SINGULARNAME: "Kapost Object"
         MAIN: "Main"
