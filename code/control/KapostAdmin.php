@@ -60,21 +60,15 @@ class KapostAdmin extends ModelAdmin {
                                                             ));
             
             
-            $gridField->getConfig()->getComponentByType('GridFieldDetailForm')->setItemEditFormCallback(array($this, 'addKapostAdminStyle'));
+            $gridField->getConfig()->getComponentByType('GridFieldDetailForm')->setItemEditFormCallback(function(Form $form) {
+                                                                                                            $form->addExtraClass('KapostAdmin');
+                                                                                                        });
         }
         
         
         $this->addKapostAdminStyle($form);
         
         return $form;
-    }
-    
-    /**
-     * Adds the callback to the item edit form
-     * @param {Form} $form Form to add the style too
-     */
-    public function addKapostAdminStyle(Form $form) {
-        $form->addExtraClass('KapostAdmin');
     }
 }
 ?>
