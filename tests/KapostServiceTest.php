@@ -525,7 +525,7 @@ class KapostServiceTest extends FunctionalTest {
         
         //Modify the created date of the token, we do it this way because write will remove it 
         DB::query('UPDATE "KapostPreviewToken" '.
-                'SET "Created"=\''.date('Y-m-d H:i:s', strtotime('-'.(KapostService::config()->preview_expiry+1).' minutes')).'\''.
+                'SET "Created"=\''.date('Y-m-d H:i:s', strtotime('-'.(KapostService::config()->preview_expiry*10).' minutes')).'\''.
                 'WHERE "ID"='.$token->ID);
         
         
