@@ -7,6 +7,7 @@ class KapostConversionHistory extends DataObject {
      */
     private static $expires_days=30;
     
+    
     private static $db=array(
                             'Title'=>'Varchar(255)',
                             'KapostChangeType'=>"Enum(array('new', 'edit'), 'new')",

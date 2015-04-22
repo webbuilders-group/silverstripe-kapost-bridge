@@ -42,6 +42,7 @@ KapostService:
     authenticator_username_field: "Email" #Field the authenticator is expecting the username to be in
     kapost_media_folder: "kapost-media" #Assets folder to place the Kapost attached media assets
     duplicate_assets: "rename" #What to do with duplicate assets valid options rename, overwrite, ignore see bellow for more information
+    preview_expiry: 10 #Preview expiry window in minutes, once this time elapses the Kapost content author must click preview again or they will recieve a 404 message on the site.
 
 KapostConversionHistory:
     expires_days: 30 #Number of days that conversion history records are kept

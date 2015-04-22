@@ -47,6 +47,7 @@ class KapostService extends Controller implements PermissionProvider {
      */
     private static $preview_expiry=10;
     
+    
     private $exposed_methods=array(
                                     'blogger.getUsersBlogs',
                                     'metaWeblog.newPost',

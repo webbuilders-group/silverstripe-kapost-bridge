@@ -128,7 +128,7 @@ public function doConvertNewResource(KapostObject $source, $data, Form $form) {
 }
 ```
 
-That should be it, you should now have a new custom object that can have it's content delivered from Kapost.
+That should be it, you should now have a new custom object that can have it's content delivered from Kapost. Make sure that you store the ``kapost_post_id`` key under the ``custom_fields`` key in the KapostResource object's ``KapostRefID`` field this is displayed and linked in the audit system.
 
 #### Conversion History Records
 In your custom object if you want conversion history tracking you based on our example you must call ``KapostResource->createConversionHistory($destinationID)`` to create the version record. So we need to create a new class and define this method on our ``KapostResource`` class.
@@ -166,3 +166,23 @@ public function createConversionHistory($destinationID) {
     return $obj;
 }
 ```
+
+#### Kapost Preview Support
+To enable preview support in Kapost you need to override the ``renderPreview`` method on the custom ``KapostObject`` extension. In the case of the example we've been building we need to add the following method to the ``KapostResource`` class.
+
+```php
+/**
+ * Handles rendering of the preview for this object
+ * @return {string} Preview to be rendered
+ */
+public function renderPreview() {
+    return KapostResourcePreview_Controller::create($this)
+                ->setRequest(Controller::curr()->getRequest())
+                ->customise(array(
+                                'IsPreview'=>true,
+                                'Children'=>false,
+                                'Menu'=>false
+                            ))->renderWith(array('Resource', 'Page'));
+}
+```
+Obviously you will need to define the ``KapostResourcePreview_Controller``, you could also simply use the ``Page_Controller`` or just render the object with what ever template you are currently using for rendering your custom object.
