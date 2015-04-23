@@ -22,38 +22,45 @@ body.cms-dialog {
     width: 48%;
 }
 
+.cms-dialog form.KapostAdmin .clear {
+    clear: both;
+}
+
 .cms-dialog form.KapostAdmin .field .middleColumn {
     margin-left: 0;
 }
 
-.cms-dialog form.KapostAdmin .field label.left {
+.cms-dialog form.KapostAdmin .field label.left, .cms-dialog form.KapostAdmin .kapostConvertLeftSide .optionset li {
     float: none;
     
     width: auto;
 }
 
-.cms-dialog hr {
-    display: block;
+.cms-dialog form.KapostAdmin .kapost-convert-dialog-content {
+    padding: 10px 0;
     
-    border: 0;
-    border-bottom: 1px solid #d0d3d5;
-    
-    margin: 8px 0;
-    padding: 0 0 7px 0;
-    
-    box-shadow: 0 1px 0 rgba(245, 245, 245, 0.8);
-    -webkit-box-shadow: 0 1px 0 rgba(245, 245, 245, 0.8);
-    -moz-box-shadow: 0 1px 0 rgba(245, 245, 245, 0.8);
-    -o-box-shadow: 0 1px 0 rgba(245, 245, 245, 0.8);
-    
-    *zoom: 1;
+    overflow: hidden;
+    overflow-y: auto;
 }
 
-.cms-dialog form.KapostAdmin .kapost-convert-dialog-content {
-    padding: 24px 0 0;
+.cms-dialog form.KapostAdmin .kapost-convert-dialog-header {
+    background: #ECEFF1;
+    
+    border: 0;
+    border-bottom: 1px solid #D0D3D5;
+    
+    padding: 8px 0 0 0;
+    
+    border-bottom: 1px solid #cacacc;
+    
+    box-shadow: 1px 0 0 #ECEFF1, rgba(248, 248, 248, 0.9) 0 -1px 0 inset, rgba(201, 205, 206, 0.8) 0 0 1px;
+    -moz-box-shadow: 1px 0 0 #ECEFF1, rgba(248, 248, 248, 0.9) 0 -1px 0 inset, rgba(201, 205, 206, 0.8) 0 0 1px;
+    -webkit-box-shadow: 1px 0 0 #ECEFF1, rgba(248, 248, 248, 0.9) 0 -1px 0 inset, rgba(201, 205, 206, 0.8) 0 0 1px;
 }
 
 .cms-dialog form.KapostAdmin .south {
+    background-color: #ECEFF1;
+    
     height: 28px;
     
     padding: 1em 0;

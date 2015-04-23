@@ -1,10 +1,8 @@
 <form $AttributesHTML>
-    <div class="north">
+    <div class="kapost-convert-dialog-header north">
         <h2><%t KapostAdmin.CONVERT_POST "_Convert Post" %></h2>
         
-        <p><%t KapostAdmin.CONVERT_DESC "_This will convert this Kapost object to a normal asset, you must choose from one of the following options." %></p>
-        
-        <hr />
+        <p><%t KapostAdmin.CONVERT_DESC "_This will convert this Kapost object to a normal object, you must choose from one of the following options." %></p>
     </div>
     
     <div class="kapost-convert-dialog-content center">
@@ -23,7 +21,7 @@
         </fieldset> 
     </div>
     
-    <div class="south">
+    <div class="kapost-convert-dialog-footer south">
         <% if $Actions %>
             <div class="Actions">
                 <% loop $Actions %>
