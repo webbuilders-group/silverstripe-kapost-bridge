@@ -66,7 +66,7 @@ class KapostAdmin extends ModelAdmin {
         }
         
         
-        $this->addKapostAdminStyle($form);
+        $form->addExtraClass('KapostAdmin');
         
         return $form;
     }
