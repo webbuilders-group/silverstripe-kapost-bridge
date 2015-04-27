@@ -58,4 +58,6 @@ en:
         db_DestinationID: "Destination"
         db_DestinationType: "Destination Type"
         CONVERSION_DATE: "Conversion Date"
-        CONVERTED_TO_OBJECT: "Converted to Object"
+        CONVERTED_TO_OBJECT: "View Destination Object"
+    KapostDestinationAction:
+        DESTINATION_OBJECT: "View Destination Object"

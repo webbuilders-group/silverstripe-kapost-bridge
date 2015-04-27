@@ -75,7 +75,7 @@ class KapostConversionHistory extends DataObject {
                             $destination=ReadonlyField::create(
                                                             'Destination',
                                                             $this->fieldLabel('DestinationID'),
-                                                            '<a href="'.htmlentities($this->getDestinationLink()).'" class="kapost-panel-link">'._t('KapostConversionHistory.CONVERTED_TO_OBJECT', '_Converted to Object').'</a>'
+                                                            '<a href="'.htmlentities($this->getDestinationLink()).'" class="kapost-panel-link">'._t('KapostConversionHistory.CONVERTED_TO_OBJECT', '_View Destination Object').'</a>'
                                                         )
                         );
         
