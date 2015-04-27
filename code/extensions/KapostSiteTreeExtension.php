@@ -12,7 +12,11 @@ class KapostSiteTreeExtension extends DataExtension {
     public function updateCMSFields(FieldList $fields) {
         $kapostRefID=$this->owner->KapostRefID;
         if(!empty($kapostRefID)) {
-            $fields->insertBefore(new LiteralField('KapostContentWarning', '<div class="message warning">'._t('KapostSiteTreeExtension.KAPOST_CONTENT_WARNING', '_This Page\'s content is being populated by Kapost').'</div>'), 'Title');
+            if(CMSPageEditController::has_extension('KapostPageEditControllerExtension')) {
+                $fields->insertBefore(new LiteralField('KapostContentWarning', '<div class="message warning">'._t('KapostSiteTreeExtension.KAPOST_CONTENT_WARNING_RO', '_This Page\'s content is being populated by Kapost, some fields are not editable').'</div>'), 'Title');
+            }else {
+                $fields->insertBefore(new LiteralField('KapostContentWarning', '<div class="message warning">'._t('KapostSiteTreeExtension.KAPOST_CONTENT_WARNING', '_This Page\'s content is being populated by Kapost').'</div>'), 'Title');
+            }
         }
         
         $fields->removeByName('KapostRefID');

@@ -7,3 +7,8 @@ After:
 SiteTree:
     extensions:
         - "KapostSiteTreeExtension"
+    non_readonly_fields:
+        - "URLSegment"
+        - "ExtraMeta"
+    make_safe_wysiwyg_fields:
+        - "Content"

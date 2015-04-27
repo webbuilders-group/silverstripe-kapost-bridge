@@ -47,6 +47,7 @@ en:
         PUBLISH_TYPE_DRAFT: "Draft"
     KapostSiteTreeExtension:
         KAPOST_CONTENT_WARNING: "This Page's content is being populated by Kapost"
+        KAPOST_CONTENT_WARNING_RO: "This Page's content is being populated by Kapost, some fields are not editable"
     KapostConversionHistory:
         SINGULARNAME: "Conversion History"
         PLURALNAME: "Conversions"
