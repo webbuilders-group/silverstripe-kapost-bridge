@@ -405,11 +405,10 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
                     }
                     
                     $rightComponents=$rightObj->getManyManyComponents($relationship);
-                    if($rightComponents && $rightComponents->exists()) {
+                    
+                    if($rightComponents && $rightComponents->exists() && ($rightComponents->dataClass()==$leftComponents->dataClass() || is_subclass_of($leftComponents->dataClass(), $rightComponents->dataClass()) || is_subclass_of($rightComponents->dataClass(), $leftComponents->dataClass()))) {
                         $leftComponents->addMany($rightComponents->column('ID'));
                     }
-                    
-                    $leftComponents->write();
                 }
             }
             
@@ -422,12 +421,10 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
                     }
                     
                     $rightComponents=$rightObj->getComponents($relationship);
-                    if($rightComponents && $rightComponents->exists()) {
+                    if($rightComponents && $rightComponents->exists() && ($rightComponents->dataClass()==$leftComponents->dataClass() || is_subclass_of($leftComponents->dataClass(), $rightComponents->dataClass()) || is_subclass_of($rightComponents->dataClass(), $leftComponents->dataClass()))) {
                         $leftComponents->addMany($rightComponents->column('ID'));
                     }
-                    $leftComponents->write();
                 }
-
             }
             
             if($hasOne=$leftObj->has_one()) {
@@ -442,6 +439,8 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
                     if($leftComponent->exists() && $rightComponent->exists() && $priority=='right') {
                         $leftObj->{$relationship.'ID'}=$rightObj->{$relationship.'ID'};
                     }
+                    
+                    $leftObj->write();
                 }
             }
         }
