@@ -29,7 +29,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             
             
             $form->Actions()->insertBefore(
-                                            FormAction::create('doConvertPost', _t('KapostAdmin.CONVERT_POST', '_Convert Post'))
+                                            FormAction::create('doConvertPost', _t('KapostAdmin.CONVERT_OBJECT', '_Convert Object'))
                                                 ->setUseButtonTag(true)
                                                 ->addExtraClass('ss-ui-action-constructive kapost-action-convert')
                                                 ->setAttribute('data-icon', 'kapost-convert')
@@ -48,7 +48,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      */
     public function convert() {
         return $this->customise(array(
-                                    'Title'=>_t('KapostAdmin.CONVERT_POST', '_Convert Post'),
+                                    'Title'=>_t('KapostAdmin.CONVERT_OBJECT', '_Convert Object'),
                                     'Content'=>null,
                                     'Form'=>$this->ConvertObjectForm()
                                 ))->renderWith('CMSDialog');

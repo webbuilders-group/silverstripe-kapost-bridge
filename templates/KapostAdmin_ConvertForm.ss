@@ -1,6 +1,6 @@
 <form $AttributesHTML>
     <div class="kapost-convert-dialog-header north">
-        <h2><%t KapostAdmin.CONVERT_POST "_Convert Post" %></h2>
+        <h2><%t KapostAdmin.CONVERT_OBJECT "_Convert Object" %></h2>
         
         <p><%t KapostAdmin.CONVERT_DESC "_This will convert this Kapost object to a normal object, you must choose from one of the following options." %></p>
     </div>
