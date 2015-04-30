@@ -22,6 +22,8 @@
         });
         
         $('.cms-edit-form .Actions input.action[type=submit].kapost-action-convert, .cms-edit-form .Actions button.action.kapost-action-convert').entwine({
+            DialogMaxHeight: 400,
+            
             onclick: function(e) {
                 //Get the post ID
                 var postID=$(this).closest('form').attr('action');
@@ -36,7 +38,7 @@
                     }
                     
                     
-                    dialog.ssdialog({'iframeUrl': 'admin/kapost/KapostObject/EditForm/field/KapostObject/item/'+postID+'/convert', 'autoOpen': true, maxHeight: 400});
+                    dialog.ssdialog({'iframeUrl': 'admin/kapost/KapostObject/EditForm/field/KapostObject/item/'+postID+'/convert', 'autoOpen': true, maxHeight: $(this).getDialogMaxHeight()});
                 }
                 
                 
