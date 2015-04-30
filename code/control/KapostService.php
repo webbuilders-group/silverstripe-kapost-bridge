@@ -346,7 +346,23 @@ class KapostService extends Controller implements PermissionProvider {
         }
         
         
-        if(!empty($page) && $page!==false && $page->exists()) {
+        $kapostObj=KapostObject::get()->filter('KapostRefID', Convert::raw2sql($content_id))->first();
+        if(!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
+            $kapostObj->Title=$pageTitle;
+            $kapostObj->MenuTitle=$menuTitle;
+            $kapostObj->MetaDescription=(array_key_exists('custom_fields', $content) && array_key_exists('SS_MetaDescription', $content['custom_fields']) ? $content['custom_fields']['SS_MetaDescription']:null);
+            $kapostObj->LinkedPageID=(!empty($page) && $page!==false && $page->exists() ? $page->ID:$kapostObj->LinkedPageID);
+            $kapostObj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
+            $kapostObj->KapostAuthor=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author']:null);
+            $kapostObj->ToPublish=$publish;
+            $kapostObj->IsPreview=$isPreview;
+            $kapostObj->write();
+            
+            //Allow extensions to adjust the existing object
+            $this->extend('updateEditKapostPage', $kapostObj, $content_id, $content, $publish, $isPreview);
+            
+            return true;
+        }else {
             $className=(array_key_exists('custom_fields', $content) ? 'Kapost'.$content['custom_fields']['kapost_custom_type']:'KapostPage');
             
             $obj=new $className();
@@ -355,7 +371,7 @@ class KapostService extends Controller implements PermissionProvider {
             $obj->Content=$content['description'];
             $obj->MetaDescription=(array_key_exists('custom_fields', $content) && array_key_exists('SS_MetaDescription', $content['custom_fields']) ? $content['custom_fields']['SS_MetaDescription']:null);
             $obj->KapostChangeType='edit';
-            $obj->LinkedPageID=$page->ID;
+            $obj->LinkedPageID=(!empty($page) && $page!==false && $page->exists() ? $page->ID:0);
             $obj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
             $obj->KapostAuthor=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author']:null);
             $obj->ToPublish=$publish;
@@ -367,24 +383,8 @@ class KapostService extends Controller implements PermissionProvider {
             $this->extend('updateEditKapostPage', $obj, $content_id, $content, $publish, $isPreview);
             
             return true;
-        }else {
-            $kapostObj=KapostObject::get()->filter('KapostRefID', Convert::raw2sql($content_id))->first();
-            if(!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
-                $kapostObj->Title=$pageTitle;
-                $kapostObj->MenuTitle=$menuTitle;
-                $kapostObj->MetaDescription=(array_key_exists('custom_fields', $content) && array_key_exists('SS_MetaDescription', $content['custom_fields']) ? $content['custom_fields']['SS_MetaDescription']:null);
-                $kapostObj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
-                $kapostObj->KapostAuthor=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author']:null);
-                $kapostObj->ToPublish=$publish;
-                $kapostObj->IsPreview=$isPreview;
-                $kapostObj->write();
-                
-                //Allow extensions to adjust the existing object
-                $this->extend('updateEditKapostPage', $kapostObj, $content_id, $content, $publish, $isPreview);
-                
-                return true;
-            }
         }
+        
         
         //Can't find the object so return a 404 code
         return new xmlrpcresp(0, 404, _t('KapostService.INVALID_POST_ID', '_Invalid post ID.'));
