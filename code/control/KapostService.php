@@ -87,7 +87,7 @@ class KapostService extends Controller implements PermissionProvider {
         $server->compress_response=true;
         
         if(Director::isDev()) {
-            $server->setDebug(3);
+            $server->setDebug(3); //Base 64 encoded debug information is included in the response
         }
         
         
