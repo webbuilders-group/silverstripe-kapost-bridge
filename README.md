@@ -30,6 +30,10 @@ If you prefer you may also install manually:
 The documentation for the module (including how to add custom types and the extension points) can be found [here](docs).
 
 
+## The Publish Twice Rule (Kapost Analytics)
+In order for Kapost Analytics to work properly you need to have the full url. Unfortunatly since we cannot know the end published url before the Kapost Object is converted (or the url changes because of the changes in Kapost) we need to publish from Kapost again after you convert the object in SilverStripe. This will allow SilverStripe to let Kapost know the next time it tries to publish what the actual published url is from SilverStripe instead of the cms url. Technically you could also simply update the url in Kapost as well instead of publishing again after converting but if you do it does not change automatically with the next publish.
+
+
 ## Configuration Options
 ```yml
 KapostAdmin:
