@@ -7,7 +7,7 @@ class KapostObject extends DataObject {
                             'KapostRefID'=>'Varchar(255)',
                             'KapostAuthor'=>'Varchar(255)',
                             'ToPublish'=>'Boolean',
-                            'IsPreview'=>'Boolean'
+                            'IsKapostPreview'=>'Boolean'
                          );
     
     private static $default_sort='Created';
@@ -189,7 +189,7 @@ class KapostObject extends DataObject {
      * Cleans up expired Kapost previews after twice the token expiry
      */
     protected function cleanUpExpiredPreviews() {
-        $expiredPreviews=KapostObject::get()->filter('IsPreview', true)->filter('LastEdited:LessThan', date('Y-m-d H:i:s', strtotime('-'.(KapostService::config()->preview_expiry*2).' minutes')));
+        $expiredPreviews=KapostObject::get()->filter('IsKapostPreview', true)->filter('LastEdited:LessThan', date('Y-m-d H:i:s', strtotime('-'.(KapostService::config()->preview_expiry*2).' minutes')));
         if($expiredPreviews->count()>0) {
             foreach($expiredPreviews as $kapostObj) {
                 $kapostObj->delete();

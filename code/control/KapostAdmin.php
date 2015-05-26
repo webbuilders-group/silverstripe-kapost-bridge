@@ -35,7 +35,7 @@ class KapostAdmin extends ModelAdmin {
         
         
         if($this->modelClass=='KapostObject' && $gridField=$form->Fields()->dataFieldByName('KapostObject')) {
-            $gridField->setList($gridField->getList()->filter('IsPreview', 0));
+            $gridField->setList($gridField->getList()->filter('IsKapostPreview', 0));
             $gridField->getConfig()
                                 ->removeComponentsByType('GridFieldAddNewButton')
                                 ->getComponentByType('GridFieldDataColumns')

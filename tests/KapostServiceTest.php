@@ -22,6 +22,16 @@ class KapostServiceTest extends FunctionalTest {
     public function setUp() {
         parent::setUp();
         
+        
+        //Remove all Service extensions (keeps the tests sane)
+        $extensions=Object::get_extensions('KapostService');
+        if(!empty($extensions)) {
+            foreach($extensions as $extension) {
+                KapostService::remove_extension($extension);
+            }
+        }
+        
+        
         if(self::$configured==false) {
             $prefix=(defined('SS_DATABASE_PREFIX') ? SS_DATABASE_PREFIX:'ss_');
             $fixtureFile='KapostServiceTest.yml';
@@ -512,6 +522,11 @@ class KapostServiceTest extends FunctionalTest {
         
         //Make sure the response contains Kapost Tracking code this should be a good guage to see if the response is correct
         $this->assertContains('_kaq.push([2, "zzzzzzzzz", "zzzzzzzzz"]);', $response->getBody());
+        
+        
+        //Verify the object is set to preview
+        $kapostObj=KapostObject::get()->filter('KapostRefID', '55241502b83cb77d1f0004d9')->first();
+        $this->assertEquals(1, $kapostObj->IsKapostPreview);
     }
     
     /**

@@ -240,6 +240,7 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {mixed} $blog_id Identifier for the current site
      * @param {array} $content Post details
      * @param {int} $publish 0 or 1 depending on whether to publish the post or not
+     * @param {bool} $isPreview Is preview mode or not (defaults to false)
      */
     protected function newPost($blog_id, $content, $publish, $isPreview=false) {
         $results=$this->extend('newPost', $blog_id, $content, $publish, $isPreview);
@@ -284,7 +285,7 @@ class KapostService extends Controller implements PermissionProvider {
         $obj->KapostAuthor=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author']:null);
         $obj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
         $obj->ToPublish=$publish;
-        $obj->IsPreview=$isPreview;
+        $obj->IsKapostPreview=$isPreview;
         $obj->write();
         
         
@@ -306,6 +307,7 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {mixed} $content_id Identifier for the post
      * @param {array} $content Post details
      * @param {int} $publish 0 or 1 depending on whether to publish the post or not
+     * @param {bool} $isPreview Is preview mode or not (defaults to false)
      */
     protected function editPost($content_id, $content, $publish, $isPreview=false) {
         $results=$this->extend('editPost', $content_id, $content, $publish, $isPreview);
@@ -355,7 +357,7 @@ class KapostService extends Controller implements PermissionProvider {
             $kapostObj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
             $kapostObj->KapostAuthor=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author']:null);
             $kapostObj->ToPublish=$publish;
-            $kapostObj->IsPreview=$isPreview;
+            $kapostObj->IsKapostPreview=$isPreview;
             $kapostObj->write();
             
             //Allow extensions to adjust the existing object
@@ -375,7 +377,7 @@ class KapostService extends Controller implements PermissionProvider {
             $obj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
             $obj->KapostAuthor=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author']:null);
             $obj->ToPublish=$publish;
-            $obj->IsPreview=$isPreview;
+            $obj->IsKapostPreview=$isPreview;
             $obj->write();
             
             
