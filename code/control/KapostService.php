@@ -131,8 +131,8 @@ class KapostService extends Controller implements PermissionProvider {
         if($this->authenticate($username, $password)) {
             $method=str_replace(array('blogger.', 'metaWeblog.', 'kapost.'), '', $request->methodname);
             
-            if((!in_array('blogger.'.$method, $this->exposed_methods) && !in_array('metaWeblog.'.$method, $this->exposed_methods) && !in_array('kapost.'.$method, $this->exposed_methods)) || !method_exists($this, $method)) {
-                return $this->httpError(403, _t('KapostService.METHOD_NOT_ALLOWED', '_Action "{method}" is not allowed on class Kapost Service.', array('method'=>$method)));
+            if(!in_array($request->methodname, $this->exposed_methods) || !method_exists($this, $method)) {
+                return $this->httpError(403, _t('KapostService.METHOD_NOT_ALLOWED', '_Action "{method}" is not allowed on class Kapost Service.', array('method'=>$request->methodname)));
             }
             
             
@@ -299,7 +299,7 @@ class KapostService extends Controller implements PermissionProvider {
         //Allow extensions to adjust the new page
         $this->extend('updateNewKapostPage', $obj, $blog_id, $content, $publish, $isPreview);
         
-        return (array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:$className.'_'.$obj->ID);
+        return $obj->KapostRefID;
     }
     
     /**
@@ -758,7 +758,7 @@ class KapostService extends Controller implements PermissionProvider {
     public function providePermissions() {
         return array(
                    'KAPOST_API_ACCESS'=>array(
-                                               'category'=>'Kapost Bridge',
+                                               'category'=>_t('KapostService.KAPOST_BRIDGE', '_Kapost Bridge'),
                                                'name'=>_t('KapostService.PERMISSION_API_ACCESS', '_Kapost API Access'),
                                                'help'=>_t('KapostService.PERMISSION_API_ACCESS_DESC', '_Access the XML-RPC Endpoint for Kapost to communicate with')
                                            ),
