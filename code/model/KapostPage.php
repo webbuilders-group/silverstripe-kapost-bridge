@@ -51,7 +51,8 @@ class KapostPage extends KapostObject {
         return Page_Controller::create($this)->customise(array(
                                                                 'IsKapostPreview'=>true,
                                                                 'Children'=>false,
-                                                                'Menu'=>false
+                                                                'Menu'=>false,
+                                                                'MetaTags'=>false
                                                             ))->renderWith('Page');
     }
 }
