@@ -13,10 +13,20 @@ class KapostSiteTreeExtension extends DataExtension {
         $kapostRefID=$this->owner->KapostRefID;
         if(!empty($kapostRefID)) {
             if(CMSPageEditController::has_extension('KapostPageEditControllerExtension')) {
-                $fields->insertBefore(new LiteralField('KapostContentWarning', '<div class="message warning">'._t('KapostSiteTreeExtension.KAPOST_CONTENT_WARNING_RO', '_This Page\'s content is being populated by Kapost, some fields are not editable').'</div>'), 'Title');
+                $messageContent=_t('KapostSiteTreeExtension.KAPOST_CONTENT_WARNING_RO', '_This Page\'s content is being populated by Kapost, some fields are not editable.');
             }else {
-                $fields->insertBefore(new LiteralField('KapostContentWarning', '<div class="message warning">'._t('KapostSiteTreeExtension.KAPOST_CONTENT_WARNING', '_This Page\'s content is being populated by Kapost').'</div>'), 'Title');
+                $messageContent=_t('KapostSiteTreeExtension.KAPOST_CONTENT_WARNING', '_This Page\'s content is being populated by Kapost.');
             }
+            
+            
+            //Edit in kapost link
+            $kapostBase=KapostAdmin::config()->kapost_base_url;
+            if(!empty($kapostBase)) {
+                $messageContent.=' <a href="'.Controller::join_links($kapostBase, 'posts', $kapostRefID).'" target="_blank">'._t('KapostSiteTreeExtension.KAPOST_CONTENT_EDIT_LABEL', '_Click here to edit in Kapost').'</a>';
+            }
+            
+            
+            $fields->insertBefore(new LiteralField('KapostContentWarning', '<div class="message warning">'.$messageContent.'</div>'), 'Title');
         }
         
         $fields->removeByName('KapostRefID');
