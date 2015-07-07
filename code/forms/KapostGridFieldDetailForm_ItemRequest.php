@@ -357,20 +357,20 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
     
     /**
      * Merges data and relations from another object of same class, without conflict resolution. Allows to specify which dataset takes priority in case its not empty. has_one-relations are just transferred with priority 'right'. has_many and many_many-relations are added regardless of priority.
-     * Caution: has_many/many_many relations are moved rather than duplicated,
-     * meaning they are not connected to the merged object any longer.
-     * Caution: Just saves updated has_many/many_many relations to the database,
-     * doesn't write the updated object itself (just writes the object-properties).
+     * Caution: has_many/many_many relations are moved rather than duplicated, meaning they are not connected to the merged object any longer.
+     * Caution: Just saves updated has_many/many_many relations to the database, doesn't write the updated object itself (just writes the object-properties).
      * Caution: Does not delete the merged object.
      * Caution: Does now overwrite Created date on the original object.
-     * @param $leftObj DataObject
-     * @param $rightObj DataObject
-     * @param $priority String left|right Determines who wins in case of a conflict (optional)
-     * @param $includeRelations Boolean Merge any existing relations (optional)
-     * @param $overwriteWithEmpty Boolean Overwrite existing left values with empty right values. Only applicable with $priority='right'. (optional)
-     * @return Boolean
+     * @param {DataObject} $leftObj Left DataObject to merge into
+     * @param {DataObject} $rightObj Right DataObject to merge from
+     * @param {string} $priority String left|right Determines who wins in case of a conflict (optional)
+     * @param {bool} $includeRelations Boolean Merge any existing relations (optional)
+     * @param {bool} $overwriteWithEmpty Boolean Overwrite existing left values with empty right values. Only applicable with $priority='right'. (optional)
+     * @param {bool} $skipParent Skip the parent has_one relationship or not (defaults to true)
+     * @param {string} $parentRelField Name of the parent has_one relationship field (defaults to Parent)
+     * @return {bool} Returns boolean true on success false otherwise
      */
-    public function merge($leftObj, $rightObj, $priority = 'right', $includeRelations = true, $overwriteWithEmpty = false) {
+    public function merge($leftObj, $rightObj, $priority='right', $includeRelations=true, $overwriteWithEmpty=false, $skipParent=true, $parentRelField='Parent') {
         if(!$rightObj->ID) {
             user_error("DataObject->merge(): Please write your merged-in object to the database before merging, to make sure all relations are transferred properly.').", E_USER_WARNING);
             return false;
@@ -381,12 +381,17 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         $rightData=$rightObj->inheritedDatabaseFields();
         
         foreach($rightData as $key=>$rightVal) {
+            // skip the parent relationship if it is set
+            if($skipParent && $key==$parentRelField.'ID') {
+                continue;
+            }
+            
             // don't merge conflicting values if priority is 'left'
             if($priority=='left' && $leftObj->{$key}!==$rightObj->{$key}) {
                 continue;
             }
             
-            // don't overwrite existing left values with empty right values (if $overwriteWithEmpty is set)
+            // don't overwrite existing left values with empty right values (if $overwriteWithEmpty is set to false)
             if($priority=='right' && !$overwriteWithEmpty && empty($rightObj->{$key})) {
                 continue;
             }
@@ -436,14 +441,15 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
                     }
                     
                     $rightComponent=$rightObj->getComponent($relationship);
-                    if($leftComponent->exists() && $rightComponent->exists() && $priority=='right') {
+                    if($leftComponent->exists() && $rightComponent->exists() && $priority=='right' && ($skipParent==false || ($skipParent && $relationship!=$parentRelField))) {
                         $leftObj->{$relationship.'ID'}=$rightObj->{$relationship.'ID'};
                     }
-                    
-                    $leftObj->write();
                 }
             }
         }
+        
+        $leftObj->write();
+        
         
         return true;
     }
