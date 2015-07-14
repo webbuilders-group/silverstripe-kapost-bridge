@@ -49,6 +49,7 @@ class KapostPage extends KapostObject {
      */
     public function renderPreview() {
         return Page_Controller::create($this)->customise(array(
+                                                                'ClassName'=>$record->DestinationClass,
                                                                 'IsKapostPreview'=>true,
                                                                 'Children'=>false,
                                                                 'Menu'=>false,
