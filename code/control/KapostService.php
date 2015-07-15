@@ -47,6 +47,13 @@ class KapostService extends Controller implements PermissionProvider {
      */
     private static $preview_expiry=10;
     
+    /**
+     * Database Character Set
+     * @config KapostService.database_charset
+     * @default UTF-8
+     */
+    private static $database_charset='UTF-8';
+    
     
     private $exposed_methods=array(
                                     'blogger.getUsersBlogs',
@@ -86,9 +93,14 @@ class KapostService extends Controller implements PermissionProvider {
         $server=new xmlrpc_server($methods, false);
         $server->compress_response=true;
         
+        
         if(Director::isDev()) {
             $server->setDebug(3); //Base 64 encoded debug information is included in the response
         }
+        
+        
+        //Force the internal encoding of the XMLRPC library to utf-8
+        $GLOBALS['xmlrpc_internalencoding']=self::config()->database_charset;
         
         
         return $server->service($this->request->getBody(), true);
