@@ -182,7 +182,7 @@ class KapostService extends Controller implements PermissionProvider {
         }
         
         
-        return $this->httpError(401, _t('KapostService.AUTH_FAILED', '_Authentication Failed, please check the App Center credentials for the SilverStripe end point.'));
+        return $this->httpError(401, _t('KapostService.AUTH_FAIL', '_Authentication Failed, please check the App Center credentials for the SilverStripe end point.'));
     }
     
     /**
