@@ -9,14 +9,20 @@
                 $('.cms-container').loadPanel(destination);
                 
                 if(destination.match(/^admin\/pages\//)) {
-                    var menu=$('.cms-menu-list');
-                    var item=menu.find('li#Menu-CMSPagesController');
+                    var listener=function() {
+                        $('.cms-container').unbind('afterstatechange', listener);
+                        
+                        var menu=$('.cms-menu-list');
+                        var item=menu.find('li#Menu-CMSPagesController');
+                        
+                        if(!item.hasClass('current')) {
+                            item.select();
+                        }
+                        
+                        menu.updateItems();
+                    };
                     
-                    if(!item.hasClass('current')) {
-                        item.select();
-                    }
-                    
-                    menu.updateItems();
+                    $('.cms-container').bind('afterstatechange', listener);
                 }
             }
         });
@@ -52,7 +58,28 @@
         
         $('.cms-edit-form.KapostAdmin a.kapost-panel-link').entwine({
             onclick: function(e) {
-                $('.cms-container').loadPanel($(this).attr('href'));
+                var destination=$(this).attr('href');
+                
+                $('.cms-container').loadPanel(destination);
+                
+                if(destination.match(/^admin\/pages\//)) {
+                    var listener=function() {
+                        $('.cms-container').unbind('afterstatechange', listener);
+                        
+                        var menu=$('.cms-menu-list');
+                        var item=menu.find('li#Menu-CMSPagesController');
+                        
+                        if(!item.hasClass('current')) {
+                            item.select();
+                        }
+                        
+                        menu.updateItems();
+                    };
+                    
+                    $('.cms-container').bind('afterstatechange', listener);
+                }
+                
+                return false;
             }
         });
     });
