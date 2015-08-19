@@ -565,6 +565,10 @@ class KapostService extends Controller implements PermissionProvider {
             if(self::config()->duplicate_assets=='overwrite') {
                 $obj=File::get()->filter('Filename', Convert::raw2sql($kapostMediaFolder->Filename.$file.$ext))->first();
                 if(!empty($obj) && $obj!==false && $obj->ID>0) {
+                    //Update the Title for the image
+                    $obj->Title=(!empty($content['alt']) ? $content['alt']:str_replace(array('-','_'), ' ', preg_replace('/\.[^.]+$/', '', $obj->Name)));
+                    $obj->write();
+                    
                     //Write the file to the file system
                     $f=fopen($kapostMediaFolder->getFullPath().'/'.$file.$ext, 'w');
                     fwrite($f, $content['bits']);
@@ -608,7 +612,7 @@ class KapostService extends Controller implements PermissionProvider {
                 $className=File::get_class_for_file_extension(substr($ext, 1));
                 $obj=new $className();
                 $obj->Name=$file.$ext;
-                $obj->Title=$file.$ext;
+                $obj->Title=(!empty($content['alt']) ? $content['alt']:str_replace(array('-','_'), ' ', preg_replace('/\.[^.]+$/', '', $obj->Name)));
                 $obj->FileName=$kapostMediaFolder->getRelativePath().'/'.$file.$ext;
                 $obj->ParentID=$kapostMediaFolder->ID;
                 
@@ -639,7 +643,7 @@ class KapostService extends Controller implements PermissionProvider {
             $className=File::get_class_for_file_extension(substr($ext, 1));
             $obj=new $className();
             $obj->Name=$file.$ext;
-            $obj->Title=$file.$ext;
+            $obj->Title=(!empty($content['alt']) ? $content['alt']:str_replace(array('-','_'), ' ', preg_replace('/\.[^.]+$/', '', $obj->Name)));
             $obj->FileName=$kapostMediaFolder->getRelativePath().'/'.$file.$ext;
             $obj->ParentID=$kapostMediaFolder->ID;
             

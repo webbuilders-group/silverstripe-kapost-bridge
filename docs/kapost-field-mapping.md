@@ -10,3 +10,11 @@ This is a list of the mapping of the basic fields from Kapost to SilverStripe.
 | SS_MetaDescription ([custom field](configuring-kapost.md#defining-seo-fields)) | MetaDescription |
 | kapost_author | *audit display only* |
 | kapost_post_id | KapostRefID |
+
+Kapost Field Mapping for File Media
+----
+| Kapost | SilverStripe |
+|--------|--------------|
+| Title | *ignored* |
+| Caption | *ignored* |
+| Alt Text | Title |
