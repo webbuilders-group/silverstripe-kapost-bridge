@@ -31,14 +31,15 @@ class KapostService extends Controller implements PermissionProvider {
     /**
      * Tells the service what to do with duplicate media assets
      * Options:
+     *    smart_rename: Verifies the file is the same as the existing file and instead uses that file, otherwise it renames the file to make it unique
      *    rename: Rename the file to make it unique
      *    overwrite: Overwrite the duplicate resource
      *    ignore: Ignore's the duplicate resource and returns an error to Kapost
      * 
      * @config KapostService.duplicate_assets
-     * @default rename
+     * @default smart_rename
      */
-    private static $duplicate_assets='rename';
+    private static $duplicate_assets='smart_rename';
     
     /**
      * Preview expiry window in minutes
@@ -584,6 +585,19 @@ class KapostService extends Controller implements PermissionProvider {
             }else if(self::config()->duplicate_assets=='ignore') {
                 return $this->httpError(409, _t('KapostService.DUPLICATE_FILE', '_Duplicate file detected, please rename the file and try again'));
             }else {
+                if(self::config()->duplicate_assets=='smart_rename' && file_exists($kapostMediaFolder->getFullPath().'/'.$file.$ext)) {
+                    $obj=File::get()->filter('Filename', Convert::raw2sql($kapostMediaFolder->Filename.$file.$ext))->first();
+                    if(!empty($obj) && $obj!==false && $obj->ID>0) {
+                        $fileHash=sha1_file($kapostMediaFolder->getFullPath().'/'.$file.$ext);
+                        if($fileHash==sha1($content['bits'])) {
+                            return array(
+                                        'id'=>$obj->ID,
+                                        'url'=>$obj->getAbsoluteURL()
+                                    );
+                        }
+                    }
+                }
+                
                 $i = 1;
                 while(file_exists($kapostMediaFolder->getFullPath().'/'.$file.$ext)) {
                     $i++;
@@ -596,7 +610,7 @@ class KapostService extends Controller implements PermissionProvider {
                     }else {
                         $file.='_'.$i;
                     }
-                
+                    
                     if($oldFile==$file && $i > 2) {
                         return $this->httpError(500, _t('KapostService.FILE_RENAME_FAIL', '_Could not fix {filename} with {attempts} attempts', array('filename'=>$file.$ext, 'attempts'=>$i)));
                     }

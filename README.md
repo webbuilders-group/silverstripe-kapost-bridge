@@ -45,7 +45,7 @@ KapostService:
     authenticator_class: "MemberAuthenticator" #Authenticator to be used for authenticating the Kapost account
     authenticator_username_field: "Email" #Field the authenticator is expecting the username to be in
     kapost_media_folder: "kapost-media" #Assets folder to place the Kapost attached media assets
-    duplicate_assets: "rename" #What to do with duplicate assets valid options rename, overwrite, ignore see bellow for more information
+    duplicate_assets: "snart_rename" #What to do with duplicate assets valid options smart_rename, rename, overwrite, ignore see bellow for more information
     preview_expiry: 10 #Preview expiry window in minutes, once this time elapses the Kapost content author must click preview again or they will recieve a 404 message on the site.
     database_charset: "UTF-8" #This should be set to the encoding for the database connection you are using. Matching this to your database connection character set will give the best chance of no encoding issues. By default it is set to the default MySQLDatabase.connection_charset value which is UTF-8.
 
@@ -67,6 +67,7 @@ CMSPageEditController:
 ### Handling Duplicate Assets
 Kapost sends an attached asset everytime a page is published, so there are three options for handling files with a duplicate name under the KapostService.duplicate_assets configuration option.
 
-* ``rename`` Rename the asset until a unique name is found
-* ``overwrite`` Overwrite the existing file with the new file, _be warned you may end up overwriting an asset you don't want overwritten_.
+* ``smart_rename`` Verifies the file is the same as the existing file and instead uses that file using a sha1 hash of both the incoming and existing file, otherwise it renames the file to make it unique.
+* ``rename`` Rename the asset until a unique name is found.
+* ``overwrite`` Overwrite the existing file with the new file, _be warned you may end up overwriting an asset you don't want overwritten.
 * ``ignore`` The service simply ignores the asset and tells Kapost that there was an error explaining to rename the file and try again.
