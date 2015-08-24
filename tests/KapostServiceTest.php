@@ -339,6 +339,148 @@ class KapostServiceTest extends FunctionalTest {
         $this->assertFileExists($file->getFullPath());
         
         
+        /** Call again to make sure the file was not renamed (default configuration) **/
+        $response=$this->call_service('new-media-asset');
+        
+        
+        //Make sure the response is a 200
+        $this->assertEquals(200, $response->getStatusCode());
+        
+        
+        //Make sure the content type is text/xml
+        $this->assertEquals('text/xml', $response->getHeader('Content-Type'));
+        
+        
+        //Parse data
+        $rpcResponse=$this->parseRPCResponse($response->getBody());
+        
+        
+        //Make sure the fault code is 0
+        $this->assertEmpty($rpcResponse->faultCode(), 'Fault: '.$rpcResponse->faultString());
+        
+        
+        //Process the response data
+        $responseData=$rpcResponse->value();
+        
+        
+        //Validate the response
+        $this->assertArrayHasKey('id', $responseData);
+        $this->assertNotEmpty($responseData['id']);
+        
+        $this->assertArrayHasKey('url', $responseData);
+        $this->assertNotEmpty($responseData['url']);
+        
+        
+        //See if the data record was found
+        $file2=File::get()->byID(intval($responseData['id']));
+        $this->assertNotEmpty($file2);
+        $this->assertNotEquals(false, $file2);
+        $this->assertTrue($file2->exists());
+        
+        
+        //See if the file was created
+        $this->assertFileExists($file2->getFullPath());
+        
+        
+        //Check to see if the file has been renamed
+        $this->assertEquals($file->Filename, $file2->Filename);
+        
+        
+        
+        /** Call again to make sure the smart_rename worked **/
+        $response=$this->call_service('new-media-asset-diff');
+        
+        
+        //Make sure the response is a 200
+        $this->assertEquals(200, $response->getStatusCode());
+        
+        
+        //Make sure the content type is text/xml
+        $this->assertEquals('text/xml', $response->getHeader('Content-Type'));
+        
+        
+        //Parse data
+        $rpcResponse=$this->parseRPCResponse($response->getBody());
+        
+        
+        //Make sure the fault code is 0
+        $this->assertEmpty($rpcResponse->faultCode(), 'Fault: '.$rpcResponse->faultString());
+        
+        
+        //Process the response data
+        $responseData=$rpcResponse->value();
+        
+        
+        //Validate the response
+        $this->assertArrayHasKey('id', $responseData);
+        $this->assertNotEmpty($responseData['id']);
+        
+        $this->assertArrayHasKey('url', $responseData);
+        $this->assertNotEmpty($responseData['url']);
+        
+        
+        //See if the data record was found
+        $file2=File::get()->byID(intval($responseData['id']));
+        $this->assertNotEmpty($file2);
+        $this->assertNotEquals(false, $file2);
+        $this->assertTrue($file2->exists());
+        
+        
+        //See if the file was created
+        $this->assertFileExists($file2->getFullPath());
+        
+        
+        //Check to see if the file has been renamed
+        $this->assertNotEquals($file->Filename, $file2->Filename);
+    }
+    
+    /**
+     * Tests handling of new media objects
+     */
+    public function testRenameNewMediaObject() {
+        KapostService::config()->duplicate_assets='rename';
+        
+        $response=$this->call_service('new-media-asset');
+        
+        
+        //Make sure the response is a 200
+        $this->assertEquals(200, $response->getStatusCode());
+        
+        
+        //Make sure the content type is text/xml
+        $this->assertEquals('text/xml', $response->getHeader('Content-Type'));
+        
+        
+        //Parse data
+        $rpcResponse=$this->parseRPCResponse($response->getBody());
+        
+        
+        //Make sure the fault code is 0
+        $this->assertEmpty($rpcResponse->faultCode(), 'Fault: '.$rpcResponse->faultString());
+        
+        
+        //Process the response data
+        $responseData=$rpcResponse->value();
+        
+        
+        //Validate the response
+        $this->assertArrayHasKey('id', $responseData);
+        $this->assertNotEmpty($responseData['id']);
+        
+        $this->assertArrayHasKey('url', $responseData);
+        $this->assertNotEmpty($responseData['url']);
+        
+        
+        //See if the data record was found
+        $file=File::get()->byID(intval($responseData['id']));
+        $this->assertNotEmpty($file);
+        $this->assertNotEquals(false, $file);
+        $this->assertTrue($file->exists());
+        
+        
+        //See if the file was created
+        $this->assertFileExists($file->getFullPath());
+        
         
         /** Call again to make sure the rename worked **/
         $response=$this->call_service('new-media-asset');
