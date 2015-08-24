@@ -27,6 +27,20 @@ class KapostSiteTreeExtension extends DataExtension {
             
             
             $fields->insertBefore(new LiteralField('KapostContentWarning', '<div class="message warning">'.$messageContent.'</div>'), 'Title');
+            
+            
+            //Detect Incoming Changes
+            if(Permission::check('CMS_ACCESS_KapostAdmin')) {
+                $incoming=KapostPage::get()->filter('KapostRefID', Convert::raw2sql($kapostRefID));
+                if($incoming->count()>=1) {
+                    $link=Controller::join_links(AdminRootController::config()->url_base, KapostAdmin::config()->url_segment, 'KapostObject/EditForm/field/KapostObject/item', $incoming->first()->ID, 'edit');
+                    
+                    $messageContent=_t('KapostSiteTreeExtension.KAPOST_INCOMING', '_There are incoming changes from Kapost waiting for this page.').' '.
+                                    '<a href="'.$link.'" class="cms-panel-link">'._t('KapostSiteTreeExtension.KAPOST_INCOMING_VIEW', '_Click here to view the changes').'</a>';
+                    
+                    $fields->insertBefore(new LiteralField('KapostIncomingWarning', '<div class="message warning">'.$messageContent.'</div>'), 'Title');
+                }
+            }
         }
         
         $fields->removeByName('KapostRefID');

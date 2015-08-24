@@ -50,6 +50,8 @@ en:
         KAPOST_CONTENT_WARNING: "This Page's content is being populated by Kapost."
         KAPOST_CONTENT_WARNING_RO: "This Page's content is being populated by Kapost, some fields are not editable."
         KAPOST_CONTENT_EDIT_LABEL: "Click here to edit in Kapost"
+        KAPOST_INCOMING: "There are incoming changes from Kapost waiting for this page."
+        KAPOST_INCOMING_VIEW: "Click here to view the changes"
     KapostConversionHistory:
         SINGULARNAME: "Conversion History"
         PLURALNAME: "Conversions"
