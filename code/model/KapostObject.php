@@ -176,6 +176,14 @@ class KapostObject extends DataObject {
     }
     
     /**
+     * Gets the edit link for the Kapost Object
+     * @return {string} Edit link for the Kapost Object
+     */
+    public function CMSEditLink() {
+        return Controller::join_links(LeftAndMain::config()->url_base, KapostAdmin::config()->url_segment, 'KapostObject/EditForm/field/KapostObject/item', $this->ID, 'edit');
+    }
+    
+    /**
      * Calls the cleanup expired previews after writing
      */
     protected function onAfterWrite() {
