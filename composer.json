@@ -23,6 +23,9 @@
     "support": {
         "issues": "https://github.com/webbuilders-group/silverstripe-kapost-bridge/issues"
     },
+    "suggest": {
+        "webbuilders-group/silverstripe-kapost-bridge-logger": "Adds support for logging of all information going to and from Kapost"
+    },
     "extra": {
         "installer-name": "kapost-bridge"
     }
