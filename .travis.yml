@@ -1,6 +1,9 @@
 language: php 
 php: 
  - 5.3
+
+sudo: false
+
 notifications:
   email:
     - devs@webbuildersgroup.com
