@@ -384,6 +384,11 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         $rightData=$rightObj->inheritedDatabaseFields();
         
         foreach($rightData as $key=>$rightVal) {
+            // skip fields that do not exist on the left object or are foreign keys which are set later
+            if(!array_key_exists($key, $leftData) || $leftData[$key]=='ForeignKey' || is_subclass_of('ForeignKey', $leftData[$key])) {
+                continue;
+            }
+            
             // skip the parent relationship if it is set
             if($skipParent && $key==$parentRelField.'ID') {
                 continue;
