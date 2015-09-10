@@ -442,15 +442,17 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             
             if($hasOne=$leftObj->has_one()) {
                 foreach($hasOne as $relationship=>$class) {
-                    $leftComponent=$leftObj->getComponent($relationship);
-                    
                     if(!$rightObj->has_one($relationship)) {
                         continue;
                     }
                     
                     $rightComponent=$rightObj->getComponent($relationship);
-                    if($leftComponent->exists() && $rightComponent->exists() && $priority=='right' && ($skipParent==false || ($skipParent && $relationship!=$parentRelField))) {
-                        $leftObj->{$relationship.'ID'}=$rightObj->{$relationship.'ID'};
+                    if($priority=='right' && ($skipParent==false || ($skipParent && $relationship!=$parentRelField))) {
+                        if($rightComponent->exists()) {
+                            $leftObj->{$relationship.'ID'}=$rightObj->{$relationship.'ID'};
+                        }else if($overwriteWithEmpty) {
+                            $leftObj->{$relationship.'ID'}=0;
+                        }
                     }
                 }
             }
