@@ -93,22 +93,6 @@ var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ka
                                             <member>
                                                 <name>key</name>
                                                 <value>
-                                                    <string>SS_Panel1Background</string>
-                                                </value>
-                                            </member>
-                                            <member>
-                                                <name>value</name>
-                                                <value>
-                                                    <string>http://www.example.com/assets/kapost-media/test.png</string>
-                                                </value>
-                                            </member>
-                                        </struct>
-                                    </value>
-                                    <value>
-                                        <struct>
-                                            <member>
-                                                <name>key</name>
-                                                <value>
                                                     <string>SS_Title</string>
                                                 </value>
                                             </member>
