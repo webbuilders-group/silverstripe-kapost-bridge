@@ -24,6 +24,17 @@ Page:
         Content: "<p>Test Content</p>"
 
 
+Folder:
+    kapostmedia:
+        Filename: "assets/kapost-media/"
+
+
+Image:
+    testimage:
+        Filename: "assets/kapost-media/test.png"
+        Parent: =>Folder.kapostmedia
+
+
 KapostPage:
     newpage:
         Title: "Test Post"
@@ -49,3 +60,23 @@ KapostPage:
         ToPublish: true
         MenuTitle: "Test Post [menu] (edited)"
         MetaDescription: "This is a test meta description (edited)"
+
+
+KapostConversionTest_TestPage:
+    customtypepage:
+        Title: "Custom Type"
+        Content: "<p>Test Content</p>"
+        KapostRefID: "custom-type-test-reference"
+        TestImageID: 123
+
+
+KapostConversionTest_KapostTestPage:
+    editcustomtypepage:
+        Title: "Custom Type (edited)"
+        Content: "<p>This is test content (edited)</p>"
+        KapostChangeType: "edit"
+        KapostRefID: "custom-type-test-reference"
+        ToPublish: true
+        MenuTitle: "Test Post [menu] (edited)"
+        MetaDescription: "This is a test meta description (edited)"
+        TestImage: =>Image.testimage

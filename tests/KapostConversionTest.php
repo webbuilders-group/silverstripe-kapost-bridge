@@ -10,6 +10,11 @@ class KapostConversionTest extends FunctionalTest {
      */
     protected $testController;
     
+    protected $extraDataObjects=array(
+                                'KapostConversionTest_KapostTestPage',
+                                'KapostConversionTest_TestPage'
+                            );
+    
     
     /**
      * Initializes the database, we do it here so we don't loose our information we need a sequential testing environment
@@ -250,6 +255,74 @@ class KapostConversionTest extends FunctionalTest {
         //Verify the fields are correct
         $this->assertEquals($parentPage->ID, $page->ParentID);
     }
+    
+    /**
+     * Tests conversion of edits for a page to the actual staged page
+     */
+    public function testConvertReplaceCustomPage() {
+        //Ensure we're an admin
+        $this->logInWithPermission('ADMIN');
+        
+        
+        //Get the kapost object
+        $kapostObj=$this->objFromFixture('KapostConversionTest_KapostTestPage', 'editcustomtypepage');
+        
+        
+        //Build the url of the request
+        $url=Controller::join_links(
+                                    $this->testController->TestForm()->Fields()->dataFieldByName('TestGrid')->Link('item'),
+                                    $kapostObj->ID,
+                                    'ConvertObjectForm'
+                                );
+        
+        $page=SiteTree::get()->filter('KapostRefID', $kapostObj->KapostRefID)->first();
+        $this->assertNotEmpty($page);
+        $this->assertNotEquals(false, $page);
+        $this->assertTrue($page->exists());
+        
+        
+        //Send the mock request
+        $testData=array(
+                        'ConvertMode'=>'ReplacePage',
+                        'ReplacePageID'=>$page->ID,
+                        'action_doConvertObject'=>'Test'
+                    );
+        
+        $response=$this->post($url, $testData);
+        
+        
+        //Verify a 200 response
+        $this->assertEquals(200, $response->getStatusCode());
+        
+        
+        //Reset versioned
+        Versioned::reset();
+        
+        
+        //Check to see the page got converted
+        $page=SiteTree::get()->filter('KapostRefID', $kapostObj->KapostRefID)->first();
+        $this->assertNotEmpty($page);
+        $this->assertNotEquals(false, $page);
+        $this->assertTrue($page->exists());
+        
+        
+        //Verify the fields are correct
+        $this->assertEquals($kapostObj->Title, $page->Title);
+        $this->assertEquals($kapostObj->Content, $page->Content);
+        $this->assertEquals($kapostObj->MenuTitle, $page->MenuTitle);
+        $this->assertEquals($kapostObj->MetaDescription, $page->MetaDescription);
+        
+        //Verify the image was correctly set
+        $image=$this->objFromFixture('Image', 'testimage');
+        $this->assertEquals($image->ID, $page->TestImageID);
+        
+        
+        //Make sure it was published per direction
+        $page=Versioned::get_by_stage('SiteTree', 'Live')->filter('KapostRefID', $kapostObj->KapostRefID)->first();
+        $this->assertNotEmpty($page);
+        $this->assertNotEquals(false, $page);
+        $this->assertTrue($page->exists());
+    }
 }
 
 class KapostTestController extends Controller implements TestOnly {
@@ -270,5 +343,26 @@ class KapostTestController extends Controller implements TestOnly {
         
         return new Form($this, 'TestForm', $fields, new FieldList());
     }
+}
+
+class KapostConversionTest_KapostTestPage extends KapostPage implements TestOnly {
+    private static $has_one=array(
+                                'TestImage'=>'Image'
+                            );
+    
+    
+    /**
+     * Gets the destination class when converting to the final object
+     * @return {string} Class to convert to
+     */
+    public function getDestinationClass() {
+        return 'KapostConversionTest_TestPage';
+    }
+}
+
+class KapostConversionTest_TestPage extends Page implements TestOnly {
+    private static $has_one=array(
+                                'TestImage'=>'Image'
+                            );
 }
 ?>
