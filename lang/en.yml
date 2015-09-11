@@ -61,6 +61,7 @@ en:
         db_KapostAuthor: "Kapost Author"
         db_DestinationID: "Destination"
         db_DestinationType: "Destination Type"
+        db_ConverterName: "Converted By"
         CONVERSION_DATE: "Conversion Date"
         CONVERTED_TO_OBJECT: "View Destination Object"
     KapostDestinationAction:

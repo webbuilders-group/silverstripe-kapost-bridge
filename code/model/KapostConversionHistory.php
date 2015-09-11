@@ -14,7 +14,8 @@ class KapostConversionHistory extends DataObject {
                             'KapostRefID'=>'Varchar(255)',
                             'KapostAuthor'=>'Varchar(255)',
                             'DestinationType'=>'Varchar(255)',
-                            'DestinationID'=>'Int'
+                            'DestinationID'=>'Int',
+                            'ConverterName'=>'Varchar(120)'
                          );
     
     private static $indexes=array(
@@ -28,7 +29,8 @@ class KapostConversionHistory extends DataObject {
                                         'Created',
                                         'DestinationType',
                                         'KapostChangeType',
-                                        'KapostAuthor'
+                                        'KapostAuthor',
+                                        'ConverterName'
                                     );
     
     
@@ -63,6 +65,7 @@ class KapostConversionHistory extends DataObject {
         $fields=new FieldList(
                             new ReadonlyField('Title', $this->fieldLabel('Title')),
                             new ReadonlyField('Created', _t('KapostConversionHistory.CONVERSION_DATE', '_Conversion Date')),
+                            new ReadonlyField('ConverterName', $this->fieldLabel('ConverterName')),
                             new ReadonlyField('KapostChangeTypeNice', $this->fieldLabel('KapostChangeType')),
                             new ReadonlyField('KapostAuthor', $this->fieldLabel('KapostAuthor')),
                             new ReadonlyField('DestinationType', $this->fieldLabel('DestinationType')),
