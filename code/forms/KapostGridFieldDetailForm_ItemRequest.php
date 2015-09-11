@@ -131,6 +131,11 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * @return {mixed} Returns an SS_HTTPResponse or an HTML string
      */
     public function doConvertObject($data, Form $form) {
+        //Make sure the record still exists
+        if(empty($this->record) || $this->record===false || !$this->record->exists()) {
+            return $this->httpError(404);
+        }
+        
         if($data['ConvertMode']=='ReplacePage') {
             if(empty($data['ReplacePageID']) || $data['ReplacePageID']==0) {
                 $form->sessionMessage(_t('KapostAdmin.NO_REPLACE_PAGE_TARGET', '_You must select a page to replace'), 'error');
