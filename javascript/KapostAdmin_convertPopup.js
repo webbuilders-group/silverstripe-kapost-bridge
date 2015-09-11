@@ -35,5 +35,14 @@
                 $(this).closest('ul').updateVisibleFields();
             }
         });
+        
+        $('#Form_ConvertObjectForm_action_doConvertObject').entwine({
+            onclick: function() {
+                $(document.body).append(
+                                        '<div class="cms-content-loading-overlay ui-widget-overlay-light"></div>'+
+                                        '<div class="cms-content-loading-spinner"></div>'
+                                    );
+            }
+        });
     });
 })(jQuery);
