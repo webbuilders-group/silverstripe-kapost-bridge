@@ -27,10 +27,10 @@ class KapostConversionHistory extends DataObject {
     private static $summary_fields=array(
                                         'Title',
                                         'Created',
+                                        'ConverterName',
                                         'DestinationType',
                                         'KapostChangeType',
-                                        'KapostAuthor',
-                                        'ConverterName'
+                                        'KapostAuthor'
                                     );
     
     
