@@ -164,16 +164,41 @@ class KapostService extends Controller implements PermissionProvider {
             }
             
             
+            //If transactions are supported start one for newPost and editPost
+            if(($method=='newPost' || $method=='editPost') && DB::getConn()->supportsTransactions()) {
+                DB::getConn()->transactionStart();
+            }
+            
+            
             //Call the method
             $response=call_user_func_array(array($this, $method), $params);
             if($response instanceof xmlrpcresp) {
+                //If transactions are supported check the response and rollback in the case of a fault
+                if(($method=='newPost' || $method=='editPost' || $method=='newMediaObject') && DB::getConn()->supportsTransactions()) {
+                    if($response->faultCode()!=0) {
+                        DB::getConn()->transactionRollback();
+                    }else {
+                        DB::getConn()->transactionEnd();
+                    }
+                }
+                
                 return $response; //Response is already encoded so return
             }
             
             //Encode the response
             $response=php_xmlrpc_encode($response);
             if(is_object($response) && $response instanceof xmlrpcval) {
-                return new xmlrpcresp($response);
+                $response=new xmlrpcresp($response);
+                
+                if(($method=='newPost' || $method=='editPost' || $method=='newMediaObject') && DB::getConn()->supportsTransactions()) {
+                    if($response->faultCode()!=0) {
+                        DB::getConn()->transactionRollback();
+                    }else {
+                        DB::getConn()->transactionEnd();
+                    }
+                }
+                
+                return $response;
             }
             
             return $this->httpError(500, _t('KapostService.INVALID_RESPONSE', '_Invalid response returned from {method}, response was: {response}', array(
