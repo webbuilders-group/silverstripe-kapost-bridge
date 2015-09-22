@@ -97,6 +97,7 @@ class KapostService extends Controller implements PermissionProvider {
         
         if(Director::isDev()) {
             $server->setDebug(3); //Base 64 encoded debug information is included in the response
+            $server->exception_handling=2; //Exception's sent to the client
         }
         
         
