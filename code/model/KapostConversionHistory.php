@@ -86,6 +86,11 @@ class KapostConversionHistory extends DataObject {
         $kapostRef->dontEscape=true;
         $destination->dontEscape=true;
         
+        
+        //Allow extensions to add/remove fields
+        $this->extend('updateCMSFields', $fields);
+        
+        
         return $fields;
     }
     
