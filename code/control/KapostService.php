@@ -55,6 +55,13 @@ class KapostService extends Controller implements PermissionProvider {
      */
     private static $database_charset='UTF-8';
     
+    /**
+     * Enables filtering of the kapost thread tags in the description field
+     * @config KapostService.filter_kapost_threads
+     * @default true
+     */
+    private static $filter_kapost_threads=true;
+    
     
     private $exposed_methods=array(
                                     'blogger.getUsersBlogs',
@@ -391,6 +398,7 @@ class KapostService extends Controller implements PermissionProvider {
         if(!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
             $kapostObj->Title=$pageTitle;
             $kapostObj->MenuTitle=$menuTitle;
+            $kapostObj->Content=$content['description'];
             $kapostObj->MetaDescription=(array_key_exists('custom_fields', $content) && array_key_exists('SS_MetaDescription', $content['custom_fields']) ? $content['custom_fields']['SS_MetaDescription']:null);
             $kapostObj->LinkedPageID=(!empty($page) && $page!==false && $page->exists() ? $page->ID:$kapostObj->LinkedPageID);
             $kapostObj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
