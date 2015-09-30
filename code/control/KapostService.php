@@ -60,7 +60,7 @@ class KapostService extends Controller implements PermissionProvider {
      * @config KapostService.filter_kapost_threads
      * @default true
      */
-    private static $filter_kapost_threads=true;
+    private static $filter_kapost_threads=false;
     
     
     private $exposed_methods=array(
@@ -325,7 +325,7 @@ class KapostService extends Controller implements PermissionProvider {
         $obj=new $className();
         $obj->Title=$pageTitle;
         $obj->MenuTitle=$menuTitle;
-        $obj->Content=$content['description'];
+        $obj->Content=(self::config()->filter_kapost_threads==true ? $this->filterKapostThreads($content['description']):$content['description']);
         $obj->MetaDescription=(array_key_exists('custom_fields', $content) && array_key_exists('SS_MetaDescription', $content['custom_fields']) ? $content['custom_fields']['SS_MetaDescription']:null);
         $obj->KapostChangeType='new';
         $obj->KapostAuthor=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author']:null);
@@ -398,7 +398,7 @@ class KapostService extends Controller implements PermissionProvider {
         if(!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
             $kapostObj->Title=$pageTitle;
             $kapostObj->MenuTitle=$menuTitle;
-            $kapostObj->Content=$content['description'];
+            $kapostObj->Content=(self::config()->filter_kapost_threads==true ? $this->filterKapostThreads($content['description']):$content['description']);
             $kapostObj->MetaDescription=(array_key_exists('custom_fields', $content) && array_key_exists('SS_MetaDescription', $content['custom_fields']) ? $content['custom_fields']['SS_MetaDescription']:null);
             $kapostObj->LinkedPageID=(!empty($page) && $page!==false && $page->exists() ? $page->ID:$kapostObj->LinkedPageID);
             $kapostObj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
@@ -417,7 +417,7 @@ class KapostService extends Controller implements PermissionProvider {
             $obj=new $className();
             $obj->Title=$pageTitle;
             $obj->MenuTitle=$menuTitle;
-            $obj->Content=$content['description'];
+            $obj->Content=(self::config()->filter_kapost_threads==true ? $this->filterKapostThreads($content['description']):$content['description']);
             $obj->MetaDescription=(array_key_exists('custom_fields', $content) && array_key_exists('SS_MetaDescription', $content['custom_fields']) ? $content['custom_fields']['SS_MetaDescription']:null);
             $obj->KapostChangeType='edit';
             $obj->LinkedPageID=(!empty($page) && $page!==false && $page->exists() ? $page->ID:0);
@@ -796,6 +796,15 @@ class KapostService extends Controller implements PermissionProvider {
         }
         
         return $leftArray;
+    }
+    
+    /**
+     * Filters the kapost content to remove the thread tags from a Kapost WYSIWYG
+     * @param {string} $html HTML to filter the tags from
+     * @return {string} HTML with tags filtered
+     */
+    public function filterKapostThreads($html) {
+        return preg_replace('/<span(\s+)thread="(.*?)"(\s+)class="thread">(.*?)<\/span>/', '$4', $html);
     }
     
     /**

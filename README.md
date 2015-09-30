@@ -48,6 +48,7 @@ KapostService:
     duplicate_assets: "snart_rename" #What to do with duplicate assets valid options smart_rename, rename, overwrite, ignore see bellow for more information
     preview_expiry: 10 #Preview expiry window in minutes, once this time elapses the Kapost content author must click preview again or they will recieve a 404 message on the site.
     database_charset: "UTF-8" #This should be set to the encoding for the database connection you are using. Matching this to your database connection character set will give the best chance of no encoding issues. By default it is set to the default MySQLDatabase.connection_charset value which is UTF-8.
+    filter_kapost_threads: false #The default HTML content field in Kapost allows for inline commenting, this flag allows for toggling of filtering out the html flag for Kapost's WYSIWYG.
 
 KapostConversionHistory:
     expires_days: 30 #Number of days that conversion history records are kept

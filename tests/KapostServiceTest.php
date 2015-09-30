@@ -170,6 +170,10 @@ class KapostServiceTest extends FunctionalTest {
         $rpcResponse=$this->parseRPCResponse($response->getBody());
         
         
+        //Ensure we don't have a fault
+        $this->assertEmpty($rpcResponse->faultCode(), 'Fault: '.$rpcResponse->faultString());
+        
+        
         //Process the response data
         $responseData=$rpcResponse->value();
         
@@ -210,6 +214,7 @@ class KapostServiceTest extends FunctionalTest {
         
         //Make sure we didn't get a 404
         $this->assertNotEquals(404, $rpcResponse->faultCode(), 'Fault: '.$rpcResponse->faultString());
+        
         
         //Process the response data
         $responseData=$rpcResponse->value();
@@ -268,6 +273,10 @@ class KapostServiceTest extends FunctionalTest {
         
         //Parse data
         $rpcResponse=$this->parseRPCResponse($response->getBody());
+        
+        
+        //Ensure we don't have a fault
+        $this->assertEmpty($rpcResponse->faultCode(), 'Fault: '.$rpcResponse->faultString());
         
         
         //Process the response data
@@ -693,6 +702,56 @@ class KapostServiceTest extends FunctionalTest {
         
         //Ensure we recieved a 404 back
         $this->assertEquals(404, $response->getStatusCode());
+    }
+    
+    /**
+     * Tests to see if the kapost thread tag stripping is enabled
+     */
+    public function testThreadTagStripping() {
+        //Ensure thread filtering is enabled
+        KapostService::config()->filter_kapost_threads=true;
+        
+        //Call the api
+        $response=$this->call_service('thread-strip-test');
+        
+        
+        //Make sure the response is a 200
+        $this->assertEquals(200, $response->getStatusCode());
+        
+        
+        //Make sure the content type is text/xml
+        $this->assertEquals('text/xml', $response->getHeader('Content-Type'));
+        
+        
+        //Parse data
+        $rpcResponse=$this->parseRPCResponse($response->getBody());
+        
+        
+        //Ensure we don't have a fault
+        $this->assertEmpty($rpcResponse->faultCode(), 'Fault: '.$rpcResponse->faultString());
+        
+        
+        //Process the response data
+        $responseData=$rpcResponse->value();
+        
+        
+        //Make sure the response id matches the kapost_post_id sent in the request
+        $this->assertEquals('5568ba64ef53a5091f000146', $responseData);
+        
+        
+        //Verify the audit object is present
+        $obj=KapostObject::get()->filter('KapostRefID', '5568ba64ef53a5091f000146')->first();
+        $this->assertNotEmpty($obj);
+        $this->assertNotEquals(false, $obj);
+        $this->assertTrue($obj->exists());
+        
+        
+        //Make sure the type change type is new
+        $this->assertEquals('new', $obj->KapostChangeType);
+        
+        
+        //Make sure the tag was correctly stripped
+        $this->assertEquals('<p>Donec commodo, nisl non viverra iaculis, velit ante laoreet velit, ut eleifend<span> dolor tortor eget mauris</span>. Nam ac dignissim quam, at cursus augue. Aliquam commodo rhoncus ligula ut viverra. Vestibulum eu molestie lacus. Etiam rhoncus mauris eget convallis lacinia. Quisque feugiat rhoncus dui vitae malesuada. In quis justo ac sem cursus ornare vel a augue. Curabitur sed laoreet mi. Aliquam erat volutpat. Maecenas vel turpis vitae est lobortis malesuada quis et libero. Suspendisse efficitur dui a lorem lobortis imperdiet. <span class="test">Duis efficitur placerat</span> turpis eget fermentum. Duis sagittis ex id ante volutpat condimentum.</p>', $obj->Content);
     }
     
     /**
