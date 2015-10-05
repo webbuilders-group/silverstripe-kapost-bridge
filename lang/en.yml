@@ -66,3 +66,5 @@ en:
         CONVERTED_TO_OBJECT: "View Destination Object"
     KapostDestinationAction:
         DESTINATION_OBJECT: "View Destination Object"
+    KapostGridFieldRefreshButton: 
+        REFRESH_LIST: "Refresh List"
