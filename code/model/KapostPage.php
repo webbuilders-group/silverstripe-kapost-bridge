@@ -49,15 +49,37 @@ class KapostPage extends KapostObject {
      * @return {string} Preview to be rendered
      */
     public function renderPreview() {
-        return Page_Controller::create($this)->customise(array(
-                                                                'ClassName'=>$this->DestinationClass,
-                                                                'IsKapostPreview'=>true,
-                                                                'Children'=>false,
-                                                                'Menu'=>false,
-                                                                'MetaTags'=>false,
-                                                                'Breadcrumbs'=>false,
-                                                                'current_stage'=>Versioned::current_stage()
-                                                            ))->renderWith('Page');
+        $previewFieldMap=array(
+                                'ClassName'=>$this->DestinationClass,
+                                'IsKapostPreview'=>true,
+                                'Children'=>false,
+                                'Menu'=>false,
+                                'MetaTags'=>false,
+                                'Breadcrumbs'=>false,
+                                'current_stage'=>Versioned::current_stage()
+                            );
+        
+        //Allow extensions to add onto the array
+        $extensions=$this->extend('updatePreviewFieldMap');
+        $extensions=array_filter($extensions, function($v) {return !is_null($v) && is_array($v);});
+        if(count($extensions)>0) {
+            foreach($extensions as $ext) {
+                $previewFieldMap=array_merge($previewFieldMap, $ext);
+            }
+        }
+        
+        
+        //Find the controller class
+        $ancestry=ClassInfo::ancestry($this->DestinationClass);
+        while($class=array_pop($ancestry)) {
+            if(class_exists($class."_Controller")) {
+                break;
+            }
+        }
+        
+        $controller=($class!==null ? "{$class}_Controller":"ContentController");
+        
+        return $controller::create($this)->customise($previewFieldMap);
     }
 }
 ?>
