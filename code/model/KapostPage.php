@@ -55,7 +55,8 @@ class KapostPage extends KapostObject {
                                                                 'Children'=>false,
                                                                 'Menu'=>false,
                                                                 'MetaTags'=>false,
-                                                                'Breadcrumbs'=>false
+                                                                'Breadcrumbs'=>false,
+                                                                'current_stage'=>Versioned::current_stage()
                                                             ))->renderWith('Page');
     }
 }
