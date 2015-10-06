@@ -54,7 +54,8 @@ class KapostPage extends KapostObject {
                                                                 'IsKapostPreview'=>true,
                                                                 'Children'=>false,
                                                                 'Menu'=>false,
-                                                                'MetaTags'=>false
+                                                                'MetaTags'=>false,
+                                                                'Breadcrumbs'=>false
                                                             ))->renderWith('Page');
     }
 }
