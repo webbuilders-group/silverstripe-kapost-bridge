@@ -1,7 +1,8 @@
 <?php
 class KapostPreviewToken extends DataObject {
     private static $db=array(
-                            'Code'=>'Varchar(40)'
+                            'Code'=>'Varchar(40)',
+                            'KapostRefID'=>'Varchar(255)'
                          );
     
     

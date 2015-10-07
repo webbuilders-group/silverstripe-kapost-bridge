@@ -124,7 +124,7 @@ class KapostService extends Controller implements PermissionProvider {
         $token=KapostPreviewToken::get()->filter('Code', Convert::raw2xml($auth))->first();
         
         //Verify the token exists and hasn't expired yet
-        if(!empty($token) && $token!==false && $token->exists() && time()-strtotime($token->Created)<self::config()->preview_expiry*60) {
+        if(!empty($token) && $token!==false && $token->exists() && time()-strtotime($token->Created)<self::config()->preview_expiry*60 && $token->KapostRefID==$this->urlParams['ID']) {
             $kapostObj=KapostObject::get()->filter('KapostRefID', Convert::raw2xml($this->urlParams['ID']))->sort('"Created" DESC')->first();
             if(!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
                 return $kapostObj->renderPreview();
@@ -737,6 +737,9 @@ class KapostService extends Controller implements PermissionProvider {
             $this->editPost($content_id, $content, false, true);
         }else {
             $resultID=$this->newPost($blog_id, $content, false, true);
+            
+            //Find the object
+            $existing=KapostObject::get()->filter('KapostRefID', Convert::raw2xml($resultID))->first();
         }
         
         //Make sure we got the kapost hash back or an id if we got an object back we assume that it's a response
@@ -748,6 +751,7 @@ class KapostService extends Controller implements PermissionProvider {
         //Generate a preview token record
         $token=new KapostPreviewToken();
         $token->Code=sha1(uniqid(time().$resultID));
+        $token->KapostRefID=$resultID;
         $token->write();
         
         
