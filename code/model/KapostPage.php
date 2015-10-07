@@ -56,7 +56,8 @@ class KapostPage extends KapostObject {
                                 'Menu'=>false,
                                 'MetaTags'=>false,
                                 'Breadcrumbs'=>false,
-                                'current_stage'=>Versioned::current_stage()
+                                'current_stage'=>Versioned::current_stage(),
+                                'SilverStripeNavigator'=>false
                             );
         
         //Allow extensions to add onto the array
