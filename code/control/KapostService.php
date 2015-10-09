@@ -127,7 +127,11 @@ class KapostService extends Controller implements PermissionProvider {
         if(!empty($token) && $token!==false && $token->exists() && time()-strtotime($token->Created)<self::config()->preview_expiry*60 && $token->KapostRefID==$this->urlParams['ID']) {
             $kapostObj=KapostObject::get()->filter('KapostRefID', Convert::raw2xml($this->urlParams['ID']))->sort('"Created" DESC')->first();
             if(!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
-                return $kapostObj->renderPreview();
+                $previewController=$kapostObj->renderPreview();
+                
+                $this->extend('updatePreviewDisplay', $kapostObj, $previewController);
+                
+                return $previewController;
             }
         }
         
