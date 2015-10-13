@@ -27,7 +27,7 @@ If you prefer you may also install manually:
 
 
 ## Documentation
-The documentation for the module (including how to add custom types and the extension points) can be found [here](docs).
+The documentation for the module (including how to add custom types and the extension points) can be found [here](docs/en).
 
 
 ## The Publish Twice Rule (Kapost Analytics)
