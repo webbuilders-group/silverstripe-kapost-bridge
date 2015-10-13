@@ -264,6 +264,19 @@ class KapostConversionTest extends FunctionalTest {
         $this->logInWithPermission('ADMIN');
         
         
+        //Get the test image
+        $image=$this->objFromFixture('Image', 'testimage');
+        
+        //If the file doesn't exist create it
+        if(!file_exists($image->getFullPath())) {
+            if(!file_exists(dirname($image->getFullPath()))) {
+                mkdir(dirname($image->getFullPath()));
+            }
+            
+            touch($image->getFullPath());
+        }
+        
+        
         //Get the kapost object
         $kapostObj=$this->objFromFixture('KapostConversionTest_KapostTestPage', 'editcustomtypepage');
         
@@ -312,8 +325,8 @@ class KapostConversionTest extends FunctionalTest {
         $this->assertEquals($kapostObj->MenuTitle, $page->MenuTitle);
         $this->assertEquals($kapostObj->MetaDescription, $page->MetaDescription);
         
+        
         //Verify the image was correctly set
-        $image=$this->objFromFixture('Image', 'testimage');
         $this->assertEquals($image->ID, $page->TestImageID);
         
         
