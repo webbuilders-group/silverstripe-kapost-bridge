@@ -335,6 +335,10 @@ class KapostConversionTest extends FunctionalTest {
         $this->assertNotEmpty($page);
         $this->assertNotEquals(false, $page);
         $this->assertTrue($page->exists());
+        
+        
+        //Remove the test image
+        unlink($image->getFullPath());
     }
 }
 
