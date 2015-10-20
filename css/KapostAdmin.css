@@ -80,6 +80,16 @@ body.cms-dialog {
     box-shadow: none;
 }
 
+.cms-dialog .field.urlsegmentcheck {
+    clear: both;
+    
+    padding-left: 0;
+}
+
+.cms-dialog .field.urlsegmentcheck label.right {
+    font-weight: bold;
+}
+
 .cms table.ss-gridfield-table tbody td a.kapost-destination-action {
     display: inline-block;
     

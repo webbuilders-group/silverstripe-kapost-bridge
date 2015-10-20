@@ -107,6 +107,22 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             if(!empty($obj) && $obj!==false && $obj->ID>0) {
                 $convertModeField->setValue('ReplacePage');
                 $replacePageField->setValue($obj->ID);
+                
+                $recordTitle=$this->record->Title;
+                if(!empty($recordTitle) && $recordTitle!=$obj->Title) {
+                    $urlFieldLabel=_t('KapostAdmin.TITLE_CHANGE_DETECT', '_The title differs from the page being replaced, it was "{wastitle}" and will be changed to "{newtitle}". Do you want to update the URL Segment?', array(
+                                            'wastitle'=>$obj->Title,
+                                            'newtitle'=>$recordTitle
+                                        ));
+                    
+                    $fields->push(CheckboxField::create('UpdateURLSegment', $urlFieldLabel)
+                            ->addExtraClass('urlsegmentcheck')
+                            ->setAttribute('data-replace-id', $obj->ID)
+                            ->setForm($form)
+                            ->setDescription(_t('KapostAdmin.NEW_URL_SEGMENT', '_The new URL Segment will be or will be close to "{newsegment}"', array(
+                                                                                                            'newsegment'=>$obj->generateURLSegment($recordTitle)
+                                                                                                        ))));
+                }
             }
         }
         
@@ -319,9 +335,21 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             
             $source=clone $this->record; //Create a clone of the record to be safe
             
+            $recordTitle=$this->record->Title;
+            $updateURLSegment=false;
+            if(!empty($recordTitle) && $recordTitle!=$destination->Title && array_key_exists('UpdateURLSegment', $data) && $data['UpdateURLSegment']==true) {
+                $updateURLSegment=true;
+            }
+            
             
             //Merge the kapost object into the target page
             $this->merge($destination, $source, 'right', true, true);
+            
+            
+            //If the url segment is to be changed then update the url segment
+            if($updateURLSegment) {
+                $destination->URLSegment=$destination->generateURLSegment($destination->Title);
+            }
             
             
             //Write the destination one more time to be sure

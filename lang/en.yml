@@ -13,6 +13,8 @@ en:
         GENERIC_CONVERSION_ERROR: "Conversion method returns an error and no specific message"
         REPLACE_PAGE: "Replace this page"
         USE_AS_PARENT: "Use this page as the parent for the new page, leave empty for a top level page"
+        TITLE_CHANGE_DETECT: 'The title differs from the page being replaced, it was "{wastitle}" and will be changed to "{newtitle}". Do you want to update the URL Segment?'
+        NEW_URL_SEGMENT: 'The new URL Segment will be or will be close to "{newsegment}"'
     KapostService:
         AUTH_FAIL: "Authentication Failed, please check the App Center credentials for the SilverStripe end point."
         METHOD_NOT_ALLOWED: 'Action "{method}" is not allowed on class Kapost Service.'
