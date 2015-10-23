@@ -42,11 +42,18 @@ class KapostService extends Controller implements PermissionProvider {
     private static $duplicate_assets='smart_rename';
     
     /**
-     * Preview expiry window in minutes
-     * @config KapostService.preview_expiry
+     * Preview token expiry window in minutes
+     * @config KapostService.preview_token_expiry
      * @default 10
      */
-    private static $preview_expiry=10;
+    private static $preview_token_expiry=10;
+    
+    /**
+     * Preview data expiry window in minutes
+     * @config KapostService.preview_data_expiry
+     * @default 20
+     */
+    private static $preview_data_expiry=20;
     
     /**
      * Database Character Set
@@ -124,7 +131,7 @@ class KapostService extends Controller implements PermissionProvider {
         $token=KapostPreviewToken::get()->filter('Code', Convert::raw2sql($auth))->first();
         
         //Verify the token exists and hasn't expired yet
-        if(!empty($token) && $token!==false && $token->exists() && time()-strtotime($token->Created)<self::config()->preview_expiry*60 && $token->KapostRefID==$this->urlParams['ID']) {
+        if(!empty($token) && $token!==false && $token->exists() && time()-strtotime($token->Created)<self::config()->preview_token_expiry*60 && $token->KapostRefID==$this->urlParams['ID']) {
             $kapostObj=KapostObject::get()->filter('KapostRefID', Convert::raw2sql($this->urlParams['ID']))->sort('"Created" DESC')->first();
             if(!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
                 $previewController=$kapostObj->renderPreview();

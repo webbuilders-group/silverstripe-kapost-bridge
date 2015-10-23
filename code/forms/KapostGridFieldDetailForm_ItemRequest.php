@@ -537,7 +537,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * Cleans up expired Kapost previews after twice the token expiry
      */
     private function cleanUpExpiredPreviews() {
-        $expiredPreviews=KapostObject::get()->filter('IsKapostPreview', true)->filter('LastEdited:LessThan', date('Y-m-d H:i:s', strtotime('-'.(KapostService::config()->preview_expiry*2).' minutes')));
+        $expiredPreviews=KapostObject::get()->filter('IsKapostPreview', true)->filter('LastEdited:LessThan', date('Y-m-d H:i:s', strtotime('-'.(KapostService::config()->preview_data_expiry).' minutes')));
         if($expiredPreviews->count()>0) {
             foreach($expiredPreviews as $kapostObj) {
                 $kapostObj->delete();

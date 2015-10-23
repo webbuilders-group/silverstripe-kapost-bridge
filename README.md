@@ -8,7 +8,7 @@ Bridge for Kapost driven content authoring, provides support for basic content p
 * Ed Chipman ([UndefinedOffset](https://github.com/UndefinedOffset))
 
 ## Requirements
-* SilverStripe CMS 3.1.x
+* SilverStripe CMS 3.1+
 * [phpxmlrpc 3.0.x](https://github.com/gggeek/phpxmlrpc)
 
 
@@ -46,7 +46,8 @@ KapostService:
     authenticator_username_field: "Email" #Field the authenticator is expecting the username to be in
     kapost_media_folder: "kapost-media" #Assets folder to place the Kapost attached media assets
     duplicate_assets: "snart_rename" #What to do with duplicate assets valid options smart_rename, rename, overwrite, ignore see bellow for more information
-    preview_expiry: 10 #Preview expiry window in minutes, once this time elapses the Kapost content author must click preview again or they will recieve a 404 message on the site.
+    preview_token_expiry: 10 #Preview token expiry window in minutes, once this time elapses the Kapost content author must click preview again or they will receive a 404 message on the site.
+    preview_data_expiry: 20 #Preview data expiry window, time in minutes that the preview's data lasts in the database. This time window is approximate as data can live past this point as the clean up happens when a conversion completes or when a new object arrives.
     database_charset: "UTF-8" #This should be set to the encoding for the database connection you are using. Matching this to your database connection character set will give the best chance of no encoding issues. By default it is set to the default MySQLDatabase.connection_charset value which is UTF-8.
     filter_kapost_threads: false #The default HTML content field in Kapost allows for inline commenting, this flag allows for toggling of filtering out the html flag for Kapost's WYSIWYG.
 

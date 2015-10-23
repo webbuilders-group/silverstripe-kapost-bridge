@@ -14,7 +14,7 @@ class KapostPreviewToken extends DataObject {
         
         
         //Clean up the expired tokens
-        $expiredTokens=KapostPreviewToken::get()->filter('Created:LessThan', date('Y-m-d H:i:s', strtotime('-'.KapostService::config()->preview_expiry.' minutes')));
+        $expiredTokens=KapostPreviewToken::get()->filter('Created:LessThan', date('Y-m-d H:i:s', strtotime('-'.KapostService::config()->preview_token_expiry.' minutes')));
         if($expiredTokens->count()>0) {
             foreach($expiredTokens as $token) {
                 $token->delete();
