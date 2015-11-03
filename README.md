@@ -57,7 +57,7 @@ KapostConversionHistory:
 ```
 
 ## Making Pages Managed through Kapost Readonly
-In some cases you may want to have the Page editing section of the cms have pages marked as readonly when their content came from Kapost. There are are a couple of fields by default that are made editable URL Segment and Extra Meta Additional fields you want editable by the cms admin can be added tp the config option ``YourPageType.non_readonly_fields``. As well Kapost includes a script tag in any WYSYWIG field to avoid confusing your analytics in Kapost and any potential collisions with the CMS's UI you should make any HTML fields safe via the config option ``YourPageType.make_safe_wysiwyg_fields`` by default the Content field is included. To enable the readonly conversion on the CMS's page editing section you need to add the bellow to your config. Note this only applies to the Content tab, the Settings tab is uneffected.
+In some cases you may want to have the Page editing section of the cms have pages marked as readonly when their content came from Kapost. There are are a couple of fields by default that are made editable URL Segment and Extra Meta Additional fields you want editable by the cms admin can be added to the config option ``YourPageType.non_readonly_fields``. As well Kapost includes a script tag in any WYSYWIG field to avoid confusing your analytics in Kapost and any potential collisions with the CMS's UI you should make any HTML fields safe via the config option ``YourPageType.make_safe_wysiwyg_fields`` by default the Content field is included. To enable the readonly conversion on the CMS's page editing section you need to add the bellow to your config. Note this only applies to the Content tab, the Settings tab is unaffected.
 
 ```yml
 CMSPageEditController:
@@ -65,6 +65,13 @@ CMSPageEditController:
         - "KapostPageEditControllerExtension"
 ```
 
+In addition you can also make the page's settings readonly by adding the ``KapostPageSettingsControllerExtension`` extension to the ``CMSPageSettingsController``. By default only CanViewType, ViewerGroups, CanEditType, and EditorGroups are editable if this extension is applied. If you want to whitelist additional fields as editable in the cms add the field's name to the ``YourPageType.non_readonly_settings_fields`` configuration option for your page type.
+
+```yml
+CMSPageSettingsController:
+    extensions:
+        - "KapostPageSettingsControllerExtension"
+```
 
 ### Handling Duplicate Assets
 Kapost sends an attached asset everytime a page is published, so there are three options for handling files with a duplicate name under the KapostService.duplicate_assets configuration option.

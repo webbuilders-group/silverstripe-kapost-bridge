@@ -10,5 +10,10 @@ SiteTree:
     non_readonly_fields:
         - "URLSegment"
         - "ExtraMeta"
+    non_readonly_settings_fields:
+        - "CanViewType"
+        - "ViewerGroups"
+        - "CanEditType"
+        - "EditorGroups"
     make_safe_wysiwyg_fields:
         - "Content"
