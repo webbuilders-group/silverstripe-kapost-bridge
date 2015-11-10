@@ -71,7 +71,7 @@ body.cms-dialog {
     -webkit-box-shadow: 1px 0 0 #ECEFF1, rgba(248, 248, 248, 0.9) 0 1px 0px inset, rgba(201, 205, 206, 0.8) 0 0 1px;
 }
 
-.cms-dialog form.KapostAdmin #ReplacePageID {
+.cms-dialog form.KapostAdmin div.field.replace-page-id, .cms-dialog form.KapostAdmin div.field.parent-page-id {
     border-bottom: 0;
     
     -moz-box-shadow: none;

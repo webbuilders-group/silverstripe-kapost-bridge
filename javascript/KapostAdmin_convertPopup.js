@@ -19,23 +19,23 @@
                 var selectedVal=$('#Form_ConvertObjectForm_ConvertMode input.radio:checked').val();
                 
                 if(selectedVal=='ReplacePage') {
-                    $('#Form_ConvertObjectForm #ParentPageID').hide();
-                    $('#Form_ConvertObjectForm #ReplacePageID, #Form_ConvertObjectForm #UpdateURLSegment:not(.keep-hidden)').show();
+                    $('#Form_ConvertObjectForm .kapostConvertRightSide > div.field.parent-page-id').hide();
+                    $('#Form_ConvertObjectForm .kapostConvertRightSide > div.field.replace-page-id, #Form_ConvertObjectForm #UpdateURLSegment:not(.keep-hidden)').show();
                     
                     var segmentUpdateField=$('#Form_ConvertObjectForm_UpdateURLSegment');
                     if(segmentUpdateField.length>0 && segmentUpdateField.hasClass('.keep-hidden')==false) {
                         segmentUpdateField.attr('disabled', false);
                     }
                 }else if(selectedVal=='NewPage') {
-                    $('#Form_ConvertObjectForm #ParentPageID').show();
-                    $('#Form_ConvertObjectForm #ReplacePageID, #Form_ConvertObjectForm #UpdateURLSegment').hide();
+                    $('#Form_ConvertObjectForm .kapostConvertRightSide > div.field.parent-page-id').show();
+                    $('#Form_ConvertObjectForm .kapostConvertRightSide > div.field.replace-page-id, #Form_ConvertObjectForm #UpdateURLSegment').hide();
                     
-                    var segmentUpdateField=$('#Form_ConvertObjectForm_UpdateURLSegment');
+                    var segmentUpdateField=$('#Form_ConvertObjectForm div.field.urlsegmentcheck');
                     if(segmentUpdateField.length>0) {
                         segmentUpdateField.attr('disabled', true);
                     }
                 }else {
-                    $('#Form_ConvertObjectForm #ParentPageID, #Form_ConvertObjectForm #ReplacePageID').hide();
+                    $('#Form_ConvertObjectForm .kapostConvertRightSide > div.field.parent-page-id, #Form_ConvertObjectForm .kapostConvertRightSide > div.field.replace-page-id').hide();
                 }
             }
         });

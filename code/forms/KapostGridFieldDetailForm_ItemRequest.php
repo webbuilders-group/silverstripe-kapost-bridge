@@ -74,8 +74,8 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
                                                                                             ), 'NewPage')
                                 )->addExtraClass('kapostConvertLeftSide'),
                             CompositeField::create(
-                                    $replacePageField=new TreeDropdownField('ReplacePageID', _t('KapostAdmin.REPLACE_PAGE', '_Replace this page'), 'SiteTree'),
-                                    new TreeDropdownField('ParentPageID', _t('KapostAdmin.USE_AS_PARENT', '_Use this page as the parent for the new page, leave empty for a top level page'), 'SiteTree')
+                                    $replacePageField=TreeDropdownField::create('ReplacePageID', _t('KapostAdmin.REPLACE_PAGE', '_Replace this page'), 'SiteTree')->addExtraClass('replace-page-id'),
+                                    TreeDropdownField::create('ParentPageID', _t('KapostAdmin.USE_AS_PARENT', '_Use this page as the parent for the new page, leave empty for a top level page'), 'SiteTree')->addExtraClass('parent-page-id')
                                 )->addExtraClass('kapostConvertRightSide')
                         );
         
