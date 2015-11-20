@@ -342,8 +342,14 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             }
             
             
+            //Cache the url segment
+            $oldURLSegment=$destination->URLSegment;
+            
             //Merge the kapost object into the target page
             $this->merge($destination, $source, 'right', true, true);
+            
+            //Restore the url segment
+            $destination->URLSegment=$oldURLSegment;
             
             
             //If the url segment is to be changed then update the url segment
