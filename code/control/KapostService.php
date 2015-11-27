@@ -749,6 +749,11 @@ class KapostService extends Controller implements PermissionProvider {
         }else {
             $resultID=$this->newPost($blog_id, $content, false, true);
             
+            //Make sure we got the kapost hash back or an id if we got an object back we assume that it's a response
+            if(is_object($resultID)) {
+                return $resultID;
+            }
+            
             //Find the object
             $existing=KapostObject::get()->filter('KapostRefID', Convert::raw2sql($resultID))->first();
         }
