@@ -111,15 +111,47 @@ class KapostService extends Controller implements PermissionProvider {
         
         if(Director::isDev()) {
             $server->setDebug(3); //Base 64 encoded debug information is included in the response
-            $server->exception_handling=2; //Exception's sent to the client
         }
+        
+        
+        //Tell XML-RPC to re-throw the exception rather than trap it so we can allow the SilverStripe's normal error handling along side sending the xmlrpc response
+        $server->exception_handling=2;
         
         
         //Force the internal encoding of the XMLRPC library to utf-8
         $GLOBALS['xmlrpc_internalencoding']=self::config()->database_charset;
         
-        
-        return $server->service($this->request->getBody(), true);
+        try {
+            return $server->service($this->request->getBody(), true);
+        }catch(Exception $e) {
+            //Call on SS_Log to log the error
+            SS_Log::log($e, SS_Log::ERR);
+            
+            
+            //Allow exceptions to handle the response
+            $results=$this->extend('onException', $e);
+            if($results && is_array($results)) {
+                $results=array_filter($results, function($v) {return (!is_null($v) && $v instanceof xmlrpcresp);});
+            
+                if(count($results)>0) {
+                    $this->generateErrorResponse($server, array_shift($results));
+                }
+            }
+            
+            
+            //If we're in dev mode relay the actual message to the client
+            if(Director::isDev()) {
+                $response=new xmlrpcresp(0, $e->getCode(), _t('KapostService.ERROR_MESSAGE', '_{message} in {file} line {line_number}', array(
+                                                                                                                                        'message'=>$e->getMessage(),
+                                                                                                                                        'file'=>$e->getFile(),
+                                                                                                                                        'line_number'=>$e->getLine()
+                                                                                                                                    )));
+            }else {
+                $response=new xmlrpcresp(0, 17, _t('KapostService.SERVER_ERROR', '_Internal server error'));
+            }
+            
+            return $this->generateErrorResponse($server, $response);
+        }
     }
     
     /**
@@ -842,6 +874,27 @@ class KapostService extends Controller implements PermissionProvider {
         }
         
         return false;
+    }
+    
+    /**
+     * Takes the xmlrpc object and generates the response to be set back
+     * @param {xmlrpc_server} $server XML-RPC Server instance
+     * @param {xmlrpcresp} $r XML-RPC Response object to relay to client
+     * @return {string} Response to be sent to the client
+     */
+    protected function generateErrorResponse(xmlrpc_server $server, xmlrpcresp $r) {
+        $this->response->addHeader('Content-Type', $r->content_type);
+        $this->response->addHeader('Vary', 'Accept-Charset');
+        
+        $payload=$server->xml_header();
+        
+        if(empty($r->payload)) {
+            $r->serialize($resp_charset);
+        }
+        
+        $payload=$payload.$r->payload;
+        
+        return $payload;
     }
     
     /**

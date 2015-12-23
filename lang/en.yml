@@ -30,6 +30,8 @@ en:
         FILE_NOT_FOUND: "File not found"
         PREVIEW_NOT_SUPPORTED: "Preview Not Supported"
         PREVIEW_NOT_SUPPORTED_DESC: "Preview is not supported for this content type."
+        SERVER_ERROR: "Internal server error"
+        ERROR_MESSAGE: "{message} in {file} line {line_number}"
     KapostObject:
         SINGULARNAME: "Kapost Object"
         MAIN: "Main"
