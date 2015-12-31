@@ -1,5 +1,6 @@
 <?php
-class KapostConversionHistory extends DataObject {
+class KapostConversionHistory extends DataObject
+{
     /**
      * Number of days that conversion history records are kept
      * @config KapostConversionHistory.expires_days
@@ -39,7 +40,8 @@ class KapostConversionHistory extends DataObject {
      * @param {int|Member} $member Member ID or member instance
      * @return {bool} Returns boolean false
      */
-    final public function canCreate($member=null) {
+    final public function canCreate($member=null)
+    {
         return false;
     }
     
@@ -48,7 +50,8 @@ class KapostConversionHistory extends DataObject {
      * @param {int|Member} $member Member ID or member instance
      * @return {bool} Returns boolean false
      */
-    final public function canEdit($member=null) {
+    final public function canEdit($member=null)
+    {
         return false;
     }
     
@@ -56,9 +59,10 @@ class KapostConversionHistory extends DataObject {
      * Gets fields used in the cms
      * @return {FieldList} Fields to be used
      */
-    public function getCMSFields() {
+    public function getCMSFields()
+    {
         $kapostBase=KapostAdmin::config()->kapost_base_url;
-        if($kapostBase[strlen($kapostBase)-1]!='/') {
+        if ($kapostBase[strlen($kapostBase)-1]!='/') {
             $kapostBase.='/';
         }
         
@@ -98,7 +102,8 @@ class KapostConversionHistory extends DataObject {
      * Gets the link to the desination in the cms
      * @return {string} Relative link to the destination page
      */
-    public function getDestinationLink() {
+    public function getDestinationLink()
+    {
         user_error('You must implement the createConversionHistory() method on your decendent of KapostConversionHistory', E_USER_WARNING);
     }
     
@@ -106,8 +111,9 @@ class KapostConversionHistory extends DataObject {
      * Gets the change type's friendly label
      * @return {string} Returns new or edit
      */
-    public function getKapostChangeTypeNice() {
-        switch($this->KapostChangeType) {
+    public function getKapostChangeTypeNice()
+    {
+        switch ($this->KapostChangeType) {
             case 'new': return _t('KapostFieldCaster.CHANGE_TYPE_NEW', '_New');
             case 'edit': return _t('KapostFieldCaster.CHANGE_TYPE_EDIT', '_Edit');
         }
@@ -119,10 +125,11 @@ class KapostConversionHistory extends DataObject {
      * Gets the summary fields for this object
      * @return {array} Map of fields to labels
      */
-    public function summaryFields() {
+    public function summaryFields()
+    {
         $fields=parent::summaryFields();
         
-        if(array_key_exists('Created', $fields)) {
+        if (array_key_exists('Created', $fields)) {
             $fields['Created']=_t('KapostConversionHistory.CONVERSION_DATE', '_Conversion Date');
         }
         
@@ -132,25 +139,27 @@ class KapostConversionHistory extends DataObject {
     /**
      * Cleans up the conversion history records after X days, after writing to the database where X is defined in the config
      */
-    protected function onAfterWrite() {
+    protected function onAfterWrite()
+    {
         parent::onAfterWrite();
         
         $records=KapostConversionHistory::get()->filter('Created:LessThan', date('Y-m-d H:i:s', strtotime('-'.self::config()->expires_days.' days')));
-        if($records->count()>0) {
-            foreach($records as $record) {
+        if ($records->count()>0) {
+            foreach ($records as $record) {
                 $record->delete();
             }
         }
     }
 }
 
-class KapostPageConversionHistory extends KapostConversionHistory {
+class KapostPageConversionHistory extends KapostConversionHistory
+{
     /**
      * Gets the link to the desination in the cms
      * @return {string} Relative link to the destination page
      */
-    public function getDestinationLink() {
+    public function getDestinationLink()
+    {
         return 'admin/pages/edit/show/'.$this->DestinationID;
     }
 }
-?>

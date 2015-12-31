@@ -1,5 +1,6 @@
 <?php
-class KapostConversionTest extends FunctionalTest {
+class KapostConversionTest extends FunctionalTest
+{
     private static $configured=false;
     private static $_fixtureFactory;
     private static $_fixtures;
@@ -19,22 +20,22 @@ class KapostConversionTest extends FunctionalTest {
     /**
      * Initializes the database, we do it here so we don't loose our information we need a sequential testing environment
      */
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         
         
         $this->testController=new KapostTestController();
         
     
-        if(self::$configured==false) {
+        if (self::$configured==false) {
             $prefix=(defined('SS_DATABASE_PREFIX') ? SS_DATABASE_PREFIX:'ss_');
             $fixtureFile='KapostConversionTest.yml';
     
             // Set up fixture
-            if($fixtureFile || $this->usesDatabase || !self::using_temp_db()) {
-                if(substr(DB::getConn()->currentDatabase(), 0, strlen($prefix) + 5)
+            if ($fixtureFile || $this->usesDatabase || !self::using_temp_db()) {
+                if (substr(DB::getConn()->currentDatabase(), 0, strlen($prefix) + 5)
                 != strtolower(sprintf('%stmpdb', $prefix))) {
-    
                     self::create_temp_db();
                 }
     
@@ -42,26 +43,32 @@ class KapostConversionTest extends FunctionalTest {
     
                 self::empty_temp_db();
     
-                foreach($this->requireDefaultRecordsFrom as $className) {
+                foreach ($this->requireDefaultRecordsFrom as $className) {
                     $instance = singleton($className);
-                    if (method_exists($instance, 'requireDefaultRecords')) $instance->requireDefaultRecords();
-                    if (method_exists($instance, 'augmentDefaultRecords')) $instance->augmentDefaultRecords();
+                    if (method_exists($instance, 'requireDefaultRecords')) {
+                        $instance->requireDefaultRecords();
+                    }
+                    if (method_exists($instance, 'augmentDefaultRecords')) {
+                        $instance->augmentDefaultRecords();
+                    }
                 }
     
-                if($fixtureFile) {
+                if ($fixtureFile) {
                     $pathForClass = $this->getCurrentAbsolutePath();
                     $fixtureFiles = (is_array($fixtureFile)) ? $fixtureFile : array($fixtureFile);
     
                     $i = 0;
-                    foreach($fixtureFiles as $fixtureFilePath) {
+                    foreach ($fixtureFiles as $fixtureFilePath) {
                         // Support fixture paths relative to the test class, rather than relative to webroot
                         // String checking is faster than file_exists() calls.
                         $isRelativeToFile = (strpos('/', $fixtureFilePath) === false
                                 || preg_match('/^\.\./', $fixtureFilePath));
     
-                        if($isRelativeToFile) {
+                        if ($isRelativeToFile) {
                             $resolvedPath = realpath($pathForClass . '/' . $fixtureFilePath);
-                            if($resolvedPath) $fixtureFilePath = $resolvedPath;
+                            if ($resolvedPath) {
+                                $fixtureFilePath = $resolvedPath;
+                            }
                         }
     
                         $fixture = Injector::inst()->create('YamlFixture', $fixtureFilePath);
@@ -69,7 +76,9 @@ class KapostConversionTest extends FunctionalTest {
                         $this->fixtures[] = $fixture;
     
                         // backwards compatibility: Load first fixture into $this->fixture
-                        if($i == 0) $this->fixture = $fixture;
+                        if ($i == 0) {
+                            $this->fixture = $fixture;
+                        }
                         $i++;
                     }
                     
@@ -77,12 +86,12 @@ class KapostConversionTest extends FunctionalTest {
                     self::$_fixtureFactory=$this->getFixtureFactory();
                     self::$_fixtures=$this->fixtures;
                 }
-    			
-    			$this->logInWithPermission("ADMIN");
+                
+                $this->logInWithPermission("ADMIN");
             }
             
             self::$configured=true;
-        }else {
+        } else {
             $this->fixtureFactory=self::$_fixtureFactory;
             $this->fixtures=self::$_fixtures;
         }
@@ -91,7 +100,8 @@ class KapostConversionTest extends FunctionalTest {
     /**
      * Tests conversion of new pages to the actual staged page
      */
-    public function testConvertNewPage() {
+    public function testConvertNewPage()
+    {
         //Ensure we're an admin
         $this->logInWithPermission('ADMIN');
         
@@ -143,7 +153,8 @@ class KapostConversionTest extends FunctionalTest {
     /**
      * Tests conversion of edits for a page to the actual staged page
      */
-    public function testConvertReplacePage() {
+    public function testConvertReplacePage()
+    {
         //Ensure we're an admin
         $this->logInWithPermission('ADMIN');
         
@@ -207,7 +218,8 @@ class KapostConversionTest extends FunctionalTest {
     /**
      * Tests conversion of new pages to the actual staged page with a parent
      */
-    public function testConvertNewPageParent() {
+    public function testConvertNewPageParent()
+    {
         //Ensure we're an admin
         $this->logInWithPermission('ADMIN');
         
@@ -259,7 +271,8 @@ class KapostConversionTest extends FunctionalTest {
     /**
      * Tests conversion of edits for a page to the actual staged page
      */
-    public function testConvertReplaceCustomPage() {
+    public function testConvertReplaceCustomPage()
+    {
         //Ensure we're an admin
         $this->logInWithPermission('ADMIN');
         
@@ -268,8 +281,8 @@ class KapostConversionTest extends FunctionalTest {
         $image=$this->objFromFixture('Image', 'testimage');
         
         //If the file doesn't exist create it
-        if(!file_exists($image->getFullPath())) {
-            if(!file_exists(dirname($image->getFullPath()))) {
+        if (!file_exists($image->getFullPath())) {
+            if (!file_exists(dirname($image->getFullPath()))) {
                 mkdir(dirname($image->getFullPath()));
             }
             
@@ -342,7 +355,8 @@ class KapostConversionTest extends FunctionalTest {
     }
 }
 
-class KapostTestController extends Controller implements TestOnly {
+class KapostTestController extends Controller implements TestOnly
+{
     private static $allowed_actions=array(
                                         'TestForm'
                                     );
@@ -350,7 +364,8 @@ class KapostTestController extends Controller implements TestOnly {
     /**
      * Mock test form used for checking the conversion process
      */
-    public function TestForm() {
+    public function TestForm()
+    {
         $gridConfig=GridFieldConfig_RecordEditor::create();
         $gridConfig->getComponentByType('GridFieldDetailForm')->setItemRequestClass('KapostGridFieldDetailForm_ItemRequest');
         
@@ -362,7 +377,8 @@ class KapostTestController extends Controller implements TestOnly {
     }
 }
 
-class KapostConversionTest_KapostTestPage extends KapostPage implements TestOnly {
+class KapostConversionTest_KapostTestPage extends KapostPage implements TestOnly
+{
     private static $has_one=array(
                                 'TestImage'=>'Image'
                             );
@@ -372,14 +388,15 @@ class KapostConversionTest_KapostTestPage extends KapostPage implements TestOnly
      * Gets the destination class when converting to the final object
      * @return {string} Class to convert to
      */
-    public function getDestinationClass() {
+    public function getDestinationClass()
+    {
         return 'KapostConversionTest_TestPage';
     }
 }
 
-class KapostConversionTest_TestPage extends Page implements TestOnly {
+class KapostConversionTest_TestPage extends Page implements TestOnly
+{
     private static $has_one=array(
                                 'TestImage'=>'Image'
                             );
 }
-?>

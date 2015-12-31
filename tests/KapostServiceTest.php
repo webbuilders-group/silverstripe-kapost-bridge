@@ -1,5 +1,6 @@
 <?php
-class KapostServiceTest extends FunctionalTest {
+class KapostServiceTest extends FunctionalTest
+{
     const USER_AGENT='Kapost XMLRPC::Client';
     
     private static $configured=false;
@@ -19,28 +20,28 @@ class KapostServiceTest extends FunctionalTest {
     /**
      * Initializes the database, we do it here so we don't loose our information we need a sequential testing environment
      */
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         
         
         //Remove all Service extensions (keeps the tests sane)
         $extensions=Object::get_extensions('KapostService');
-        if(!empty($extensions)) {
-            foreach($extensions as $extension) {
+        if (!empty($extensions)) {
+            foreach ($extensions as $extension) {
                 KapostService::remove_extension($extension);
             }
         }
         
         
-        if(self::$configured==false) {
+        if (self::$configured==false) {
             $prefix=(defined('SS_DATABASE_PREFIX') ? SS_DATABASE_PREFIX:'ss_');
             $fixtureFile='KapostServiceTest.yml';
             
             // Set up fixture
-            if($fixtureFile || $this->usesDatabase || !self::using_temp_db()) {
-                if(substr(DB::getConn()->currentDatabase(), 0, strlen($prefix) + 5)
+            if ($fixtureFile || $this->usesDatabase || !self::using_temp_db()) {
+                if (substr(DB::getConn()->currentDatabase(), 0, strlen($prefix) + 5)
                 != strtolower(sprintf('%stmpdb', $prefix))) {
-            
                     self::create_temp_db();
                 }
             
@@ -48,26 +49,32 @@ class KapostServiceTest extends FunctionalTest {
                     
                 self::empty_temp_db();
                     
-                foreach($this->requireDefaultRecordsFrom as $className) {
+                foreach ($this->requireDefaultRecordsFrom as $className) {
                     $instance = singleton($className);
-                    if (method_exists($instance, 'requireDefaultRecords')) $instance->requireDefaultRecords();
-                    if (method_exists($instance, 'augmentDefaultRecords')) $instance->augmentDefaultRecords();
+                    if (method_exists($instance, 'requireDefaultRecords')) {
+                        $instance->requireDefaultRecords();
+                    }
+                    if (method_exists($instance, 'augmentDefaultRecords')) {
+                        $instance->augmentDefaultRecords();
+                    }
                 }
             
-                if($fixtureFile) {
+                if ($fixtureFile) {
                     $pathForClass = $this->getCurrentAbsolutePath();
                     $fixtureFiles = (is_array($fixtureFile)) ? $fixtureFile : array($fixtureFile);
             
                     $i = 0;
-                    foreach($fixtureFiles as $fixtureFilePath) {
+                    foreach ($fixtureFiles as $fixtureFilePath) {
                         // Support fixture paths relative to the test class, rather than relative to webroot
                         // String checking is faster than file_exists() calls.
                         $isRelativeToFile = (strpos('/', $fixtureFilePath) === false
                                 || preg_match('/^\.\./', $fixtureFilePath));
             
-                        if($isRelativeToFile) {
+                        if ($isRelativeToFile) {
                             $resolvedPath = realpath($pathForClass . '/' . $fixtureFilePath);
-                            if($resolvedPath) $fixtureFilePath = $resolvedPath;
+                            if ($resolvedPath) {
+                                $fixtureFilePath = $resolvedPath;
+                            }
                         }
                             
                         $fixture = Injector::inst()->create('YamlFixture', $fixtureFilePath);
@@ -75,7 +82,9 @@ class KapostServiceTest extends FunctionalTest {
                         $this->fixtures[] = $fixture;
             
                         // backwards compatibility: Load first fixture into $this->fixture
-                        if($i == 0) $this->fixture = $fixture;
+                        if ($i == 0) {
+                            $this->fixture = $fixture;
+                        }
                         $i++;
                     }
                     
@@ -88,7 +97,7 @@ class KapostServiceTest extends FunctionalTest {
             }
             
             self::$configured=true;
-        }else {
+        } else {
             $this->fixtureFactory=self::$_fixtureFactory;
             $this->fixtures=self::$_fixtures;
         }
@@ -97,7 +106,8 @@ class KapostServiceTest extends FunctionalTest {
     /**
      * Ensures the list methods response matches the expected response which is that it contains atleast the methods defined in the core
      */
-    public function testListMethods() {
+    public function testListMethods()
+    {
         $response=$this->call_service('list-methods');
         
         
@@ -122,7 +132,7 @@ class KapostServiceTest extends FunctionalTest {
         
         
         //Verify that the default methods are in the array
-        foreach($this->exposed_methods as $method) {
+        foreach ($this->exposed_methods as $method) {
             $this->assertContains($method, $responseData);
         }
     }
@@ -130,7 +140,8 @@ class KapostServiceTest extends FunctionalTest {
     /**
      * Tests to see if an unknown id response is correct
      */
-    public function testGetPostUnknownID() {
+    public function testGetPostUnknownID()
+    {
         //Call the api and get the response
         $response=$this->call_service('get-post');
         
@@ -154,7 +165,8 @@ class KapostServiceTest extends FunctionalTest {
     /**
      * Test Creation of a new post
      */
-    public function testNewPost() {
+    public function testNewPost()
+    {
         $response=$this->call_service('new-post');
         
         
@@ -196,7 +208,8 @@ class KapostServiceTest extends FunctionalTest {
     /**
      * Tests get post returns a good response since we're written the post
      */
-    public function testGetPostKnownID() {
+    public function testGetPostKnownID()
+    {
         $response=$this->call_service('get-post');
         
         
@@ -243,7 +256,7 @@ class KapostServiceTest extends FunctionalTest {
         
         //Parse the custom fields into a key, value pair
         $custom_fields=array();
-        foreach($responseData['custom_fields'] as $field) {
+        foreach ($responseData['custom_fields'] as $field) {
             $custom_fields[$field['key']]=$field['value'];
         }
         
@@ -259,7 +272,8 @@ class KapostServiceTest extends FunctionalTest {
     /**
      * Tests to ensure the edit post request works correctly
      */
-    public function testEditPost() {
+    public function testEditPost()
+    {
         $response=$this->call_service('edit-post');
         
         
@@ -305,7 +319,8 @@ class KapostServiceTest extends FunctionalTest {
     /**
      * Tests handling of new media objects
      */
-    public function testNewMediaObject() {
+    public function testNewMediaObject()
+    {
         $response=$this->call_service('new-media-asset');
         
         
@@ -446,7 +461,8 @@ class KapostServiceTest extends FunctionalTest {
     /**
      * Tests handling of new media objects
      */
-    public function testRenameNewMediaObject() {
+    public function testRenameNewMediaObject()
+    {
         KapostService::config()->duplicate_assets='rename';
         
         $response=$this->call_service('new-media-asset');
@@ -541,7 +557,8 @@ class KapostServiceTest extends FunctionalTest {
     /**
      * Tests handling of overwriting duplicate media objects
      */
-    public function testOverwriteDuplicateMediaObject() {
+    public function testOverwriteDuplicateMediaObject()
+    {
         KapostService::config()->duplicate_assets='overwrite';
         
         $response=$this->call_service('new-media-asset');
@@ -593,7 +610,8 @@ class KapostServiceTest extends FunctionalTest {
     /**
      * Tests handling of ignoring duplicate media objects
      */
-    public function testIgnoreDuplicateMediaObject() {
+    public function testIgnoreDuplicateMediaObject()
+    {
         KapostService::config()->duplicate_assets='ignore';
         
         $response=$this->call_service('new-media-asset');
@@ -618,7 +636,8 @@ class KapostServiceTest extends FunctionalTest {
     /**
      * Tests to see if the preview functionality is working correctly
      */
-    public function testPreviewObject() {
+    public function testPreviewObject()
+    {
         $response=$this->call_service('get-preview');
         
         
@@ -683,7 +702,8 @@ class KapostServiceTest extends FunctionalTest {
     /**
      * Tests to see if the expired token returns a 404 as expected
      */
-    public function testPreviewExpiredToken() {
+    public function testPreviewExpiredToken()
+    {
         //Generate the preview token
         $token=new KapostPreviewToken();
         $token->Code='testcode';
@@ -707,7 +727,8 @@ class KapostServiceTest extends FunctionalTest {
     /**
      * Tests to see if the kapost thread tag stripping is enabled
      */
-    public function testThreadTagStripping() {
+    public function testThreadTagStripping()
+    {
         //Ensure thread filtering is enabled
         KapostService::config()->filter_kapost_threads=true;
         
@@ -759,7 +780,8 @@ class KapostServiceTest extends FunctionalTest {
      * @param {string} $mockRequest Mock Request to load
      * @return {SS_HTTPResponse} Response Object
      */
-    protected function call_service($mockRequest) {
+    protected function call_service($mockRequest)
+    {
         return $this->post('kapost-service', array(), array('User-Agent'=>self::USER_AGENT), null, file_get_contents(dirname(__FILE__).'/mock_requests/'.$mockRequest.'.xml'));
     }
     
@@ -768,10 +790,10 @@ class KapostServiceTest extends FunctionalTest {
      * @param {string} $body XML Response
      * @return {xmlrpcresp} XML RPC Response Object
      */
-    final protected function parseRPCResponse($body) {
+    final protected function parseRPCResponse($body)
+    {
         $xmlmsg=new xmlrpcmsg('');
         
         return $xmlmsg->parseResponse($body, true, 'phpvals');
     }
 }
-?>

@@ -1,9 +1,11 @@
 <?php
-class KapostGridFieldRefreshButton implements GridField_HTMLProvider, GridField_ActionProvider {
+class KapostGridFieldRefreshButton implements GridField_HTMLProvider, GridField_ActionProvider
+{
     /**
      * @param string $targetFragment The HTML fragment to write the button into
      */
-    public function __construct($targetFragment='after') {
+    public function __construct($targetFragment='after')
+    {
         $this->targetFragment=$targetFragment;
     }
     
@@ -14,7 +16,8 @@ class KapostGridFieldRefreshButton implements GridField_HTMLProvider, GridField_
      * @param {array} $arguments Arguments relevant for the action
      * @param {array} $data All form data
      */
-    public function handleAction(GridField $gridField, $actionName, $arguments, $data) {
+    public function handleAction(GridField $gridField, $actionName, $arguments, $data)
+    {
         //Do nothing, we want to just reload the list
     }
     
@@ -23,7 +26,8 @@ class KapostGridFieldRefreshButton implements GridField_HTMLProvider, GridField_
      * @param GridField GridField bound to
      * @return {array} Array with action identifier strings.
      */
-    public function getActions($gridField) {
+    public function getActions($gridField)
+    {
         return array('refresh-grid');
     }
     
@@ -32,7 +36,8 @@ class KapostGridFieldRefreshButton implements GridField_HTMLProvider, GridField_
      * @param {GridField} $gridField GridField bound to
      * @return {array} Array of HTML fragments to add
      */
-    public function getHTMLFragments($gridField) {
+    public function getHTMLFragments($gridField)
+    {
         $button=GridField_FormAction::create($gridField, 'refresh-grid', _t('KapostGridFieldRefreshButton.REFRESH_LIST', '_Refresh List'), 'refresh-grid', null)
                                             ->setAttribute('data-icon', 'arrow-circle-double');
         
@@ -41,4 +46,3 @@ class KapostGridFieldRefreshButton implements GridField_HTMLProvider, GridField_
                 );
     }
 }
-?>

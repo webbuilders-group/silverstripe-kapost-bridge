@@ -1,5 +1,6 @@
 <?php
-class KapostService extends Controller implements PermissionProvider {
+class KapostService extends Controller implements PermissionProvider
+{
     /**
      * If set to true when the service is called the user agent of the request is checked to see if it is Kapost's XML-RPC user agent
      * @config KapostService.check_user_agent
@@ -88,14 +89,15 @@ class KapostService extends Controller implements PermissionProvider {
     /**
      * Handles incoming requests to the kapost service
      */
-    public function index() {
+    public function index()
+    {
         //If the request is not a post request 404
-        if(!$this->request->isPOST()) {
+        if (!$this->request->isPOST()) {
             return ErrorPage::response_for(404);
         }
         
         //If the request is not the kapost user agent 404
-        if(self::config()->check_user_agent==true && $this->request->getHeader('User-Agent')!='Kapost XMLRPC::Client') {
+        if (self::config()->check_user_agent==true && $this->request->getHeader('User-Agent')!='Kapost XMLRPC::Client') {
             return ErrorPage::response_for(404);
         }
         
@@ -109,7 +111,7 @@ class KapostService extends Controller implements PermissionProvider {
         $server->compress_response=true;
         
         
-        if(Director::isDev()) {
+        if (Director::isDev()) {
             $server->setDebug(3); //Base 64 encoded debug information is included in the response
         }
         
@@ -123,30 +125,30 @@ class KapostService extends Controller implements PermissionProvider {
         
         try {
             return $server->service($this->request->getBody(), true);
-        }catch(Exception $e) {
+        } catch (Exception $e) {
             //Call on SS_Log to log the error
             SS_Log::log($e, SS_Log::ERR);
             
             
             //Allow exceptions to handle the response
             $results=$this->extend('onException', $e);
-            if($results && is_array($results)) {
-                $results=array_filter($results, function($v) {return (!is_null($v) && $v instanceof xmlrpcresp);});
+            if ($results && is_array($results)) {
+                $results=array_filter($results, function ($v) {return (!is_null($v) && $v instanceof xmlrpcresp);});
             
-                if(count($results)>0) {
+                if (count($results)>0) {
                     $this->generateErrorResponse($server, array_shift($results));
                 }
             }
             
             
             //If we're in dev mode relay the actual message to the client
-            if(Director::isDev()) {
+            if (Director::isDev()) {
                 $response=new xmlrpcresp(0, $e->getCode(), _t('KapostService.ERROR_MESSAGE', '_{message} in {file} line {line_number}', array(
                                                                                                                                         'message'=>$e->getMessage(),
                                                                                                                                         'file'=>$e->getFile(),
                                                                                                                                         'line_number'=>$e->getLine()
                                                                                                                                     )));
-            }else {
+            } else {
                 $response=new xmlrpcresp(0, 17, _t('KapostService.SERVER_ERROR', '_Internal server error'));
             }
             
@@ -158,14 +160,15 @@ class KapostService extends Controller implements PermissionProvider {
      * Handles rendering of the preview for an object
      * @return {string} Response to send to the object
      */
-    public function preview() {
+    public function preview()
+    {
         $auth=$this->request->getVar('auth');
         $token=KapostPreviewToken::get()->filter('Code', Convert::raw2sql($auth))->first();
         
         //Verify the token exists and hasn't expired yet
-        if(!empty($token) && $token!==false && $token->exists() && time()-strtotime($token->Created)<self::config()->preview_token_expiry*60 && $token->KapostRefID==$this->urlParams['ID']) {
+        if (!empty($token) && $token!==false && $token->exists() && time()-strtotime($token->Created)<self::config()->preview_token_expiry*60 && $token->KapostRefID==$this->urlParams['ID']) {
             $kapostObj=KapostObject::get()->filter('KapostRefID', Convert::raw2sql($this->urlParams['ID']))->sort('"Created" DESC')->first();
-            if(!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
+            if (!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
                 $previewController=$kapostObj->renderPreview();
                 
                 $this->extend('updatePreviewDisplay', $kapostObj, $previewController);
@@ -177,7 +180,7 @@ class KapostService extends Controller implements PermissionProvider {
         
         //Token expired or object not found
         $response=ErrorPage::response_for(404);
-        if(!empty($response)) {
+        if (!empty($response)) {
             return $response;
         }
         
@@ -188,47 +191,48 @@ class KapostService extends Controller implements PermissionProvider {
      * Handles RPC request methods
      * @param {xmlrpcmsg} $request XML-RPC Request Object
      */
-    public function handleRPCMethod(xmlrpcmsg $request) {
+    public function handleRPCMethod(xmlrpcmsg $request)
+    {
         $username=$request->getParam(1)->getval();
         $password=$request->getParam(2)->getval();
         
-        if($this->authenticate($username, $password)) {
+        if ($this->authenticate($username, $password)) {
             $method=str_replace(array('blogger.', 'metaWeblog.', 'kapost.'), '', $request->methodname);
             
-            if(!in_array($request->methodname, $this->exposed_methods) || !method_exists($this, $method)) {
+            if (!in_array($request->methodname, $this->exposed_methods) || !method_exists($this, $method)) {
                 return $this->httpError(403, _t('KapostService.METHOD_NOT_ALLOWED', '_Action "{method}" is not allowed on class Kapost Service.', array('method'=>$request->methodname)));
             }
             
             
             //Pack params into call to method if they are not the authentication parameters
             $params=array();
-            for($i=0;$i<$request->getNumParams();$i++) {
-                if($i!=1 && $i!=2) {
+            for ($i=0;$i<$request->getNumParams();$i++) {
+                if ($i!=1 && $i!=2) {
                     $params[]=php_xmlrpc_decode($request->getParam($i));
                 }
             }
             
             
             //Convert the custom fields to an associtive array
-            if(array_key_exists(1, $params) && is_array($params[1]) && array_key_exists('custom_fields', $params[1])) {
+            if (array_key_exists(1, $params) && is_array($params[1]) && array_key_exists('custom_fields', $params[1])) {
                 $params[1]['custom_fields']=$this->struct_to_assoc($params[1]['custom_fields']);
             }
             
             
             //If transactions are supported start one for newPost and editPost
-            if(($method=='newPost' || $method=='editPost') && DB::getConn()->supportsTransactions()) {
+            if (($method=='newPost' || $method=='editPost') && DB::getConn()->supportsTransactions()) {
                 DB::getConn()->transactionStart();
             }
             
             
             //Call the method
             $response=call_user_func_array(array($this, $method), $params);
-            if($response instanceof xmlrpcresp) {
+            if ($response instanceof xmlrpcresp) {
                 //If transactions are supported check the response and rollback in the case of a fault
-                if(($method=='newPost' || $method=='editPost' || $method=='newMediaObject') && DB::getConn()->supportsTransactions()) {
-                    if($response->faultCode()!=0) {
+                if (($method=='newPost' || $method=='editPost' || $method=='newMediaObject') && DB::getConn()->supportsTransactions()) {
+                    if ($response->faultCode()!=0) {
                         DB::getConn()->transactionRollback();
-                    }else {
+                    } else {
                         DB::getConn()->transactionEnd();
                     }
                 }
@@ -238,13 +242,13 @@ class KapostService extends Controller implements PermissionProvider {
             
             //Encode the response
             $response=php_xmlrpc_encode($response);
-            if(is_object($response) && $response instanceof xmlrpcval) {
+            if (is_object($response) && $response instanceof xmlrpcval) {
                 $response=new xmlrpcresp($response);
                 
-                if(($method=='newPost' || $method=='editPost' || $method=='newMediaObject') && DB::getConn()->supportsTransactions()) {
-                    if($response->faultCode()!=0) {
+                if (($method=='newPost' || $method=='editPost' || $method=='newMediaObject') && DB::getConn()->supportsTransactions()) {
+                    if ($response->faultCode()!=0) {
                         DB::getConn()->transactionRollback();
-                    }else {
+                    } else {
                         DB::getConn()->transactionEnd();
                     }
                 }
@@ -268,7 +272,8 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {string} $password Password to match against
      * @return {bool} Returns boolean true if authentication passes false otherwise
      */
-    protected function authenticate($username, $password) {
+    protected function authenticate($username, $password)
+    {
         $authenticator=$this->config()->authenticator_class;
         
         $member=$authenticator::authenticate(array(
@@ -285,7 +290,8 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {string} $errorMessage Error message string
      * @return {xmlrpcresp} XML-RPC response object
      */
-    public function httpError($errorCode, $errorMessage=null) {
+    public function httpError($errorCode, $errorMessage=null)
+    {
         return new xmlrpcresp(0, $errorCode+10000, $errorMessage);
     }
     
@@ -293,15 +299,16 @@ class KapostService extends Controller implements PermissionProvider {
      * Gets the site config or subsites for the current site
      * @return {array} Nested array of sites
      */
-    protected function getUsersBlogs($app_id) {
-        if(SiteConfig::has_extension('SiteConfigSubsites')) {
+    protected function getUsersBlogs($app_id)
+    {
+        if (SiteConfig::has_extension('SiteConfigSubsites')) {
             $response=array();
             
             //Disable subsite filter
             Subsite::disable_subsite_filter();
             
             $subsites=Subsite::get();
-            foreach($subsites as $subsite) {
+            foreach ($subsites as $subsite) {
                 $response[]=array(
                                 'blogid'=>$subsite->ID,
                                 'blogname'=>$subsite->Title
@@ -331,37 +338,38 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {int} $publish 0 or 1 depending on whether to publish the post or not
      * @param {bool} $isPreview Is preview mode or not (defaults to false)
      */
-    protected function newPost($blog_id, $content, $publish, $isPreview=false) {
+    protected function newPost($blog_id, $content, $publish, $isPreview=false)
+    {
         $results=$this->extend('newPost', $blog_id, $content, $publish, $isPreview);
-        if($results && is_array($results)) {
-            $results=array_filter($results, function($v) {return !is_null($v);});
+        if ($results && is_array($results)) {
+            $results=array_filter($results, function ($v) {return !is_null($v);});
             
-            if(count($results)>0) {
+            if (count($results)>0) {
                 return array_shift($results);
             }
         }
         
         
-        if(array_key_exists('custom_fields', $content)) {
+        if (array_key_exists('custom_fields', $content)) {
             //Ensure the type is an extension of the KapostPage object
-            if(!class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) || !('Kapost'.$content['custom_fields']['kapost_custom_type']=='KapostPage' || is_subclass_of('Kapost'.$content['custom_fields']['kapost_custom_type'], 'KapostPage'))) {
+            if (!class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) || !('Kapost'.$content['custom_fields']['kapost_custom_type']=='KapostPage' || is_subclass_of('Kapost'.$content['custom_fields']['kapost_custom_type'], 'KapostPage'))) {
                 return $this->httpError(400, _t('KapostService.TYPE_NOT_KNOWN', '_The type "{type}" is not a known type', array('type'=>$content['custom_fields']['kapost_custom_type'])));
             }
             
             $className='Kapost'.$content['custom_fields']['kapost_custom_type'];
-        }else {
+        } else {
             //Assume we're creating a page and set the content as such
             $className='KapostPage';
         }
         
         
         $pageTitle=$content['title'];
-        if(array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']) && !empty($content['custom_fields']['SS_Title'])) {
+        if (array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']) && !empty($content['custom_fields']['SS_Title'])) {
             $pageTitle=$content['custom_fields']['SS_Title'];
         }
         
         $menuTitle=$content['title'];
-        if(empty($content['title']) && array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']) && !empty($content['custom_fields']['SS_Title'])) {
+        if (empty($content['title']) && array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']) && !empty($content['custom_fields']['SS_Title'])) {
             $menuTitle=$content['custom_fields']['SS_Title'];
         }
         
@@ -379,7 +387,7 @@ class KapostService extends Controller implements PermissionProvider {
         
         
         //Fallback for tests where the kapost_post_id is missing
-        if(!array_key_exists('custom_fields', $content)) {
+        if (!array_key_exists('custom_fields', $content)) {
             $obj->KapostRefID=$className.'_'.$obj->ID;
             $obj->write();
         }
@@ -398,19 +406,20 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {int} $publish 0 or 1 depending on whether to publish the post or not
      * @param {bool} $isPreview Is preview mode or not (defaults to false)
      */
-    protected function editPost($content_id, $content, $publish, $isPreview=false) {
+    protected function editPost($content_id, $content, $publish, $isPreview=false)
+    {
         $results=$this->extend('editPost', $content_id, $content, $publish, $isPreview);
-        if($results && is_array($results)) {
-            $results=array_filter($results, function($v) {return !is_null($v);});
+        if ($results && is_array($results)) {
+            $results=array_filter($results, function ($v) {return !is_null($v);});
             
-            if(count($results)>0) {
+            if (count($results)>0) {
                 return array_shift($results);
             }
         }
         
         
         //Ensure the type is an extension of the KapostPage object
-        if(array_key_exists('custom_fields', $content) && (!class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) || !('Kapost'.$content['custom_fields']['kapost_custom_type']=='KapostPage' || is_subclass_of('Kapost'.$content['custom_fields']['kapost_custom_type'], 'KapostPage')))) {
+        if (array_key_exists('custom_fields', $content) && (!class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) || !('Kapost'.$content['custom_fields']['kapost_custom_type']=='KapostPage' || is_subclass_of('Kapost'.$content['custom_fields']['kapost_custom_type'], 'KapostPage')))) {
             return $this->httpError(400, _t('KapostService.TYPE_NOT_KNOWN', '_The type "{type}" is not a known type', array('type'=>$content['custom_fields']['kapost_custom_type'])));
         }
         
@@ -427,18 +436,18 @@ class KapostService extends Controller implements PermissionProvider {
         
         
         $pageTitle=$content['title'];
-        if(array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']) && !empty($content['custom_fields']['SS_Title'])) {
+        if (array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']) && !empty($content['custom_fields']['SS_Title'])) {
             $pageTitle=$content['custom_fields']['SS_Title'];
         }
         
         $menuTitle=$content['title'];
-        if(empty($content['title']) && array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']) && !empty($content['custom_fields']['SS_Title'])) {
+        if (empty($content['title']) && array_key_exists('custom_fields', $content) && array_key_exists('SS_Title', $content['custom_fields']) && !empty($content['custom_fields']['SS_Title'])) {
             $menuTitle=$content['custom_fields']['SS_Title'];
         }
         
         
         $kapostObj=KapostObject::get()->filter('KapostRefID', Convert::raw2sql($content_id))->first();
-        if(!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
+        if (!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
             $kapostObj->Title=$pageTitle;
             $kapostObj->MenuTitle=$menuTitle;
             $kapostObj->Content=(self::config()->filter_kapost_threads==true ? $this->filterKapostThreads($content['description']):$content['description']);
@@ -454,7 +463,7 @@ class KapostService extends Controller implements PermissionProvider {
             $this->extend('updateEditKapostPage', $kapostObj, $content_id, $content, $publish, $isPreview);
             
             return true;
-        }else {
+        } else {
             $className=(array_key_exists('custom_fields', $content) ? 'Kapost'.$content['custom_fields']['kapost_custom_type']:'KapostPage');
             
             $obj=new $className();
@@ -486,12 +495,13 @@ class KapostService extends Controller implements PermissionProvider {
      * Gets the details of a post from the system
      * @param {mixed} $content_id ID of the post in the system
      */
-    protected function getPost($content_id) {
+    protected function getPost($content_id)
+    {
         $results=$this->extend('getPost', $content_id);
-        if($results && is_array($results)) {
-            $results=array_filter($results, function($v) {return !is_null($v);});
+        if ($results && is_array($results)) {
+            $results=array_filter($results, function ($v) {return !is_null($v);});
             
-            if(count($results)>0) {
+            if (count($results)>0) {
                 return array_shift($results);
             }
         }
@@ -507,7 +517,7 @@ class KapostService extends Controller implements PermissionProvider {
         Versioned::set_reading_mode($oldReadingStage);
         
         
-        if(!empty($page) && $page!==false && $page->exists()) {
+        if (!empty($page) && $page!==false && $page->exists()) {
             $postMeta=array(
                         'title'=>$page->Title,
                         'description'=>$page->Content,
@@ -523,16 +533,16 @@ class KapostService extends Controller implements PermissionProvider {
             
             //Allow extensions to modify the page meta
             $results=$this->extend('updatePageMeta', $page);
-            if(count($results)>0) {
-                for($i=0;$i<count($results);$i++) {
+            if (count($results)>0) {
+                for ($i=0;$i<count($results);$i++) {
                     $postMeta=$this->mergeResultArray($postMeta, $results[$i]);
                 }
             }
             
             return $postMeta;
-        }else {
+        } else {
             $kapostObj=KapostObject::get()->filter('KapostRefID', Convert::raw2sql($content_id))->first();
-            if(!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
+            if (!empty($kapostObj) && $kapostObj!==false && $kapostObj->exists()) {
                 $postMeta=array(
                             'title'=>$kapostObj->Title,
                             'description'=>$kapostObj->Content,
@@ -548,8 +558,8 @@ class KapostService extends Controller implements PermissionProvider {
                 
                 //Allow extensions to modify the page meta
                 $results=$this->extend('updateObjectMeta', $kapostObj);
-                if(count($results)>0) {
-                    for($i=0;$i<count($results);$i++) {
+                if (count($results)>0) {
+                    for ($i=0;$i<count($results);$i++) {
                         $postMeta=$this->mergeResultArray($postMeta, $results[$i]);
                     }
                 }
@@ -566,11 +576,12 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {mixed} $blog_id ID of the blog
      * @return {array} Array of categories
      */
-    protected function getCategories($blog_id) {
+    protected function getCategories($blog_id)
+    {
         $categories=array();
         $pageClasses=ClassInfo::subclassesFor('SiteTree');
-        foreach($pageClasses as $class) {
-            if($class!='SiteTree') {
+        foreach ($pageClasses as $class) {
+            if ($class!='SiteTree') {
                 $categories[]=array(
                                 'categoryId'=>'ss_'.strtolower($class),
                                 'categoryName'=>singleton($class)->i18n_singular_name(),
@@ -582,11 +593,11 @@ class KapostService extends Controller implements PermissionProvider {
         
         
         $results=$this->extend('getCategories', $blog_id);
-        if($results && is_array($results)) {
-            $results=array_filter($results, function($v) {return !is_null($v);});
+        if ($results && is_array($results)) {
+            $results=array_filter($results, function ($v) {return !is_null($v);});
             
-            if(count($results)>0) {
-                for($i=0;$i<count($results);$i++) {
+            if (count($results)>0) {
+                for ($i=0;$i<count($results);$i++) {
                     $categories=array_merge($categories, $results[$i]);
                 }
             }
@@ -601,13 +612,14 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {array} $content Content object to be handled
      * @return {xmlrpcresp} XML-RPC Response object
      */
-    protected function newMediaObject($blog_id, $content) {
+    protected function newMediaObject($blog_id, $content)
+    {
         $fileName=$content['name'];
         $validator=new Upload_Validator(array('name'=>$fileName));
         $validator->setAllowedExtensions(File::config()->allowed_extensions);
         
         //Verify we have a valid extension
-        if($validator->isValidExtension()==false) {
+        if ($validator->isValidExtension()==false) {
             return $this->httpError(403, _t('KapostService.FILE_NOT_ALLOWED', '_File extension is not allowed'));
         }
         
@@ -615,19 +627,19 @@ class KapostService extends Controller implements PermissionProvider {
         //Generate default filename
         $nameFilter=FileNameFilter::create();
         $file=$nameFilter->filter($fileName);
-        while($file[0]=='_' || $file[0]=='.') {
+        while ($file[0]=='_' || $file[0]=='.') {
             $file=substr($file, 1);
         }
         
         $doubleBarrelledExts=array('.gz', '.bz', '.bz2');
         
         $ext="";
-        if(preg_match('/^(.*)(\.[^.]+)$/', $file, $matches)) {
+        if (preg_match('/^(.*)(\.[^.]+)$/', $file, $matches)) {
             $file=$matches[1];
             $ext=$matches[2];
             
             // Special case for double-barrelled 
-            if(in_array($ext, $doubleBarrelledExts) && preg_match('/^(.*)(\.[^.]+)$/', $file, $matches)) {
+            if (in_array($ext, $doubleBarrelledExts) && preg_match('/^(.*)(\.[^.]+)$/', $file, $matches)) {
                 $file=$matches[1];
                 $ext=$matches[2].$ext;
             }
@@ -639,12 +651,12 @@ class KapostService extends Controller implements PermissionProvider {
         //Find the kapost media folder
         $kapostMediaFolder=Folder::find_or_make($this->config()->kapost_media_folder);
         
-        if(file_exists($kapostMediaFolder->getFullPath().'/'.$file.$ext)) {
-            if(self::config()->duplicate_assets=='overwrite') {
+        if (file_exists($kapostMediaFolder->getFullPath().'/'.$file.$ext)) {
+            if (self::config()->duplicate_assets=='overwrite') {
                 $obj=File::get()->filter('Filename', Convert::raw2sql($kapostMediaFolder->Filename.$file.$ext))->first();
-                if(!empty($obj) && $obj!==false && $obj->ID>0) {
+                if (!empty($obj) && $obj!==false && $obj->ID>0) {
                     //Update the Title for the image
-                    $obj->Title=(!empty($content['alt']) ? $content['alt']:str_replace(array('-','_'), ' ', preg_replace('/\.[^.]+$/', '', $obj->Name)));
+                    $obj->Title=(!empty($content['alt']) ? $content['alt']:str_replace(array('-', '_'), ' ', preg_replace('/\.[^.]+$/', '', $obj->Name)));
                     $obj->write();
                     
                     //Write the file to the file system
@@ -659,14 +671,14 @@ class KapostService extends Controller implements PermissionProvider {
                 }
                 
                 return $this->httpError(404, _t('KapostService.FILE_NOT_FOUND', '_File not found'));
-            }else if(self::config()->duplicate_assets=='ignore') {
+            } elseif (self::config()->duplicate_assets=='ignore') {
                 return $this->httpError(409, _t('KapostService.DUPLICATE_FILE', '_Duplicate file detected, please rename the file and try again'));
-            }else {
-                if(self::config()->duplicate_assets=='smart_rename' && file_exists($kapostMediaFolder->getFullPath().'/'.$file.$ext)) {
+            } else {
+                if (self::config()->duplicate_assets=='smart_rename' && file_exists($kapostMediaFolder->getFullPath().'/'.$file.$ext)) {
                     $obj=File::get()->filter('Filename', Convert::raw2sql($kapostMediaFolder->Filename.$file.$ext))->first();
-                    if(!empty($obj) && $obj!==false && $obj->ID>0) {
+                    if (!empty($obj) && $obj!==false && $obj->ID>0) {
                         $fileHash=sha1_file($kapostMediaFolder->getFullPath().'/'.$file.$ext);
-                        if($fileHash==sha1($content['bits'])) {
+                        if ($fileHash==sha1($content['bits'])) {
                             return array(
                                         'id'=>$obj->ID,
                                         'url'=>$obj->getAbsoluteURL()
@@ -676,19 +688,19 @@ class KapostService extends Controller implements PermissionProvider {
                 }
                 
                 $i = 1;
-                while(file_exists($kapostMediaFolder->getFullPath().'/'.$file.$ext)) {
+                while (file_exists($kapostMediaFolder->getFullPath().'/'.$file.$ext)) {
                     $i++;
                     $oldFile=$file;
                      
-                    if(strpos($file, '.')!==false) {
+                    if (strpos($file, '.')!==false) {
                         $file = preg_replace('/[0-9]*(\.[^.]+$)/', $i.'\\1', $file);
-                    }else if(strpos($file, '_')!==false) {
+                    } elseif (strpos($file, '_')!==false) {
                         $file=preg_replace('/_([^_]+$)/', '_'.$i, $file);
-                    }else {
+                    } else {
                         $file.='_'.$i;
                     }
                     
-                    if($oldFile==$file && $i > 2) {
+                    if ($oldFile==$file && $i > 2) {
                         return $this->httpError(500, _t('KapostService.FILE_RENAME_FAIL', '_Could not fix {filename} with {attempts} attempts', array('filename'=>$file.$ext, 'attempts'=>$i)));
                     }
                 }
@@ -703,12 +715,12 @@ class KapostService extends Controller implements PermissionProvider {
                 $className=File::get_class_for_file_extension(substr($ext, 1));
                 $obj=new $className();
                 $obj->Name=$file.$ext;
-                $obj->Title=(!empty($content['alt']) ? $content['alt']:str_replace(array('-','_'), ' ', preg_replace('/\.[^.]+$/', '', $obj->Name)));
+                $obj->Title=(!empty($content['alt']) ? $content['alt']:str_replace(array('-', '_'), ' ', preg_replace('/\.[^.]+$/', '', $obj->Name)));
                 $obj->FileName=$kapostMediaFolder->getRelativePath().'/'.$file.$ext;
                 $obj->ParentID=$kapostMediaFolder->ID;
                 
                 //If subsites is enabled add it to the correct subsite
-                if(File::has_extension('FileSubsites')) {
+                if (File::has_extension('FileSubsites')) {
                     $obj->SubsiteID=$blog_id;
                 }
                 
@@ -723,7 +735,7 @@ class KapostService extends Controller implements PermissionProvider {
                             'url'=>$obj->getAbsoluteURL()
                         );
             }
-        }else {
+        } else {
             //Write the file to the file system
             $f=fopen($kapostMediaFolder->getFullPath().'/'.$file.$ext, 'w');
             fwrite($f, $content['bits']);
@@ -734,12 +746,12 @@ class KapostService extends Controller implements PermissionProvider {
             $className=File::get_class_for_file_extension(substr($ext, 1));
             $obj=new $className();
             $obj->Name=$file.$ext;
-            $obj->Title=(!empty($content['alt']) ? $content['alt']:str_replace(array('-','_'), ' ', preg_replace('/\.[^.]+$/', '', $obj->Name)));
+            $obj->Title=(!empty($content['alt']) ? $content['alt']:str_replace(array('-', '_'), ' ', preg_replace('/\.[^.]+$/', '', $obj->Name)));
             $obj->FileName=$kapostMediaFolder->getRelativePath().'/'.$file.$ext;
             $obj->ParentID=$kapostMediaFolder->ID;
             
             //If subsites is enabled add it to the correct subsite
-            if(File::has_extension('FileSubsites')) {
+            if (File::has_extension('FileSubsites')) {
                 $obj->SubsiteID=$blog_id;
             }
             
@@ -761,12 +773,13 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {array} $content Post details
      * @param {mixed} $content_id Identifier for the post
      */
-    protected function getPreview($blog_id, $content, $content_id) {
+    protected function getPreview($blog_id, $content, $content_id)
+    {
         $results=$this->extend('getPreview', $blog_id, $content, $content_id);
-        if($results && is_array($results)) {
-            $results=array_filter($results, function($v) {return !is_null($v);});
+        if ($results && is_array($results)) {
+            $results=array_filter($results, function ($v) {return !is_null($v);});
         
-            if(count($results)>0) {
+            if (count($results)>0) {
                 return array_shift($results);
             }
         }
@@ -774,15 +787,15 @@ class KapostService extends Controller implements PermissionProvider {
         
         //Detect if the record already exists or not so we can decide whether to create a new record or edit an existing
         $existing=KapostObject::get()->filter('KapostRefID', Convert::raw2sql($content_id))->first();
-        if(!empty($existing) && $existing!==false && $existing->exists()) {
+        if (!empty($existing) && $existing!==false && $existing->exists()) {
             $resultID=$content_id;
             
             $this->editPost($content_id, $content, false, true);
-        }else {
+        } else {
             $resultID=$this->newPost($blog_id, $content, false, true);
             
             //Make sure we got the kapost hash back or an id if we got an object back we assume that it's a response
-            if(is_object($resultID)) {
+            if (is_object($resultID)) {
                 return $resultID;
             }
             
@@ -791,7 +804,7 @@ class KapostService extends Controller implements PermissionProvider {
         }
         
         //Make sure we got the kapost hash back or an id if we got an object back we assume that it's a response
-        if(is_object($resultID)) {
+        if (is_object($resultID)) {
             return $resultID;
         }
         
@@ -815,16 +828,17 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {array} $struct Input struct to be converted
      * @return {array} Associtive array matching the struct
      */
-    final protected function struct_to_assoc($struct) {
+    final protected function struct_to_assoc($struct)
+    {
         $result=array();
-        foreach($struct as $item) {
-            if(array_key_exists('key', $item) && array_key_exists('value', $item)) {
-                if(array_key_exists($item['key'], $result)) {
+        foreach ($struct as $item) {
+            if (array_key_exists('key', $item) && array_key_exists('value', $item)) {
+                if (array_key_exists($item['key'], $result)) {
                     user_error('Duplicate key detected in struct entry, content overwritten by the last entry: [New: '.print_r($item, true).'] [Previous: '.print_r($result[$item['key']], true).']', E_USER_WARNING);
                 }
                 
                 $result[$item['key']]=$item['value'];
-            }else {
+            } else {
                 user_error('Key/Value pair not detected in struct entry: '.print_r($item, true), E_USER_NOTICE);
             }
         }
@@ -838,11 +852,12 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {array} $rightArray Right array to merge from
      * @return {array} Resulting array
      */
-    private function mergeResultArray($leftArray, $rightArray) {
-        foreach($rightArray as $key=>$value) {
-            if(is_array($value) && array_key_exists($key, $leftArray)) {
+    private function mergeResultArray($leftArray, $rightArray)
+    {
+        foreach ($rightArray as $key=>$value) {
+            if (is_array($value) && array_key_exists($key, $leftArray)) {
                 $leftArray[$key]=array_merge($leftArray[$key], $value);
-            }else {
+            } else {
                 $leftArray[$key]=$value;
             }
         }
@@ -855,7 +870,8 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {string} $html HTML to filter the tags from
      * @return {string} HTML with tags filtered
      */
-    public function filterKapostThreads($html) {
+    public function filterKapostThreads($html)
+    {
         return preg_replace('/<span(\s+)thread="(.*?)"(\s+)class="thread">(.*?)<\/span>/', '$4', $html);
     }
     
@@ -864,11 +880,12 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {string} $url Absolute url to the file
      * @return {File} Returns the file instance representing the url, or boolean false if it's not found
      */
-    public static function find_file_by_url($url) {
+    public static function find_file_by_url($url)
+    {
         $url=Director::makeRelative($url);
-        if($url) {
+        if ($url) {
             $file=File::get()->filter('Filename', Convert::raw2sql($url))->first();
-            if(!empty($file) && $file!==false && $file->ID>0) {
+            if (!empty($file) && $file!==false && $file->ID>0) {
                 return $file;
             }
         }
@@ -882,13 +899,14 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {xmlrpcresp} $r XML-RPC Response object to relay to client
      * @return {string} Response to be sent to the client
      */
-    protected function generateErrorResponse(xmlrpc_server $server, xmlrpcresp $r) {
+    protected function generateErrorResponse(xmlrpc_server $server, xmlrpcresp $r)
+    {
         $this->response->addHeader('Content-Type', $r->content_type);
         $this->response->addHeader('Vary', 'Accept-Charset');
         
         $payload=$server->xml_header();
         
-        if(empty($r->payload)) {
+        if (empty($r->payload)) {
             $r->serialize($resp_charset);
         }
         
@@ -901,7 +919,8 @@ class KapostService extends Controller implements PermissionProvider {
      * Return a map of permission codes to add to the dropdown shown in the Security section of the CMS.
      * @return {array} Map of permission codes
      */
-    public function providePermissions() {
+    public function providePermissions()
+    {
         return array(
                    'KAPOST_API_ACCESS'=>array(
                                                'category'=>_t('KapostService.KAPOST_BRIDGE', '_Kapost Bridge'),
@@ -911,4 +930,3 @@ class KapostService extends Controller implements PermissionProvider {
                 );
     }
 }
-?>
