@@ -1,14 +1,16 @@
 <?php
-class KapostPageEditControllerExtension extends Extension {
+class KapostPageEditControllerExtension extends Extension
+{
     /**
      * Updates the form to make all of the fields read only with the exception of a few fields
      * @param {Form} $form Form to be adjusted
      */
-    public function updateEditForm(Form $form) {
+    public function updateEditForm(Form $form)
+    {
         $record=$form->getRecord();
-        if($record) {
+        if ($record) {
             $kapostRefID=$record->KapostRefID;
-            if(empty($kapostRefID)) {
+            if (empty($kapostRefID)) {
                 return;
             }
 
@@ -17,18 +19,18 @@ class KapostPageEditControllerExtension extends Extension {
             $form->setFields($oldFields->makeReadonly());
             
             //Make the fields that should be non-readonly editable again
-            foreach($record->config()->non_readonly_fields as $fieldName) {
+            foreach ($record->config()->non_readonly_fields as $fieldName) {
                 $oldField=$oldFields->dataFieldByName($fieldName);
-                if($oldField) {
+                if ($oldField) {
                     $form->Fields()->replaceField($fieldName, $oldField);
                 }
             }
             
             
             //Loop through the wysiwyg fields that need to be made safe and sanitize their html
-            foreach($record->config()->make_safe_wysiwyg_fields as $fieldName) {
+            foreach ($record->config()->make_safe_wysiwyg_fields as $fieldName) {
                 $field=$form->Fields()->dataFieldByName($fieldName);
-                if($field) {
+                if ($field) {
                     $field->setName($field->getName().'_safe');
                     $field->setValue($this->sanitizeHTML($field->Value()));
                 }
@@ -41,7 +43,8 @@ class KapostPageEditControllerExtension extends Extension {
      * @param {string} $str String to be sanitized
      * @return {string} HTML to be used
      */
-    private function sanitizeHTML($str) {
+    private function sanitizeHTML($str)
+    {
         $htmlValue=Injector::inst()->create('HTMLValue', $str);
         $santiser=Injector::inst()->create('HtmlEditorSanitiser', HtmlEditorConfig::get_active());
         $santiser->sanitise($htmlValue);
@@ -49,4 +52,3 @@ class KapostPageEditControllerExtension extends Extension {
         return $htmlValue->getContent();
     }
 }
-?>

@@ -1,5 +1,6 @@
 <?php
-class KapostObject extends DataObject {
+class KapostObject extends DataObject
+{
     private static $db=array(
                             'Title'=>'Varchar(255)',
                             'Content'=>'HTMLText',
@@ -25,7 +26,8 @@ class KapostObject extends DataObject {
      * @param {int|Member} $member Member ID or member instance
      * @return {bool} Returns boolean false
      */
-    final public function canCreate($member=null) {
+    final public function canCreate($member=null)
+    {
         return false;
     }
     
@@ -34,7 +36,8 @@ class KapostObject extends DataObject {
      * @param {int|Member} $member Member ID or member instance
      * @return {bool} Returns boolean false
      */
-    final public function canEdit($member=null) {
+    final public function canEdit($member=null)
+    {
         return false;
     }
     
@@ -43,7 +46,8 @@ class KapostObject extends DataObject {
      * Gets fields used in the cms
      * @return {FieldList} Fields to be used
      */
-    public function getCMSFields() {
+    public function getCMSFields()
+    {
         $fields=new FieldList(
                             new TabSet('Root',
                                     new Tab('Main', _t('KapostObject.MAIN', '_Main'),
@@ -69,8 +73,9 @@ class KapostObject extends DataObject {
      * Gets the change type's friendly label
      * @return {string} Returns new or edit
      */
-    public function getKapostChangeTypeNice() {
-        switch($this->KapostChangeType) {
+    public function getKapostChangeTypeNice()
+    {
+        switch ($this->KapostChangeType) {
             case 'new': return _t('KapostFieldCaster.CHANGE_TYPE_NEW', '_New');
             case 'edit': return _t('KapostFieldCaster.CHANGE_TYPE_EDIT', '_Edit');
         }
@@ -82,8 +87,9 @@ class KapostObject extends DataObject {
      * Gets the publish type's friendly label
      * @return {string} Returns live or draft
      */
-    public function getToPublishNice() {
-        if($this->ToPublish==true) {
+    public function getToPublishNice()
+    {
+        if ($this->ToPublish==true) {
             return _t('KapostFieldCaster.PUBLISH_TYPE_LIVE', '_Live');
         }
     
@@ -94,7 +100,8 @@ class KapostObject extends DataObject {
      * Wrapper for the object's i18n_singular_name()
      * @return {string} Non-XML ready result of i18n_singular_name or the raw value
      */
-    public function getClassNameNice() {
+    public function getClassNameNice()
+    {
         return $this->i18n_singular_name();
     }
     
@@ -102,7 +109,8 @@ class KapostObject extends DataObject {
      * Gets the destination class when converting to the final object, by default this simply removes Kapost form the class name
      * @return {string} Class to convert to
      */
-    public function getDestinationClass() {
+    public function getDestinationClass()
+    {
         return preg_replace('/^Kapost/', '', $this->ClassName);
     }
     
@@ -111,7 +119,8 @@ class KapostObject extends DataObject {
      * @param {string} $str String to be sanitized
      * @return {string} HTML to be used
      */
-    final public function sanitizeHTML($str) {
+    final public function sanitizeHTML($str)
+    {
         $htmlValue=Injector::inst()->create('HTMLValue', $str);
         $santiser=Injector::inst()->create('HtmlEditorSanitiser', HtmlEditorConfig::get_active());
         $santiser->sanitise($htmlValue);
@@ -124,14 +133,15 @@ class KapostObject extends DataObject {
      * @param {array} $_params
      * @return {FieldList} Form fields to use in searching
      */
-    public function scaffoldSearchFields($_params=null) {
+    public function scaffoldSearchFields($_params=null)
+    {
         $fields=parent::scaffoldSearchFields($_params);
         
-        if(!$fields->dataFieldByName('ClassNameNice')) {
+        if (!$fields->dataFieldByName('ClassNameNice')) {
             $classMap=ClassInfo::subclassesFor('KapostObject');
             unset($classMap['KapostObject']);
             
-            foreach($classMap as $key=>$value) {
+            foreach ($classMap as $key=>$value) {
                 $classMap[$key]=_t($key.'.SINGULARNAME', $value);
             }
             
@@ -145,10 +155,11 @@ class KapostObject extends DataObject {
      * Gets the summary fields for this object
      * @return {array} Map of fields to labels
      */
-    public function summaryFields() {
+    public function summaryFields()
+    {
         $fields=parent::summaryFields();
         
-        if(array_key_exists('ClassNameNice', $fields)) {
+        if (array_key_exists('ClassNameNice', $fields)) {
             $fields['ClassNameNice']=_t('KapostObject.CONTENT_TYPE', '_Content Type');
         }
         
@@ -159,7 +170,8 @@ class KapostObject extends DataObject {
      * Used for recording a conversion history record
      * @return {KapostConversionHistory}
      */
-    public function createConversionHistory($destinationID) {
+    public function createConversionHistory($destinationID)
+    {
         user_error('You should implement the createConversionHistory() method on your decendent of KapostObject', E_USER_WARNING);
     }
     
@@ -167,8 +179,9 @@ class KapostObject extends DataObject {
      * Handles rendering of the preview for this object
      * @return {string} Preview to be rendered
      */
-    public function renderPreview() {
-        if(Director::isDev()) {
+    public function renderPreview()
+    {
+        if (Director::isDev()) {
             user_error('You should implement the renderPreview() method on your decendent of KapostObject', E_USER_WARNING);
         }
         
@@ -179,14 +192,16 @@ class KapostObject extends DataObject {
      * Gets the edit link for the Kapost Object
      * @return {string} Edit link for the Kapost Object
      */
-    public function CMSEditLink() {
+    public function CMSEditLink()
+    {
         return Controller::join_links(LeftAndMain::config()->url_base, KapostAdmin::config()->url_segment, 'KapostObject/EditForm/field/KapostObject/item', $this->ID, 'edit');
     }
     
     /**
      * Calls the cleanup expired previews after writing
      */
-    protected function onAfterWrite() {
+    protected function onAfterWrite()
+    {
         parent::onAfterWrite();
         
         
@@ -196,13 +211,13 @@ class KapostObject extends DataObject {
     /**
      * Cleans up expired Kapost previews after twice the token expiry
      */
-    protected function cleanUpExpiredPreviews() {
+    protected function cleanUpExpiredPreviews()
+    {
         $expiredPreviews=KapostObject::get()->filter('IsKapostPreview', true)->filter('LastEdited:LessThan', date('Y-m-d H:i:s', strtotime('-'.(KapostService::config()->preview_data_expiry).' minutes')));
-        if($expiredPreviews->count()>0) {
-            foreach($expiredPreviews as $kapostObj) {
+        if ($expiredPreviews->count()>0) {
+            foreach ($expiredPreviews as $kapostObj) {
                 $kapostObj->delete();
             }
         }
     }
 }
-?>

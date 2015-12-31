@@ -1,14 +1,16 @@
 <?php
-class KapostPageSettingsControllerExtension extends Extension {
+class KapostPageSettingsControllerExtension extends Extension
+{
     /**
      * Updates the form to make all of the fields read only with the exception of a few fields
      * @param {Form} $form Form to be adjusted
      */
-    public function updateEditForm(Form $form) {
+    public function updateEditForm(Form $form)
+    {
         $record=$form->getRecord();
-        if($record) {
+        if ($record) {
             $kapostRefID=$record->KapostRefID;
-            if(empty($kapostRefID)) {
+            if (empty($kapostRefID)) {
                 return;
             }
 
@@ -17,10 +19,10 @@ class KapostPageSettingsControllerExtension extends Extension {
             $form->setFields($oldFields->makeReadonly());
             
             //Make the fields that should be non-readonly editable again
-            if(is_array($record->config()->non_readonly_settings_fields)) {
-                foreach($record->config()->non_readonly_settings_fields as $fieldName) {
+            if (is_array($record->config()->non_readonly_settings_fields)) {
+                foreach ($record->config()->non_readonly_settings_fields as $fieldName) {
                     $oldField=$oldFields->dataFieldByName($fieldName);
-                    if($oldField) {
+                    if ($oldField) {
                         $form->Fields()->replaceField($fieldName, $oldField);
                     }
                 }
@@ -28,4 +30,3 @@ class KapostPageSettingsControllerExtension extends Extension {
         }
     }
 }
-?>

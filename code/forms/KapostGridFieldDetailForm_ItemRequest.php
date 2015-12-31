@@ -1,5 +1,6 @@
 <?php
-class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequest {
+class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequest
+{
     private static $allowed_actions=array(
                                         'ItemEditForm',
                                         'convert',
@@ -11,13 +12,14 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * Builds an item edit form.  The arguments to getCMSFields() are the popupController and popupFormName, however this is an experimental API and may change.
      * @return {Form}
      */
-    public function ItemEditForm() {
+    public function ItemEditForm()
+    {
         $form=parent::ItemEditForm();
         
-        if($form) {
-            if($this->record && $this->record->exists()) {
+        if ($form) {
+            if ($this->record && $this->record->exists()) {
                 $kapostBase=KapostAdmin::config()->kapost_base_url;
-                if($kapostBase[strlen($kapostBase)-1]!='/') {
+                if ($kapostBase[strlen($kapostBase)-1]!='/') {
                     $kapostBase.='/';
                 }
                 
@@ -34,8 +36,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
                                                     ->setUseButtonTag(true)
                                                     ->addExtraClass('ss-ui-action-constructive kapost-action-convert')
                                                     ->setAttribute('data-icon', 'kapost-convert')
-                                                    ->setForm($form)
-                                            , 'action_doDelete');
+                                                    ->setForm($form), 'action_doDelete');
             }
             
             
@@ -49,7 +50,8 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * Handles requests for the convert dialog
      * @return {string} HTML to be sent to the browser
      */
-    public function convert() {
+    public function convert()
+    {
         return $this->customise(array(
                                     'Title'=>_t('KapostAdmin.CONVERT_OBJECT', '_Convert Object'),
                                     'Content'=>null,
@@ -61,7 +63,8 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * Form used for defining the conversion form
      * @return {Form} Form to be used for configuring the conversion
      */
-    public function ConvertObjectForm() {
+    public function ConvertObjectForm()
+    {
         //Reset the reading stage
         Versioned::reset();
         
@@ -102,14 +105,14 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         
         //Handle pages to see if the page exists
         $convertToClass=$this->getDestinationClass();
-        if($convertToClass!==false && ($convertToClass=='SiteTree' || is_subclass_of($convertToClass, 'SiteTree'))) {
+        if ($convertToClass!==false && ($convertToClass=='SiteTree' || is_subclass_of($convertToClass, 'SiteTree'))) {
             $obj=SiteTree::get()->filter('KapostRefID', Convert::raw2sql($this->record->KapostRefID))->first();
-            if(!empty($obj) && $obj!==false && $obj->ID>0) {
+            if (!empty($obj) && $obj!==false && $obj->ID>0) {
                 $convertModeField->setValue('ReplacePage');
                 $replacePageField->setValue($obj->ID);
                 
                 $recordTitle=$this->record->Title;
-                if(!empty($recordTitle) && $recordTitle!=$obj->Title) {
+                if (!empty($recordTitle) && $recordTitle!=$obj->Title) {
                     $urlFieldLabel=_t('KapostAdmin.TITLE_CHANGE_DETECT', '_The title differs from the page being replaced, it was "{wastitle}" and will be changed to "{newtitle}". Do you want to update the URL Segment?', array(
                                             'wastitle'=>$obj->Title,
                                             'newtitle'=>$recordTitle
@@ -146,23 +149,24 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * @param {Form} $form Submitting Form
      * @return {mixed} Returns an SS_HTTPResponse or an HTML string
      */
-    public function doConvertObject($data, Form $form) {
+    public function doConvertObject($data, Form $form)
+    {
         //Make sure the record still exists
-        if(empty($this->record) || $this->record===false || !$this->record->exists()) {
+        if (empty($this->record) || $this->record===false || !$this->record->exists()) {
             return $this->httpError(404);
         }
         
-        if($data['ConvertMode']=='ReplacePage') {
-            if(empty($data['ReplacePageID']) || $data['ReplacePageID']==0) {
+        if ($data['ConvertMode']=='ReplacePage') {
+            if (empty($data['ReplacePageID']) || $data['ReplacePageID']==0) {
                 $form->sessionMessage(_t('KapostAdmin.NO_REPLACE_PAGE_TARGET', '_You must select a page to replace'), 'error');
                 return $this->popupController->redirectBack();
             }
             
             
-            if(($redirectURL=$this->replacePage($data, $form))===false) {
+            if (($redirectURL=$this->replacePage($data, $form))===false) {
                 $form->sessionMessage(_t('KapostAdmin.ERROR_COULD_NOT_REPLACE', '_Sorry an error occured and the target page could not be replaced.'), 'error');
                 return $this->popupController->redirectBack();
-            }else {
+            } else {
                 Requirements::clear();
                 Requirements::customScript('window.parent.jQuery(\'.cms-edit-form.KapostAdmin\').entwine(\'ss\').panelRedirect('.json_encode($redirectURL).')');
                 
@@ -175,11 +179,11 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
                                             'Form'=>null
                                         ))->renderWith('CMSDialog');
             }
-        }else if($data['ConvertMode']=='NewPage') {
-            if(($redirectURL=$this->newPage($data, $form))===false) {
+        } elseif ($data['ConvertMode']=='NewPage') {
+            if (($redirectURL=$this->newPage($data, $form))===false) {
                 $form->sessionMessage(_t('KapostAdmin.ERROR_COULD_NOT_CREATE', '_Sorry an error occured and the page could not be created.'), 'error');
                 return $this->popupController->redirectBack();
-            }else {
+            } else {
                 Requirements::clear();
                 Requirements::customScript('window.parent.jQuery(\'.cms-edit-form.KapostAdmin\').entwine(\'ss\').panelRedirect('.json_encode($redirectURL).')');
                 
@@ -196,11 +200,11 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         
         
         //Allow extensions to convert the object
-        if(in_array($data['ConvertMode'], KapostAdmin::config()->extra_conversion_modes)) {
+        if (in_array($data['ConvertMode'], KapostAdmin::config()->extra_conversion_modes)) {
             $results=$this->extend('doConvert'.$data['ConvertMode'], $this->record, $data, $form);
-            if(count($results)>0) {
-                foreach($results as $result) {
-                    if($result!==false) {
+            if (count($results)>0) {
+                foreach ($results as $result) {
+                    if ($result!==false) {
                         Requirements::clear();
                         Requirements::customScript('window.parent.jQuery(\'.cms-edit-form.KapostAdmin\').entwine(\'ss\').panelRedirect('.json_encode($result).')');
                         
@@ -217,7 +221,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
                 
                 
                 $message=$form->Message();
-                if(empty($message)) {
+                if (empty($message)) {
                     $form->sessionMessage(_t('KapostAdmin.GENERIC_CONVERSION_ERROR', '_Conversion method returns an error and no specific message'), 'error');
                 }
                 
@@ -237,9 +241,10 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * @param {Form} $form Submitting Form
      * @return {bool} Returns boolean true on success, false otherwise
      */
-    public function newPage($data, Form $form) {
+    public function newPage($data, Form $form)
+    {
         //Start a transaction if supported
-        if(DB::getConn()->supportsTransactions()) {
+        if (DB::getConn()->supportsTransactions()) {
             DB::getConn()->transactionStart();
         }
         
@@ -247,9 +252,9 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         
         
         //Verify we have a destination class
-        if($convertToClass!==false) {
+        if ($convertToClass!==false) {
             $source=clone $this->record; //Create a clone of the record to be safe
-            
+
             
             //Create the new page
             $destination=new $convertToClass();
@@ -262,7 +267,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             
             
             //If a target was set and the parent has been found set the parent of the page
-            if(intval($data['ParentPageID']) && SiteTree::get()->filter('ID', intval($data['ParentPageID']))->count()>0) {
+            if (intval($data['ParentPageID']) && SiteTree::get()->filter('ID', intval($data['ParentPageID']))->count()>0) {
                 $destination->ParentID=intval($data['ParentPageID']);
             }
             
@@ -275,7 +280,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             
             
             //If the kapost object is to be published publish it
-            if($this->record->ToPublish==true) {
+            if ($this->record->ToPublish==true) {
                 $destination->publish('Stage', 'Live');
             }
             
@@ -289,7 +294,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             
             
             //End the transaction if supported
-            if(DB::getConn()->supportsTransactions()) {
+            if (DB::getConn()->supportsTransactions()) {
                 DB::getConn()->transactionEnd();
             }
             
@@ -298,7 +303,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         
         
         //Rollback the transaction if supported
-        if(DB::getConn()->supportsTransactions()) {
+        if (DB::getConn()->supportsTransactions()) {
             DB::getConn()->transactionRollback();
         }
         
@@ -311,9 +316,10 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * @param {Form} $form Submitting Form
      * @return {bool} Returns boolean true on success, false otherwise
      */
-    public function replacePage($data, Form $form) {
+    public function replacePage($data, Form $form)
+    {
         //Start a transaction if supported
-        if(DB::getConn()->supportsTransactions()) {
+        if (DB::getConn()->supportsTransactions()) {
             DB::getConn()->transactionStart();
         }
         
@@ -322,9 +328,9 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         
         
         //Verify we have a destination class
-        if(!empty($destination) && $destination!==false && $destination->exists() && is_subclass_of($destinationClass, 'SiteTree')) {
+        if (!empty($destination) && $destination!==false && $destination->exists() && is_subclass_of($destinationClass, 'SiteTree')) {
             //Ensure the classes are the same if they're not change and re-load
-            if($destination->ClassName!=$destinationClass) {
+            if ($destination->ClassName!=$destinationClass) {
                 $destination->setClassName($destinationClass);
                 $destination->write();
                 $destination->flushCache();
@@ -334,10 +340,10 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             }
             
             $source=clone $this->record; //Create a clone of the record to be safe
-            
+
             $recordTitle=$this->record->Title;
             $updateURLSegment=false;
-            if(!empty($recordTitle) && $recordTitle!=$destination->Title && array_key_exists('UpdateURLSegment', $data) && $data['UpdateURLSegment']==true) {
+            if (!empty($recordTitle) && $recordTitle!=$destination->Title && array_key_exists('UpdateURLSegment', $data) && $data['UpdateURLSegment']==true) {
                 $updateURLSegment=true;
             }
             
@@ -353,7 +359,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             
             
             //If the url segment is to be changed then update the url segment
-            if($updateURLSegment) {
+            if ($updateURLSegment) {
                 $destination->URLSegment=$destination->generateURLSegment($destination->Title);
             }
             
@@ -367,7 +373,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             
             
             //If the kapost object is to be published publish it
-            if($this->record->ToPublish==true) {
+            if ($this->record->ToPublish==true) {
                 $destination->publish('Stage', 'Live');
             }
             
@@ -381,7 +387,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             
             
             //End the transaction if supported
-            if(DB::getConn()->supportsTransactions()) {
+            if (DB::getConn()->supportsTransactions()) {
                 DB::getConn()->transactionEnd();
             }
             
@@ -390,7 +396,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         
         
         //Rollback the transaction if supported
-        if(DB::getConn()->supportsTransactions()) {
+        if (DB::getConn()->supportsTransactions()) {
             DB::getConn()->transactionRollback();
         }
         
@@ -412,8 +418,9 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * @param {string} $parentRelField Name of the parent has_one relationship field (defaults to Parent)
      * @return {bool} Returns boolean true on success false otherwise
      */
-    public function merge($leftObj, $rightObj, $priority='right', $includeRelations=true, $overwriteWithEmpty=false, $skipParent=true, $parentRelField='Parent') {
-        if(!$rightObj->ID) {
+    public function merge($leftObj, $rightObj, $priority='right', $includeRelations=true, $overwriteWithEmpty=false, $skipParent=true, $parentRelField='Parent')
+    {
+        if (!$rightObj->ID) {
             user_error("DataObject->merge(): Please write your merged-in object to the database before merging, to make sure all relations are transferred properly.').", E_USER_WARNING);
             return false;
         }
@@ -422,24 +429,24 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         $leftData=$leftObj->inheritedDatabaseFields();
         $rightData=$rightObj->inheritedDatabaseFields();
         
-        foreach($rightData as $key=>$rightVal) {
+        foreach ($rightData as $key=>$rightVal) {
             // skip fields that do not exist on the left object or are foreign keys which are set later
-            if(!array_key_exists($key, $leftData) || $leftData[$key]=='ForeignKey' || is_subclass_of('ForeignKey', $leftData[$key])) {
+            if (!array_key_exists($key, $leftData) || $leftData[$key]=='ForeignKey' || is_subclass_of('ForeignKey', $leftData[$key])) {
                 continue;
             }
             
             // skip the parent relationship if it is set
-            if($skipParent && $key==$parentRelField.'ID') {
+            if ($skipParent && $key==$parentRelField.'ID') {
                 continue;
             }
             
             // don't merge conflicting values if priority is 'left'
-            if($priority=='left' && $leftObj->{$key}!==$rightObj->{$key}) {
+            if ($priority=='left' && $leftObj->{$key}!==$rightObj->{$key}) {
                 continue;
             }
             
             // don't overwrite existing left values with empty right values (if $overwriteWithEmpty is set to false)
-            if($priority=='right' && !$overwriteWithEmpty && empty($rightObj->{$key})) {
+            if ($priority=='right' && !$overwriteWithEmpty && empty($rightObj->{$key})) {
                 continue;
             }
             
@@ -447,49 +454,49 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         }
         
         // merge relations
-        if($includeRelations) {
-            if($manyMany=$leftObj->many_many()) {
-                foreach($manyMany as $relationship=>$class) {
+        if ($includeRelations) {
+            if ($manyMany=$leftObj->many_many()) {
+                foreach ($manyMany as $relationship=>$class) {
                     $leftComponents=$leftObj->getManyManyComponents($relationship);
                     
-                    if(!$rightObj->many_many($relationship)) {
+                    if (!$rightObj->many_many($relationship)) {
                         continue;
                     }
                     
                     $rightComponents=$rightObj->getManyManyComponents($relationship);
                     
-                    if($rightComponents && $rightComponents->exists() && ($rightComponents->dataClass()==$leftComponents->dataClass() || is_subclass_of($leftComponents->dataClass(), $rightComponents->dataClass()) || is_subclass_of($rightComponents->dataClass(), $leftComponents->dataClass()))) {
+                    if ($rightComponents && $rightComponents->exists() && ($rightComponents->dataClass()==$leftComponents->dataClass() || is_subclass_of($leftComponents->dataClass(), $rightComponents->dataClass()) || is_subclass_of($rightComponents->dataClass(), $leftComponents->dataClass()))) {
                         $leftComponents->addMany($rightComponents->column('ID'));
                     }
                 }
             }
             
-            if($hasMany=$leftObj->has_many()) {
-                foreach($hasMany as $relationship=>$class) {
+            if ($hasMany=$leftObj->has_many()) {
+                foreach ($hasMany as $relationship=>$class) {
                     $leftComponents=$leftObj->getComponents($relationship);
                     
-                    if(!$rightObj->has_many($relationship)) {
+                    if (!$rightObj->has_many($relationship)) {
                         continue;
                     }
                     
                     $rightComponents=$rightObj->getComponents($relationship);
-                    if($rightComponents && $rightComponents->exists() && ($rightComponents->dataClass()==$leftComponents->dataClass() || is_subclass_of($leftComponents->dataClass(), $rightComponents->dataClass()) || is_subclass_of($rightComponents->dataClass(), $leftComponents->dataClass()))) {
+                    if ($rightComponents && $rightComponents->exists() && ($rightComponents->dataClass()==$leftComponents->dataClass() || is_subclass_of($leftComponents->dataClass(), $rightComponents->dataClass()) || is_subclass_of($rightComponents->dataClass(), $leftComponents->dataClass()))) {
                         $leftComponents->addMany($rightComponents->column('ID'));
                     }
                 }
             }
             
-            if($hasOne=$leftObj->has_one()) {
-                foreach($hasOne as $relationship=>$class) {
-                    if(!$rightObj->has_one($relationship)) {
+            if ($hasOne=$leftObj->has_one()) {
+                foreach ($hasOne as $relationship=>$class) {
+                    if (!$rightObj->has_one($relationship)) {
                         continue;
                     }
                     
                     $rightComponent=$rightObj->getComponent($relationship);
-                    if($priority=='right' && ($skipParent==false || ($skipParent && $relationship!=$parentRelField))) {
-                        if($rightComponent->exists()) {
+                    if ($priority=='right' && ($skipParent==false || ($skipParent && $relationship!=$parentRelField))) {
+                        if ($rightComponent->exists()) {
                             $leftObj->{$relationship.'ID'}=$rightObj->{$relationship.'ID'};
-                        }else if($overwriteWithEmpty) {
+                        } elseif ($overwriteWithEmpty) {
                             $leftObj->{$relationship.'ID'}=0;
                         }
                     }
@@ -507,30 +514,31 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * Gets the destination class for the record
      * @return {string|bool} Returns the destination class name or false if it can't be found
      */
-    private function getDestinationClass() {
-        if(empty($this->record) || $this->record===false) {
+    private function getDestinationClass()
+    {
+        if (empty($this->record) || $this->record===false) {
             return false;
         }
         
         $convertToClass=false;
         
-        if(class_exists($this->record->DestinationClass) && is_subclass_of($this->record->DestinationClass, 'SiteTree')) {
+        if (class_exists($this->record->DestinationClass) && is_subclass_of($this->record->DestinationClass, 'SiteTree')) {
             $convertToClass=$this->record->DestinationClass;
-        }else {
+        } else {
             $parentClasses=array_reverse(ClassInfo::dataClassesFor($this->record->ClassName));
             unset($parentClasses[$this->record->ClassName]);
             unset($parentClasses['KapostObject']);
         
-            if(count($parentClasses)>0) {
-                foreach($parentClasses as $class) {
+            if (count($parentClasses)>0) {
+                foreach ($parentClasses as $class) {
                     $sng=singleton($class);
-                    if(class_exists($sng->DestinationClass) && is_subclass_of($sng->DestinationClass, 'SiteTree')) {
+                    if (class_exists($sng->DestinationClass) && is_subclass_of($sng->DestinationClass, 'SiteTree')) {
                         $convertToClass=$sng->DestinationClass;
                         break;
                     }
                 }
         
-                if(isset($sng)) {
+                if (isset($sng)) {
                     unset($sng);
                 }
             }
@@ -542,13 +550,13 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
     /**
      * Cleans up expired Kapost previews after twice the token expiry
      */
-    private function cleanUpExpiredPreviews() {
+    private function cleanUpExpiredPreviews()
+    {
         $expiredPreviews=KapostObject::get()->filter('IsKapostPreview', true)->filter('LastEdited:LessThan', date('Y-m-d H:i:s', strtotime('-'.(KapostService::config()->preview_data_expiry).' minutes')));
-        if($expiredPreviews->count()>0) {
-            foreach($expiredPreviews as $kapostObj) {
+        if ($expiredPreviews->count()>0) {
+            foreach ($expiredPreviews as $kapostObj) {
                 $kapostObj->delete();
             }
         }
     }
 }
-?>

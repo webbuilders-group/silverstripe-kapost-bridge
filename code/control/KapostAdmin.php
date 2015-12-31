@@ -1,5 +1,6 @@
 <?php
-class KapostAdmin extends ModelAdmin {
+class KapostAdmin extends ModelAdmin
+{
     public $showImportForm=false;
     
     private static $url_segment='kapost';
@@ -27,14 +28,15 @@ class KapostAdmin extends ModelAdmin {
      * @param {FieldList} $fields Fields to use in the form
      * @return {Form} Form to be used in the model admin interface
      */
-    public function getEditForm($id=null, $fields=null) {
+    public function getEditForm($id=null, $fields=null)
+    {
         $form=parent::getEditForm($id, $fields);
         
         Requirements::css(KAPOST_DIR.'/css/KapostAdmin.css');
         Requirements::javascript(KAPOST_DIR.'/javascript/KapostAdmin.js');
         
         
-        if($this->modelClass=='KapostObject' && $gridField=$form->Fields()->dataFieldByName('KapostObject')) {
+        if ($this->modelClass=='KapostObject' && $gridField=$form->Fields()->dataFieldByName('KapostObject')) {
             $gridField->setList($gridField->getList()->filter('IsKapostPreview', 0));
             $gridField->getConfig()
                                 ->addComponent(new KapostGridFieldRefreshButton('before'))
@@ -50,7 +52,7 @@ class KapostAdmin extends ModelAdmin {
             $gridField->getConfig()
                                 ->getComponentByType('GridFieldDetailForm')
                                     ->setItemRequestClass('KapostGridFieldDetailForm_ItemRequest');
-        }else if($this->modelClass=='KapostConversionHistory' && $gridField=$form->Fields()->dataFieldByName('KapostConversionHistory')) {
+        } elseif ($this->modelClass=='KapostConversionHistory' && $gridField=$form->Fields()->dataFieldByName('KapostConversionHistory')) {
             $gridField->getConfig()
                                 ->removeComponentsByType('GridFieldAddNewButton')
                                 ->addComponent(new KapostDestinationAction(), 'GridFieldEditButton')
@@ -61,7 +63,7 @@ class KapostAdmin extends ModelAdmin {
                                                             ));
             
             
-            $gridField->getConfig()->getComponentByType('GridFieldDetailForm')->setItemEditFormCallback(function(Form $form) {
+            $gridField->getConfig()->getComponentByType('GridFieldDetailForm')->setItemEditFormCallback(function (Form $form) {
                                                                                                             $form->addExtraClass('KapostAdmin');
                                                                                                         });
         }
@@ -72,4 +74,3 @@ class KapostAdmin extends ModelAdmin {
         return $form;
     }
 }
-?>
