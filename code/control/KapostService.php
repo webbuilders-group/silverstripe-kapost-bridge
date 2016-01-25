@@ -141,7 +141,7 @@ class KapostService extends Controller implements PermissionProvider {
             
             //If we're in dev mode relay the actual message to the client
             if(Director::isDev()) {
-                $response=new xmlrpcresp(0, $e->getCode(), _t('KapostService.ERROR_MESSAGE', '_{message} in {file} line {line_number}', array(
+                $response=new xmlrpcresp(0, $e->getCode()+100, _t('KapostService.ERROR_MESSAGE', '_{message} in {file} line {line_number}', array(
                                                                                                                                         'message'=>$e->getMessage(),
                                                                                                                                         'file'=>$e->getFile(),
                                                                                                                                         'line_number'=>$e->getLine()
@@ -889,7 +889,7 @@ class KapostService extends Controller implements PermissionProvider {
         $payload=$server->xml_header();
         
         if(empty($r->payload)) {
-            $r->serialize($resp_charset);
+            $r->serialize();
         }
         
         $payload=$payload.$r->payload;
