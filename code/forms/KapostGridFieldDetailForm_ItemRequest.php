@@ -504,6 +504,24 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
     }
     
     /**
+     * Wrapper for the top level controller's redirect()
+	 * @param {string} $url URL to redirect to
+	 * @param {int} $code HTTP Response Code
+	 * @return {SS_HTTPResponse}
+     */
+    public function redirect($url, $code=302) {
+        return $this->getToplevelController()->redirect($url, $code);
+    }
+    
+    /**
+     * Wrapper for the top level controller's redirectBack()
+	 * @return {SS_HTTPResponse}
+     */
+    public function redirectBack() {
+        return $this->getToplevelController()->redirectBack();
+    }
+    
+    /**
      * Gets the destination class for the record
      * @return {string|bool} Returns the destination class name or false if it can't be found
      */
