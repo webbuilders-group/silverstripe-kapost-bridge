@@ -99,7 +99,7 @@ class KapostConversionHistory extends DataObject {
      * @return {string} Relative link to the destination page
      */
     public function getDestinationLink() {
-        user_error('You must implement the createConversionHistory() method on your decendent of KapostConversionHistory', E_USER_WARNING);
+        user_error('You must implement the getDestinationLink() method on your decendent of KapostConversionHistory: '.$this->class, E_USER_WARNING);
     }
     
     /**
