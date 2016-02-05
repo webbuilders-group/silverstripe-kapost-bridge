@@ -159,7 +159,15 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
             }
             
             
-            if(($redirectURL=$this->replacePage($data, $form))===false) {
+            try {
+                $redirectURL=$this->replacePage($data, $form);
+            }catch(ValidationException $e) {
+                //Catch any validation exception and return it as an error message on the form
+                $form->sessionMessage($e->getMessage(), 'error');
+                return $this->popupController->redirectBack();
+            }
+            
+            if($redirectURL===false) {
                 $form->sessionMessage(_t('KapostAdmin.ERROR_COULD_NOT_REPLACE', '_Sorry an error occured and the target page could not be replaced.'), 'error');
                 return $this->popupController->redirectBack();
             }else {
@@ -176,7 +184,15 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
                                         ))->renderWith('CMSDialog');
             }
         }else if($data['ConvertMode']=='NewPage') {
-            if(($redirectURL=$this->newPage($data, $form))===false) {
+            try {
+                $redirectURL=$this->newPage($data, $form);
+            }catch(ValidationException $e) {
+                //Catch any validation exception and return it as an error message on the form
+                $form->sessionMessage($e->getMessage(), 'error');
+                return $this->popupController->redirectBack();
+            }
+            
+            if($redirectURL===false) {
                 $form->sessionMessage(_t('KapostAdmin.ERROR_COULD_NOT_CREATE', '_Sorry an error occured and the page could not be created.'), 'error');
                 return $this->popupController->redirectBack();
             }else {
@@ -197,7 +213,14 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         
         //Allow extensions to convert the object
         if(in_array($data['ConvertMode'], KapostAdmin::config()->extra_conversion_modes)) {
-            $results=$this->extend('doConvert'.$data['ConvertMode'], $this->record, $data, $form);
+            try {
+                $results=$this->extend('doConvert'.$data['ConvertMode'], $this->record, $data, $form);
+            }catch(ValidationException $e) {
+                //Catch any validation exception and return it as an error message on the form
+                $form->sessionMessage($e->getMessage(), 'error');
+                return $this->popupController->redirectBack();
+            }
+            
             if(count($results)>0) {
                 foreach($results as $result) {
                     if($result!==false) {
