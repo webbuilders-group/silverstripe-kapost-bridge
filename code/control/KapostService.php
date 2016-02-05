@@ -498,13 +498,9 @@ class KapostService extends Controller implements PermissionProvider {
         
         
         //Switch Versioned to stage
-        $oldReadingStage=Versioned::current_stage();
-        Versioned::set_reading_mode('stage');
+        Versioned::set_reading_mode('Stage.stage');
         
         $page=SiteTree::get()->filter('KapostRefID', Convert::raw2sql($content_id))->first();
-        
-        //Switch Versioned back
-        Versioned::set_reading_mode($oldReadingStage);
         
         
         if(!empty($page) && $page!==false && $page->exists()) {
