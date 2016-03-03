@@ -6,6 +6,8 @@ class KapostObject extends DataObject {
                             'KapostChangeType'=>"Enum(array('new', 'edit'), 'new')",
                             'KapostRefID'=>'Varchar(255)',
                             'KapostAuthor'=>'Varchar(255)',
+                            'KapostAuthorAvatar'=>'Varchar(2083)',
+                            'KapostConversionNotes'=>'Text',
                             'ToPublish'=>'Boolean',
                             'IsKapostPreview'=>'Boolean'
                          );

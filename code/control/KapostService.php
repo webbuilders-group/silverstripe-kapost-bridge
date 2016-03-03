@@ -372,6 +372,8 @@ class KapostService extends Controller implements PermissionProvider {
         $obj->MetaDescription=(array_key_exists('custom_fields', $content) && array_key_exists('SS_MetaDescription', $content['custom_fields']) ? $content['custom_fields']['SS_MetaDescription']:null);
         $obj->KapostChangeType='new';
         $obj->KapostAuthor=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author']:null);
+        $obj->KapostAuthorAvatar=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author_avatar']:null);
+        $obj->KapostConversionNotes=(array_key_exists('custom_fields', $content) && array_key_exists('SS_KapostConversionNotes', $content['custom_fields']) ? $content['custom_fields']['SS_KapostConversionNotes']:null);
         $obj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
         $obj->ToPublish=$publish;
         $obj->IsKapostPreview=$isPreview;
@@ -446,6 +448,8 @@ class KapostService extends Controller implements PermissionProvider {
             $kapostObj->LinkedPageID=(!empty($page) && $page!==false && $page->exists() ? $page->ID:$kapostObj->LinkedPageID);
             $kapostObj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
             $kapostObj->KapostAuthor=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author']:null);
+            $kapostObj->KapostAuthorAvatar=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author_avatar']:null);
+            $kapostObj->KapostConversionNotes=(array_key_exists('custom_fields', $content) && array_key_exists('SS_KapostConversionNotes', $content['custom_fields']) ? $content['custom_fields']['SS_KapostConversionNotes']:null);
             $kapostObj->ToPublish=$publish;
             $kapostObj->IsKapostPreview=$isPreview;
             $kapostObj->write();
@@ -466,6 +470,8 @@ class KapostService extends Controller implements PermissionProvider {
             $obj->LinkedPageID=(!empty($page) && $page!==false && $page->exists() ? $page->ID:0);
             $obj->KapostRefID=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:null);
             $obj->KapostAuthor=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author']:null);
+            $obj->KapostAuthorAvatar=(array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_author_avatar']:null);
+            $obj->KapostConversionNotes=(array_key_exists('custom_fields', $content) && array_key_exists('SS_KapostConversionNotes', $content['custom_fields']) ? $content['custom_fields']['SS_KapostConversionNotes']:null);
             $obj->ToPublish=$publish;
             $obj->IsKapostPreview=$isPreview;
             $obj->write();

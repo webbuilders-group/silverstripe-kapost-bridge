@@ -102,3 +102,106 @@ body.cms-dialog {
     
     overflow: hidden;
 }
+
+.cms-dialog #kapost-convert-notes-trigger {
+    position: absolute;
+    top: 30px;
+    right: 20px;
+    
+    -webkit-box-shadow: 2px 2px 4px 0 rgb(201, 205, 206);
+    -moz-box-shadow: 2px 2px 4px 0 rgb(201, 205, 206);
+    box-shadow: 2px 2px 4px 0 rgb(201, 205, 206);
+    
+    z-index: 1000;
+}
+
+.cms-dialog #kapost-convert-notes-trigger, .cms-dialog #kapost-convert-notes-trigger img {
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+}
+
+.cms-dialog #kapost-convert-notes-trigger img {
+    display: block;
+    
+    width: 48px;
+    height: 48px;
+}
+
+.cms-dialog #kapost-convert-notes-trigger.animate {
+    animation: bounce 1s;
+    animation-fill-mode: both;
+    animation-delay: 20s;
+    
+    transform-origin: center bottom;
+}
+
+.cms-dialog #kapost-convert-notes-popup {
+    background: #ECEFF1;
+    
+    display: none;
+    
+    position: absolute;
+    top: 46px;
+    right: 84px;
+    
+    width: 60%;
+    max-height: 80%;
+    
+    padding: 20px;
+    
+    border: 1px solid #CACACC;
+    
+    overflow-x: hidden;
+    overflow-y: auto;
+    
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    
+    -webkit-box-shadow: rgba(248, 248, 248, 0.9) 1px 1px 0 inset, rgba(248, 248, 248, 0.9) -1px -1px 0 inset, rgb(201, 205, 206) 2px 2px 4px;
+    -moz-box-shadow: rgba(248, 248, 248, 0.9) 1px 1px 0 inset, rgba(248, 248, 248, 0.9) -1px -1px 0 inset, rgb(201, 205, 206) 2px 2px 4px;
+    box-shadow: rgba(248, 248, 248, 0.9) 1px 1px 0 inset, rgba(248, 248, 248, 0.9) -1px -1px 0 inset, rgb(201, 205, 206) 2px 2px 4px;
+    
+    z-index: 1000;
+}
+
+.cms-dialog #kapost-convert-notes-popup.visible {
+    display: block;
+}
+
+.cms-dialog #kapost-convert-notes-popup p {
+    margin: 0;
+}
+
+.cms-dialog #kapost-convert-notes-popup .kapost-author {
+    font-weight: bold;
+    font-size: 14px;
+    
+    margin-bottom: 15px;
+}
+
+@keyframes bounce {
+    from, 20%, 53%, 80%, to {
+        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+        transform: translate3d(0,0,0);
+    }
+    
+    40%, 43% {
+        animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+        transform: translate3d(0, -30px, 0);
+    }
+    
+    70% {
+        animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+        transform: translate3d(0, -15px, 0);
+    }
+    
+    90% {
+        transform: translate3d(0,-4px,0);
+    }
+}

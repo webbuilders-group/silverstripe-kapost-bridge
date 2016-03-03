@@ -71,5 +71,83 @@
                                     );
             }
         });
+        
+        $('#kapost-convert-notes-trigger').entwine({
+            onadd: function() {
+                $(this).addClass('animate').bindDelayListen();
+            },
+            
+            /**
+             * 
+             */
+            onclick: function(e) {
+                var popup=$('#kapost-convert-notes-popup');
+                var self=$(this);
+                
+                popup.toggleClass('visible');
+                self.toggleClass('animate');
+                
+                if(popup.hasClass('visible')) {
+                    $(document.body).on('click', hideConvertNotes);
+                    popup.on('click', blockPropagate);
+                    self.bindDelayListen();
+                }else {
+                    $(document.body).off('click', hideConvertNotes);
+                    popup.off('click', blockPropagate);
+                }
+                
+                e.stopPropagation();
+                return false;
+            },
+            
+            /**
+             * 
+             */
+            bindDelayListen: function() {
+                var self=$(this);
+                self.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', self._delayInteration);
+            },
+
+            /**
+             * 
+             */
+            restartAnimation: function() {
+                var self=$(this);
+                
+                var newButton=self.clone().removeClass('animate');
+                self.replaceWith(newButton);
+            },
+            
+            /**
+             * Delays the next loop iteration by 20s 
+             */
+            _delayInteration: function() {
+                $(this).restartAnimation();
+            }
+        });
     });
+    
+    
+    /**
+     * Blocks propagation of an event
+     * @param e Event Data
+     */
+    function blockPropagate(e) {
+        e.stopPropagation();
+        return false;
+    }
+    
+    /**
+     * Hides the convert notes when the body is clicked
+     * @param e Event Data
+     */
+    function hideConvertNotes(e) {
+        $('#kapost-convert-notes-popup').removeClass('visible').off('click', blockPropagate);
+        $('#kapost-convert-notes-trigger').entwine('kapost').restartAnimation();
+        
+        $(document.body).off('click', hideConvertNotes);
+        
+        e.stopPropagation();
+        return false;
+    }
 })(jQuery);

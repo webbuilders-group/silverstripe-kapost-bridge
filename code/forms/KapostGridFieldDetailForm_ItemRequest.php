@@ -53,8 +53,9 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         return $this->customise(array(
                                     'Title'=>_t('KapostAdmin.CONVERT_OBJECT', '_Convert Object'),
                                     'Content'=>null,
-                                    'Form'=>$this->ConvertObjectForm()
-                                ))->renderWith('CMSDialog');
+                                    'Form'=>$this->ConvertObjectForm(),
+                                    'KapostObject'=>$this->record
+                                ))->renderWith('KapostAdmin_ConvertDialog');
     }
     
     /**

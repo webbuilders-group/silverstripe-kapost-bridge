@@ -20,3 +20,7 @@ Because of how Kapost handles/supports the SEO fields it has built in, this modu
 |--------------------|----------------------------|
 | SS_Title           | Title (optional, falls back to Kapost's title field) |
 | SS_MetaDescription | MetaDescription            |
+
+
+### Using Conversion Notes
+Sometimes you have content types that need some additional information from the Kapost Author. Maybe this information is as simple as where a page appears in the tree or maybe it's more complex if you have additional functionality. To do this you can add a custom field (Settings > Custom Fields in Kapost) to your content types with a field name of ``SS_KapostConversionNotes``. When this field is handled by the Kapost Bridge it will appear in the conversion dialog as an icon of the Kapost Author's avatar. When that icon is clicked a balloon will open containing the notes from the Kapost Author. This field is by default discarded after the conversion is completed.
