@@ -71,5 +71,18 @@ class KapostAdmin extends ModelAdmin {
         
         return $form;
     }
+    
+    /**
+     * @return array Map of class name to an array of 'title' (see {@link $managed_models})
+     */
+    public function getManagedModels() {
+        $models=parent::getManagedModels();
+        
+        if(array_key_exists('KapostObject', $models)) {
+            $models['KapostObject']['title']=_t('KapostAdmin.INCOMING_CONTENT', '_Incoming Content');
+        }
+        
+        return $models;
+    }
 }
 ?>
