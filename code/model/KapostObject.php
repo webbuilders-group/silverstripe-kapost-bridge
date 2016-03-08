@@ -22,6 +22,7 @@ class KapostObject extends DataObject {
                                         'ToPublish'
                                     );
     
+    
     /**
      * Prevent creation of the KapostObjects, they are delivered from Kapost
      * @param {int|Member} $member Member ID or member instance
@@ -39,7 +40,6 @@ class KapostObject extends DataObject {
     final public function canEdit($member=null) {
         return false;
     }
-    
     
     /**
      * Gets fields used in the cms

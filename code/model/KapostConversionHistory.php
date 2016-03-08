@@ -53,6 +53,15 @@ class KapostConversionHistory extends DataObject {
     }
     
     /**
+     * Prevent deleting of the KapostConversionHistory
+     * @param {int|Member} $member Member ID or member instance
+     * @return {bool} Returns boolean false
+     */
+    final public function canDelete($member=null) {
+        return false;
+    }
+    
+    /**
      * Gets fields used in the cms
      * @return {FieldList} Fields to be used
      */
