@@ -73,6 +73,29 @@ class KapostAdmin extends ModelAdmin {
     }
     
     /**
+     * Gets the list used in the ModelAdmin
+     * @return {SS_List}
+     */
+    public function getList() {
+        $context=$this->getSearchContext();
+        $params=$this->getRequest()->requestVar('q');
+        
+        if(is_array($params)) {
+            if(array_key_exists('Created', $params) && is_array($params['Created'])) {
+                $params['Created']=implode(' ', $params['Created']);
+            }
+            
+            $params=array_map('trim', $params);
+        }
+        
+        $list=$context->getResults($params);
+        
+        $this->extend('updateList', $list);
+        
+        return $list;
+    }
+    
+    /**
      * @return array Map of class name to an array of 'title' (see {@link $managed_models})
      */
     public function getManagedModels() {
