@@ -121,6 +121,10 @@ body.cms-dialog {
     border-radius: 50%;
 }
 
+.cms-dialog #kapost-convert-notes-trigger:focus {
+    outline: 0;
+}
+
 .cms-dialog #kapost-convert-notes-trigger img {
     display: block;
     
@@ -137,7 +141,7 @@ body.cms-dialog {
 }
 
 .cms-dialog #kapost-convert-notes-popup {
-    background: #ECEFF1;
+    background: #FFFFFF;
     
     display: none;
     
