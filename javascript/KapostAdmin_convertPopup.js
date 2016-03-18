@@ -74,11 +74,15 @@
         
         $('#kapost-convert-notes-trigger').entwine({
             onadd: function() {
-                $(this).addClass('animate').bindDelayListen();
+                if($(this).hasClass('animate')==false) {
+                    $('#kapost-convert-notes-popup').addClass('visible').on('click', blockPropagate);
+                    $(document.body).on('click', hideConvertNotes);
+                }
             },
             
             /**
-             * 
+             * Shows the popup when the trigger button is clicked
+             * @param e Event Data
              */
             onclick: function(e) {
                 var popup=$('#kapost-convert-notes-popup');
@@ -90,7 +94,6 @@
                 if(popup.hasClass('visible')) {
                     $(document.body).on('click', hideConvertNotes);
                     popup.on('click', blockPropagate);
-                    self.bindDelayListen();
                 }else {
                     $(document.body).off('click', hideConvertNotes);
                     popup.off('click', blockPropagate);
@@ -101,7 +104,7 @@
             },
             
             /**
-             * 
+             * Binds a listener that when the animation finishes will restart the animation after a given time
              */
             bindDelayListen: function() {
                 var self=$(this);
@@ -109,13 +112,14 @@
             },
 
             /**
-             * 
+             * Clones the current element and replaces the current element with the new one binding the delay listener
              */
             restartAnimation: function() {
                 var self=$(this);
                 
-                var newButton=self.clone().removeClass('animate');
+                var newButton=self.clone().addClass('animate');
                 self.replaceWith(newButton);
+                newButton.bindDelayListen();
             },
             
             /**
