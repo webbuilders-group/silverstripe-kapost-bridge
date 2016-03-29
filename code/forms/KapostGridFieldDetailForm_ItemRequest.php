@@ -68,16 +68,18 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         
         
         $fields=new FieldList(
-                            CompositeField::create(
-                                    $convertModeField=new OptionsetField('ConvertMode', '', array(
-                                                                                                'ReplacePage'=>_t('KapostAdmin.REPLACES_AN_EXISTING_PAGE', '_This replaces an existing page'),
-                                                                                                'NewPage'=>_t('KapostAdmin.IS_NEW_PAGE', '_This is a new page')
-                                                                                            ), 'NewPage')
-                                )->addExtraClass('kapostConvertLeftSide')->setName('kapostConvertLeftSide'),
-                            CompositeField::create(
-                                    $replacePageField=TreeDropdownField::create('ReplacePageID', _t('KapostAdmin.REPLACE_PAGE', '_Replace this page'), 'SiteTree')->addExtraClass('replace-page-id'),
-                                    TreeDropdownField::create('ParentPageID', _t('KapostAdmin.USE_AS_PARENT', '_Use this page as the parent for the new page, leave empty for a top level page'), 'SiteTree')->addExtraClass('parent-page-id')
-                                )->addExtraClass('kapostConvertRightSide')->setName('kapostConvertRightSide')
+                            $wrapper=CompositeField::create(
+                                    CompositeField::create(
+                                            $convertModeField=new OptionsetField('ConvertMode', '', array(
+                                                                                                        'ReplacePage'=>_t('KapostAdmin.REPLACES_AN_EXISTING_PAGE', '_This replaces an existing page'),
+                                                                                                        'NewPage'=>_t('KapostAdmin.IS_NEW_PAGE', '_This is a new page')
+                                                                                                    ), 'NewPage')
+                                        )->addExtraClass('kapostConvertLeftSide')->setName('kapostConvertLeftSide'),
+                                    CompositeField::create(
+                                            $replacePageField=TreeDropdownField::create('ReplacePageID', _t('KapostAdmin.REPLACE_PAGE', '_Replace this page'), 'SiteTree')->addExtraClass('replace-page-id'),
+                                            TreeDropdownField::create('ParentPageID', _t('KapostAdmin.USE_AS_PARENT', '_Use this page as the parent for the new page, leave empty for a top level page'), 'SiteTree')->addExtraClass('parent-page-id')
+                                        )->addExtraClass('kapostConvertRightSide')->setName('kapostConvertRightSide')
+                                )->addExtraClass('kapostConvertTypeWrap')->setName('kapostConvertTypeWrap')
                         );
         
         
@@ -116,13 +118,13 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
                                             'newtitle'=>$recordTitle
                                         ));
                     
-                    $fields->push(CheckboxField::create('UpdateURLSegment', $urlFieldLabel)
-                            ->addExtraClass('urlsegmentcheck')
-                            ->setAttribute('data-replace-id', $obj->ID)
-                            ->setForm($form)
-                            ->setDescription(_t('KapostAdmin.NEW_URL_SEGMENT', '_The new URL Segment will be or will be close to "{newsegment}"', array(
-                                                                                                            'newsegment'=>$obj->generateURLSegment($recordTitle)
-                                                                                                        ))));
+                    $fields->insertAfter('kapostConvertTypeWrap', CheckboxField::create('UpdateURLSegment', $urlFieldLabel)
+                                                                                ->addExtraClass('urlsegmentcheck')
+                                                                                ->setAttribute('data-replace-id', $obj->ID)
+                                                                                ->setForm($form)
+                                                                                ->setDescription(_t('KapostAdmin.NEW_URL_SEGMENT', '_The new URL Segment will be or will be close to "{newsegment}"', array(
+                                                                                                                                                                'newsegment'=>$obj->generateURLSegment($recordTitle)
+                                                                                                                                                            ))));
                 }
             }
         }
@@ -136,6 +138,13 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         
         //Allow extensions to adjust the form
         $this->extend('updateConvertObjectForm', $form, $this->record);
+        
+        
+        //If we have more than 1 field enable the line below the convert type
+        $csrfToken=$form->getSecurityToken();
+        if((!($csrfToken instanceof NullSecurityToken) && $form->Fields()->count()>2) || ($csrfToken instanceof NullSecurityToken && $form->Fields()->count()>1)) {
+            $wrapper->addExtraClass('has-more-fields');
+        }
         
         
         return $form;

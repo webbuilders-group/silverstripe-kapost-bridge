@@ -22,6 +22,34 @@ body.cms-dialog {
     width: 48%;
 }
 
+.cms-dialog form.KapostAdmin .kapostConvertTypeWrap:after {
+    clear: both;
+    
+    display: block;
+    
+    content: ' ';
+    
+    width: 0;
+    height: 0;
+    
+    font-size: 0;
+    
+    line-height: 0;
+    
+    visibility: hidden;
+}
+
+.cms-dialog form.KapostAdmin .kapostConvertTypeWrap.has-more-fields {
+    border-bottom: 1px solid #D0D3D5;
+    
+    -webkit-box-shadow: 0 1px 0 rgba(245, 245, 245, 0.8);
+    -moz-box-shadow: 0 1px 0 rgba(245, 245, 245, 0.8);
+    -o-box-shadow: 0 1px 0 rgba(245, 245, 245, 0.8);
+    box-shadow: 0 1px 0 rgba(245, 245, 245, 0.8);
+    
+    padding-bottom: 7px;
+}
+
 .cms-dialog form.KapostAdmin .clear {
     clear: both;
 }
