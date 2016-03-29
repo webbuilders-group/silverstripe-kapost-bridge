@@ -118,13 +118,13 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
                                             'newtitle'=>$recordTitle
                                         ));
                     
-                    $fields->insertAfter('kapostConvertTypeWrap', CheckboxField::create('UpdateURLSegment', $urlFieldLabel)
-                                                                                ->addExtraClass('urlsegmentcheck')
-                                                                                ->setAttribute('data-replace-id', $obj->ID)
-                                                                                ->setForm($form)
-                                                                                ->setDescription(_t('KapostAdmin.NEW_URL_SEGMENT', '_The new URL Segment will be or will be close to "{newsegment}"', array(
-                                                                                                                                                                'newsegment'=>$obj->generateURLSegment($recordTitle)
-                                                                                                                                                            ))));
+                    $fields->insertAfter(CheckboxField::create('UpdateURLSegment', $urlFieldLabel)
+                                                            ->addExtraClass('urlsegmentcheck')
+                                                            ->setAttribute('data-replace-id', $obj->ID)
+                                                            ->setForm($form)
+                                                            ->setDescription(_t('KapostAdmin.NEW_URL_SEGMENT', '_The new URL Segment will be or will be close to "{newsegment}"', array(
+                                                                                                                                            'newsegment'=>$obj->generateURLSegment($recordTitle)
+                                                                                                                                        ))), 'kapostConvertTypeWrap');
                 }
             }
         }
