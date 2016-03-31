@@ -544,7 +544,8 @@ class KapostService extends Controller implements PermissionProvider {
                             'permaLink'=>Controller::join_links(Director::absoluteBaseURL(), 'admin/kapost/KapostObject/EditForm/field/KapostObject/item', $kapostObj->ID, 'edit'),
                             'custom_fields'=>array(
                                     array('id'=>'SS_Title', 'key'=>'SS_Title', 'value'=>$kapostObj->Title),
-                                    array('id'=>'SS_MetaDescription', 'key'=>'SS_MetaDescription', 'value'=>$kapostObj->MetaDescription)
+                                    array('id'=>'SS_MetaDescription', 'key'=>'SS_MetaDescription', 'value'=>$kapostObj->MetaDescription),
+                                    array('id'=>'SS_KapostConversionNotes', 'key'=>'SS_KapostConversionNotes', 'value'=>$kapostObj->KapostConversionNotes)
                                 )
                         );
                 
