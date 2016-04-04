@@ -36,7 +36,7 @@ class KapostPage extends KapostObject {
         $obj->KapostChangeType=$this->KapostChangeType;
         $obj->KapostRefID=$this->KapostRefID;
         $obj->KapostAuthor=$this->KapostAuthor;
-        $obj->DestinationType=$this->ClassNameNice;
+        $obj->DestinationType=$this->DestinationClass;
         $obj->DestinationID=$destinationID;
         $obj->ConverterName=Member::currentUser()->Name;
         $obj->write();

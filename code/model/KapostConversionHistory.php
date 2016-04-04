@@ -77,7 +77,7 @@ class KapostConversionHistory extends DataObject {
                             new ReadonlyField('ConverterName', $this->fieldLabel('ConverterName')),
                             new ReadonlyField('KapostChangeTypeNice', $this->fieldLabel('KapostChangeType')),
                             new ReadonlyField('KapostAuthor', $this->fieldLabel('KapostAuthor')),
-                            new ReadonlyField('DestinationType', $this->fieldLabel('DestinationType')),
+                            new ReadonlyField('DestinationTypeNice', $this->fieldLabel('DestinationType')),
                             $kapostRef=ReadonlyField::create(
                                                     'KapostRefID_linked',
                                                     $this->fieldLabel('KapostRefID'),
@@ -122,6 +122,24 @@ class KapostConversionHistory extends DataObject {
         }
     
         return $this->KapostChangeType;
+    }
+    
+    /**
+     * Gets the singular name of the destination type or just returs what was stored for the destination type if the class does not have one of i18n_singular_name or singular_name or the class does not exist
+     * @return {string}
+     */
+    public function getDestinationTypeNice() {
+        $className=$this->DestinationType;
+        if(class_exists($className)) {
+            $sng=singleton($className);
+            if(method_exists($sng, 'i18n_singular_name')) {
+                return $sng->i18n_singular_name();
+            }else if(method_exists($sng, 'singular_name')) {
+                return $sng->singular_name();
+            }
+        }
+        
+        return $className;
     }
     
     /**
