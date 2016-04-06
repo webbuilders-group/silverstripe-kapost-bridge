@@ -17,6 +17,7 @@ en:
         NEW_URL_SEGMENT: 'The new URL Segment will be or will be close to "{newsegment}"'
         NOTES_FROM_AUTHOR: "Notes from {author_name}"
         INCOMING_CONTENT: "Incoming Content"
+        KAPOST_CONTENT_NOT_FOUND: "Incoming Kapost Content could not be found"
     KapostService:
         AUTH_FAIL: "Authentication Failed, please check the App Center credentials for the SilverStripe end point."
         METHOD_NOT_ALLOWED: 'Action "{method}" is not allowed on class Kapost Service.'

@@ -8,7 +8,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
     
     
     /**
-     * Builds an item edit form.  The arguments to getCMSFields() are the popupController and popupFormName, however this is an experimental API and may change.
+     * Builds an item edit form. The arguments to getCMSFields() are the popupController and popupFormName, however this is an experimental API and may change.
      * @return {Form}
      */
     public function ItemEditForm() {
@@ -50,6 +50,11 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * @return {string} HTML to be sent to the browser
      */
     public function convert() {
+        //Verify the record exists before proceeding
+        if(empty($this->record) || $this->record===false || !$this->record->exists()) {
+            return $this->httpError(404, _t('KapostAdmin.KAPOST_CONTENT_NOT_FOUND', '_Incoming Kapost Content could not be found'));
+        }
+        
         return $this->customise(array(
                                     'Title'=>_t('KapostAdmin.CONVERT_OBJECT', '_Convert Object'),
                                     'Content'=>null,
@@ -63,6 +68,11 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * @return {Form} Form to be used for configuring the conversion
      */
     public function ConvertObjectForm() {
+        //Verify the record exists before proceeding
+        if(empty($this->record) || $this->record===false || !$this->record->exists()) {
+            return $this->httpError(404, _t('KapostAdmin.KAPOST_CONTENT_NOT_FOUND', '_Incoming Kapost Content could not be found'));
+        }
+        
         //Reset the reading stage
         Versioned::reset();
         
