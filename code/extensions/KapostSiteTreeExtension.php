@@ -31,7 +31,7 @@ class KapostSiteTreeExtension extends DataExtension {
             
             //Detect Incoming Changes
             if(Permission::check('CMS_ACCESS_KapostAdmin')) {
-                $incoming=KapostObject::get()->filter('KapostRefID', Convert::raw2sql($kapostRefID));
+                $incoming=KapostObject::get()->filter('IsKapostPreview', 0)->filter('KapostRefID', Convert::raw2sql($kapostRefID));
                 if($incoming->count()>=1) {
                     $link=Controller::join_links(AdminRootController::config()->url_base, KapostAdmin::config()->url_segment, 'KapostObject/EditForm/field/KapostObject/item', $incoming->first()->ID, 'edit');
                     
