@@ -25,6 +25,9 @@
         "webbuilders-group/silverstripe-kapost-bridge-logger": "Adds support for logging of all information going to and from Kapost"
     },
     "extra": {
-        "installer-name": "kapost-bridge"
+        "installer-name": "kapost-bridge",
+        "branch-alias": {
+            "dev-master": "0.7.x-dev"
+        }
     }
 }
