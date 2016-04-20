@@ -73,6 +73,31 @@ class KapostAdmin extends ModelAdmin {
     }
     
     /**
+	 * 
+	 * @return SS_List of forms
+	 * 
+	 * @see ModelAdmin::getManagedModelTabs()
+	 */
+	protected function getManagedModelTabs() {
+		$tabs=parent::getManagedModelTabs();
+        
+		
+		//If the log viewer is installed add that to the managed model tabs
+		if(class_exists('KapostBridgeLogViewer')) {
+		    $sng=new KapostBridgeLogViewer();
+		    $tabs->push(new ArrayData(array(
+                            	            'Title'=>$sng->SectionTitle(),
+                            	            'ClassName'=>'KapostBridgeLogViewer',
+                            	            'Link'=>$sng->Link(),
+                            	            'LinkOrCurrent'=>'link'
+                            		    )));
+		}
+		
+		
+		return $tabs;
+	}
+    
+    /**
      * Gets the list used in the ModelAdmin
      * @return {SS_List}
      */
