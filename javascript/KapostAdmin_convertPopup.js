@@ -1,12 +1,13 @@
 (function($) {
     $.entwine('kapost', function($) {
-        $(window).resize(function() {
-            $('#Form_ConvertObjectForm').layout();
-        });
-        
         $('#Form_ConvertObjectForm').entwine({
-            onadd: function(e) {
+            onmatch: function() {
                 $(this).layout();
+            },
+            fromWindow: {
+                onresize: function() {
+                    $(this).layout();
+                }
             }
         });
         
