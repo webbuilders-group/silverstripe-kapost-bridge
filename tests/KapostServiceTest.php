@@ -31,6 +31,11 @@ class KapostServiceTest extends FunctionalTest {
             }
         }
         
+
+        //Configure and add the Hook
+        KapostServiceTestHook::set_test($this);
+        KapostService::add_extension('KapostServiceTestHook');
+        
         
         if(self::$configured==false) {
             $prefix=(defined('SS_DATABASE_PREFIX') ? SS_DATABASE_PREFIX:'ss_');
@@ -772,6 +777,115 @@ class KapostServiceTest extends FunctionalTest {
         $xmlmsg=new xmlrpcmsg('');
         
         return $xmlmsg->parseResponse($body, true, 'phpvals');
+    }
+}
+
+class KapostServiceTestHook extends Extension implements TestOnly {
+    private static $unitTest;
+    
+    /**
+     * @TODO
+     */
+    public static function set_test(SapphireTest $test) {
+        self::$unitTest=$test;
+    }
+    
+    /**
+     * Hooks in to run additional tests during the data processing for newPost
+     * @param {KapostObject} $kapostObj Kapost Object instance to update
+     * @param {string} $site_id ID of the Site to be referenced
+     * @param {array} $content Content from Kapost to apply to the Kapost Object
+     * @param {int} $publish To publish on conversion or not
+     * @param {bool} $isPreview Is preview mode or not (defaults to false)
+     */
+    public function updateNewKapostPage(KapostObject $kapostObj, $site_id, $content, $publish, $isPreview) {
+        //Verify the key SS_TestArray exists
+        self::$unitTest->assertArrayHasKey('SS_TestArray', $content['custom_fields']);
+        
+        //Ensure the SS_TestArray key's value is an array
+        self::$unitTest->assertInternalType('array', $content['custom_fields']['SS_TestArray']);
+        
+        
+        //Verify the array is not empty
+        self::$unitTest->assertNotEmpty($content['custom_fields']['SS_TestArray']);
+        self::$unitTest->assertEquals(4, count($content['custom_fields']['SS_TestArray']));
+        
+        
+        //Verify the values of the array
+        self::$unitTest->assertContains('Test Value 1', $content['custom_fields']['SS_TestArray']);
+        self::$unitTest->assertContains('Test Value 2', $content['custom_fields']['SS_TestArray']);
+        self::$unitTest->assertContains('Test Value 3', $content['custom_fields']['SS_TestArray']);
+        self::$unitTest->assertContains('Test Value 4', $content['custom_fields']['SS_TestArray']);
+        
+        
+        
+
+        //Verify the key SS_TestHashArray exists
+        self::$unitTest->assertArrayHasKey('SS_TestHashedArray', $content['custom_fields']);
+        
+        //Ensure the SS_TestArray key's value is an array
+        self::$unitTest->assertInternalType('array', $content['custom_fields']['SS_TestHashedArray']);
+        
+        
+        //Verify the array is not empty
+        self::$unitTest->assertNotEmpty($content['custom_fields']['SS_TestHashedArray']);
+        self::$unitTest->assertEquals(4, count($content['custom_fields']['SS_TestHashedArray']));
+        
+        
+        //Verify the values of the array
+        self::$unitTest->assertContains('Test Value 1', $content['custom_fields']['SS_TestHashedArray']);
+        self::$unitTest->assertContains('Test Value 2', $content['custom_fields']['SS_TestHashedArray']);
+        self::$unitTest->assertContains('Test Value 3', $content['custom_fields']['SS_TestHashedArray']);
+        self::$unitTest->assertContains('Test Value 4', $content['custom_fields']['SS_TestHashedArray']);
+    }
+    
+    /**
+     * Hooks in to run additional tests during the data processing for editPost
+     * @param {KapostObject} $kapostObj Kapost Object instance to update
+     * @param {string} $content_id ID of the Kapost Object referenced
+     * @param {array} $content Content from Kapost to apply to the Kapost Object
+     * @param {int} $publish To publish on conversion or not
+     * @param {bool} $isPreview Is preview mode or not (defaults to false)
+     */
+    public function updateEditKapostPage(KapostObject $kapostObj, $content_id, $content, $publish, $isPreview) {
+        //Verify the key SS_TestArray exists
+        self::$unitTest->assertArrayHasKey('SS_TestArray', $content['custom_fields']);
+        
+        //Ensure the SS_TestArray key's value is an array
+        self::$unitTest->assertInternalType('array', $content['custom_fields']['SS_TestArray']);
+        
+        
+        //Verify the array is not empty
+        self::$unitTest->assertNotEmpty($content['custom_fields']['SS_TestArray']);
+        self::$unitTest->assertEquals(4, count($content['custom_fields']['SS_TestArray']));
+        
+        
+        //Verify the values of the array
+        self::$unitTest->assertContains('Test Value 1', $content['custom_fields']['SS_TestArray']);
+        self::$unitTest->assertContains('Test Value 2', $content['custom_fields']['SS_TestArray']);
+        self::$unitTest->assertContains('Test Value 3', $content['custom_fields']['SS_TestArray']);
+        self::$unitTest->assertContains('Test Value 4', $content['custom_fields']['SS_TestArray']);
+        
+        
+        
+
+        //Verify the key SS_TestHashArray exists
+        self::$unitTest->assertArrayHasKey('SS_TestHashedArray', $content['custom_fields']);
+        
+        //Ensure the SS_TestArray key's value is an array
+        self::$unitTest->assertInternalType('array', $content['custom_fields']['SS_TestHashedArray']);
+        
+        
+        //Verify the array is not empty
+        self::$unitTest->assertNotEmpty($content['custom_fields']['SS_TestHashedArray']);
+        self::$unitTest->assertEquals(4, count($content['custom_fields']['SS_TestHashedArray']));
+        
+        
+        //Verify the values of the array
+        self::$unitTest->assertContains('Test Value 1', $content['custom_fields']['SS_TestHashedArray']);
+        self::$unitTest->assertContains('Test Value 2', $content['custom_fields']['SS_TestHashedArray']);
+        self::$unitTest->assertContains('Test Value 3', $content['custom_fields']['SS_TestHashedArray']);
+        self::$unitTest->assertContains('Test Value 4', $content['custom_fields']['SS_TestHashedArray']);
     }
 }
 ?>

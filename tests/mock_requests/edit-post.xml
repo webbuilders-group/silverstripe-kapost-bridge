@@ -137,6 +137,38 @@ var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ka
                                             <member>
                                                 <name>key</name>
                                                 <value>
+                                                    <string>_kapost_array_SS_TestArray</string>
+                                                </value>
+                                            </member>
+                                            <member>
+                                                <name>value</name>
+                                                <value>
+                                                    <string>WyJUZXN0IFZhbHVlIDEiLCJUZXN0IFZhbHVlIDIiLCJUZXN0IFZhbHVlIDMiLCJUZXN0IFZhbHVlIDQiXQ==</string>
+                                                </value>
+                                            </member>
+                                        </struct>
+                                    </value>
+                                    <value>
+                                        <struct>
+                                            <member>
+                                                <name>key</name>
+                                                <value>
+                                                    <string>_kapost_hash_SS_TestHashedArray</string>
+                                                </value>
+                                            </member>
+                                            <member>
+                                                <name>value</name>
+                                                <value>
+                                                    <string>WyJUZXN0IFZhbHVlIDEiLCJUZXN0IFZhbHVlIDIiLCJUZXN0IFZhbHVlIDMiLCJUZXN0IFZhbHVlIDQiXQ==</string>
+                                                </value>
+                                            </member>
+                                        </struct>
+                                    </value>
+                                    <value>
+                                        <struct>
+                                            <member>
+                                                <name>key</name>
+                                                <value>
                                                     <string>_kapost_protected</string>
                                                 </value>
                                             </member>

@@ -332,6 +332,30 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {bool} $isPreview Is preview mode or not (defaults to false)
      */
     protected function newPost($blog_id, $content, $publish, $isPreview=false) {
+        //Decode all hash or array keys
+        if(array_key_exists('custom_fields', $content)) {
+            $hashKeys=$this->preg_grep_keys('/^_kapost_(array|hash)_/', $content['custom_fields']);
+            if(!empty($hashKeys)) {
+                foreach($hashKeys as $key=>$value) {
+                    //Decode the base64 encoded string
+                    $value=@base64_decode($value);
+                    if($value!==false && !empty($value)) {
+                        //Decode the array string to a php associative array
+                        $value=@json_decode($value, true);
+                        if($value!==false && !empty($value)) {
+                            //Remove the old key
+                            unset($content['custom_fields'][$key]);
+                            
+                            //Add the decoded array to the custom fields
+                            $content['custom_fields'][preg_replace('/^_kapost_(array|hash)_/', '', $key)]=$value;
+                        }
+                    }
+                }
+            }
+        }
+        
+        
+        //Allow extensions to handle the request
         $results=$this->extend('newPost', $blog_id, $content, $publish, $isPreview);
         if($results && is_array($results)) {
             $results=array_filter($results, function($v) {return !is_null($v);});
@@ -401,6 +425,30 @@ class KapostService extends Controller implements PermissionProvider {
      * @param {bool} $isPreview Is preview mode or not (defaults to false)
      */
     protected function editPost($content_id, $content, $publish, $isPreview=false) {
+        //Decode all hash or array keys
+        if(array_key_exists('custom_fields', $content)) {
+            $hashKeys=$this->preg_grep_keys('/^_kapost_(array|hash)_/', $content['custom_fields']);
+            if(!empty($hashKeys)) {
+                foreach($hashKeys as $key=>$value) {
+                    //Decode the base64 encoded string
+                    $value=@base64_decode($value);
+                    if($value!==false && !empty($value)) {
+                        //Decode the array string to a php associative array
+                        $value=@json_decode($value, true);
+                        if($value!==false && !empty($value)) {
+                            //Remove the old key
+                            unset($content['custom_fields'][$key]);
+                            
+                            //Add the decoded array to the custom fields
+                            $content['custom_fields'][preg_replace('/^_kapost_(array|hash)_/', '', $key)]=$value;
+                        }
+                    }
+                }
+            }
+        }
+        
+        
+        //Allow extensions to handle the request
         $results=$this->extend('editPost', $content_id, $content, $publish, $isPreview);
         if($results && is_array($results)) {
             $results=array_filter($results, function($v) {return !is_null($v);});
@@ -851,6 +899,25 @@ class KapostService extends Controller implements PermissionProvider {
         }
         
         return $leftArray;
+    }
+    
+    /**
+     * Gets all of the values who's keys match a given expression
+     * @param {string} $pattern Regular expression patter to run against the keys
+     * @param {array} $input Input array
+     * @param {int} $flags Flags to pass to preg_grep
+     * @return {array} Array of key value pairs who's keys matched the expression
+     * 
+     * @see preg_grep()
+     */
+    private function preg_grep_keys($pattern, $input, $flags=0) {
+        $keys=preg_grep($pattern, array_keys($input), $flags);
+        $vals=array();
+        foreach($keys as $key) {
+            $vals[$key]=$input[$key];
+        }
+        
+        return $vals;
     }
     
     /**
