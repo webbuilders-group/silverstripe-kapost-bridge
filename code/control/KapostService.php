@@ -911,13 +911,7 @@ class KapostService extends Controller implements PermissionProvider {
      * @see preg_grep()
      */
     private function preg_grep_keys($pattern, $input, $flags=0) {
-        $keys=preg_grep($pattern, array_keys($input), $flags);
-        $vals=array();
-        foreach($keys as $key) {
-            $vals[$key]=$input[$key];
-        }
-        
-        return $vals;
+        return array_intersect_key($input, array_flip(preg_grep($pattern, array_keys($input), $flags)));
     }
     
     /**
