@@ -23,6 +23,15 @@ class KapostConversionTest extends FunctionalTest {
         parent::setUp();
         
         
+        //Remove all extensions (keeps the tests sane)
+        $extensions=Object::get_extensions('KapostGridFieldDetailForm_ItemRequest');
+        if(!empty($extensions)) {
+            foreach($extensions as $extension) {
+                KapostGridFieldDetailForm_ItemRequest::remove_extension($extension);
+            }
+        }
+        
+        
         $this->testController=new KapostTestController();
         
     
