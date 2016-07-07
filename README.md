@@ -8,7 +8,7 @@ Bridge for Kapost driven content authoring, provides support for basic content p
 * Ed Chipman ([UndefinedOffset](https://github.com/UndefinedOffset))
 
 ## Requirements
-* SilverStripe CMS 3.1+
+* SilverStripe Framework 3.1+
 * [phpxmlrpc 3.0.x](https://github.com/gggeek/phpxmlrpc)
 
 

@@ -160,6 +160,11 @@ class KapostServiceTest extends FunctionalTest {
      * Test Creation of a new post
      */
     public function testNewPost() {
+        if(!class_exists('SiteTree')) {
+            $this->markTestSkipped('CMS not installed skipping test');
+            return;
+        }
+        
         $response=$this->call_service('new-post');
         
         
@@ -202,6 +207,11 @@ class KapostServiceTest extends FunctionalTest {
      * Tests get post returns a good response since we're written the post
      */
     public function testGetPostKnownID() {
+        if(!class_exists('SiteTree')) {
+            $this->markTestSkipped('CMS not installed skipping test');
+            return;
+        }
+        
         $response=$this->call_service('get-post');
         
         
@@ -265,6 +275,11 @@ class KapostServiceTest extends FunctionalTest {
      * Tests to ensure the edit post request works correctly
      */
     public function testEditPost() {
+        if(!class_exists('SiteTree')) {
+            $this->markTestSkipped('CMS not installed skipping test');
+            return;
+        }
+        
         $response=$this->call_service('edit-post');
         
         
@@ -624,6 +639,11 @@ class KapostServiceTest extends FunctionalTest {
      * Tests to see if the preview functionality is working correctly
      */
     public function testPreviewObject() {
+        if(!class_exists('SiteTree')) {
+            $this->markTestSkipped('CMS not installed skipping test');
+            return;
+        }
+        
         $response=$this->call_service('get-preview');
         
         
@@ -689,6 +709,11 @@ class KapostServiceTest extends FunctionalTest {
      * Tests to see if the expired token returns a 404 as expected
      */
     public function testPreviewExpiredToken() {
+        if(!class_exists('SiteTree')) {
+            $this->markTestSkipped('CMS not installed skipping test');
+            return;
+        }
+        
         //Generate the preview token
         $token=new KapostPreviewToken();
         $token->Code='testcode';
@@ -713,6 +738,11 @@ class KapostServiceTest extends FunctionalTest {
      * Tests to see if the kapost thread tag stripping is enabled
      */
     public function testThreadTagStripping() {
+        if(!class_exists('SiteTree')) {
+            $this->markTestSkipped('CMS not installed skipping test');
+            return;
+        }
+        
         //Ensure thread filtering is enabled
         KapostService::config()->filter_kapost_threads=true;
         

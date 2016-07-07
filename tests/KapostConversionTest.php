@@ -10,17 +10,32 @@ class KapostConversionTest extends FunctionalTest {
      */
     protected $testController;
     
-    protected $extraDataObjects=array(
-                                'KapostConversionTest_KapostTestPage',
-                                'KapostConversionTest_TestPage'
-                            );
     
+    /**
+     * Adds the extra data objects if the SiteTree class exists
+     */
+    public function setUpOnce() {
+        if(class_exists('SiteTree')) {
+            $this->extraDataObjects=array(
+                                        'KapostConversionTest_KapostTestPage',
+                                        'KapostConversionTest_TestPage'
+                                    );
+        }
+        
+        parent::setUpOnce();
+    }
     
     /**
      * Initializes the database, we do it here so we don't loose our information we need a sequential testing environment
      */
     public function setUp() {
         parent::setUp();
+        
+        
+        if(!class_exists('SiteTree')) {
+            $this->markTestSkipped('CMS not installed skipping test');
+            return;
+        }
         
         
         //Remove all extensions (keeps the tests sane)
@@ -34,7 +49,7 @@ class KapostConversionTest extends FunctionalTest {
         
         $this->testController=new KapostTestController();
         
-    
+        
         if(self::$configured==false) {
             $prefix=(defined('SS_DATABASE_PREFIX') ? SS_DATABASE_PREFIX:'ss_');
             $fixtureFile='KapostConversionTest.yml';
@@ -101,6 +116,11 @@ class KapostConversionTest extends FunctionalTest {
      * Tests conversion of new pages to the actual staged page
      */
     public function testConvertNewPage() {
+        if(!class_exists('SiteTree')) {
+            $this->markTestSkipped('CMS not installed skipping test');
+            return;
+        }
+        
         //Ensure we're an admin
         $this->logInWithPermission('ADMIN');
         
@@ -153,6 +173,11 @@ class KapostConversionTest extends FunctionalTest {
      * Tests conversion of edits for a page to the actual staged page
      */
     public function testConvertReplacePage() {
+        if(!class_exists('SiteTree')) {
+            $this->markTestSkipped('CMS not installed skipping test');
+            return;
+        }
+        
         //Ensure we're an admin
         $this->logInWithPermission('ADMIN');
         
@@ -217,6 +242,11 @@ class KapostConversionTest extends FunctionalTest {
      * Tests conversion of new pages to the actual staged page with a parent
      */
     public function testConvertNewPageParent() {
+        if(!class_exists('SiteTree')) {
+            $this->markTestSkipped('CMS not installed skipping test');
+            return;
+        }
+        
         //Ensure we're an admin
         $this->logInWithPermission('ADMIN');
         
@@ -269,6 +299,11 @@ class KapostConversionTest extends FunctionalTest {
      * Tests conversion of edits for a page to the actual staged page
      */
     public function testConvertReplaceCustomPage() {
+        if(!class_exists('SiteTree')) {
+            $this->markTestSkipped('CMS not installed skipping test');
+            return;
+        }
+        
         //Ensure we're an admin
         $this->logInWithPermission('ADMIN');
         
@@ -369,6 +404,10 @@ class KapostTestController extends Controller implements TestOnly {
         
         return new Form($this, 'TestForm', $fields, new FieldList());
     }
+}
+
+if(!class_exists('SiteTree')) {
+    return;
 }
 
 class KapostConversionTest_KapostTestPage extends KapostPage implements TestOnly {

@@ -176,9 +176,11 @@ class KapostService extends Controller implements PermissionProvider {
         
         
         //Token expired or object not found
-        $response=ErrorPage::response_for(404);
-        if(!empty($response)) {
-            return $response;
+        if(class_exists('ErrorPage')) {
+            $response=ErrorPage::response_for(404);
+            if(!empty($response)) {
+                return $response;
+            }
         }
         
         return parent::httpError(404);
@@ -368,7 +370,7 @@ class KapostService extends Controller implements PermissionProvider {
         
         if(array_key_exists('custom_fields', $content)) {
             //Ensure the type is an extension of the KapostPage object
-            if(!class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) || !('Kapost'.$content['custom_fields']['kapost_custom_type']=='KapostPage' || is_subclass_of('Kapost'.$content['custom_fields']['kapost_custom_type'], 'KapostPage'))) {
+            if(!class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) || !class_exists('SiteTree') || !('Kapost'.$content['custom_fields']['kapost_custom_type']=='KapostPage' || is_subclass_of('Kapost'.$content['custom_fields']['kapost_custom_type'], 'KapostPage'))) {
                 return $this->httpError(400, _t('KapostService.TYPE_NOT_KNOWN', '_The type "{type}" is not a known type', array('type'=>$content['custom_fields']['kapost_custom_type'])));
             }
             
@@ -460,7 +462,7 @@ class KapostService extends Controller implements PermissionProvider {
         
         
         //Ensure the type is an extension of the KapostPage object
-        if(array_key_exists('custom_fields', $content) && (!class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) || !('Kapost'.$content['custom_fields']['kapost_custom_type']=='KapostPage' || is_subclass_of('Kapost'.$content['custom_fields']['kapost_custom_type'], 'KapostPage')))) {
+        if((array_key_exists('custom_fields', $content) && (!class_exists('Kapost'.$content['custom_fields']['kapost_custom_type'])  || !class_exists('SiteTree') || !('Kapost'.$content['custom_fields']['kapost_custom_type']=='KapostPage' || is_subclass_of('Kapost'.$content['custom_fields']['kapost_custom_type'], 'KapostPage')))) || (!array_key_exists('custom_fields', $content) && !class_exists('SiteTree'))) {
             return $this->httpError(400, _t('KapostService.TYPE_NOT_KNOWN', '_The type "{type}" is not a known type', array('type'=>$content['custom_fields']['kapost_custom_type'])));
         }
         
@@ -551,6 +553,12 @@ class KapostService extends Controller implements PermissionProvider {
         }
         
         
+        //If we don't have a SiteTree class and extensions didn't handle the request return an invalid post
+        if(!class_exists('SiteTree')) {
+            return new xmlrpcresp(0, 404, _t('KapostService.INVALID_POST_ID', '_Invalid post ID.'));
+        }
+        
+        
         //Switch Versioned to stage
         Versioned::set_reading_mode('Stage.stage');
         
@@ -619,17 +627,21 @@ class KapostService extends Controller implements PermissionProvider {
      */
     protected function getCategories($blog_id) {
         $categories=array();
-        $pageClasses=ClassInfo::subclassesFor('SiteTree');
-        foreach($pageClasses as $class) {
-            if($class!='SiteTree') {
-                $categories[]=array(
-                                'categoryId'=>'ss_'.strtolower($class),
-                                'categoryName'=>singleton($class)->i18n_singular_name(),
-                                'parentId'=>0
-                            );
+        
+        
+        //If we have a SiteTree class add the classes
+        if(class_exists('SiteTree')) {
+            $pageClasses=ClassInfo::subclassesFor('SiteTree');
+            foreach($pageClasses as $class) {
+                if($class!='SiteTree') {
+                    $categories[]=array(
+                                    'categoryId'=>'ss_'.strtolower($class),
+                                    'categoryName'=>singleton($class)->i18n_singular_name(),
+                                    'parentId'=>0
+                                );
+                }
             }
         }
-        
         
         
         $results=$this->extend('getCategories', $blog_id);
@@ -642,6 +654,7 @@ class KapostService extends Controller implements PermissionProvider {
                 }
             }
         }
+        
         
         return $categories;
     }

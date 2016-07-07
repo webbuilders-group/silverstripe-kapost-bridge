@@ -14,7 +14,7 @@
 
     "require":
     {
-        "silverstripe/cms": "~3.1",
+        "silverstripe/framework": "~3.1",
         "phpxmlrpc/phpxmlrpc": "3.0.*",
         "composer/installers": "*"
     },
