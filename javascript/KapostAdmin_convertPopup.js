@@ -66,10 +66,13 @@
         
         $('#Form_ConvertObjectForm_action_doConvertObject').entwine({
             onclick: function() {
-                $(document.body).append(
-                                        '<div class="cms-content-loading-overlay ui-widget-overlay-light"></div>'+
-                                        '<div class="cms-content-loading-spinner"></div>'
-                                    );
+                var form=this.closest('form');
+                if((typeof form.valid == 'function' && form.valid()) || (typeof form.valid != 'function' && (typeof form.get(0).checkValidity != 'function' || form.get(0).checkValidity()))) {
+                    $(document.body).append(
+                                            '<div class="cms-content-loading-overlay ui-widget-overlay-light"></div>'+
+                                            '<div class="cms-content-loading-spinner"></div>'
+                                        );
+                }
             }
         });
         
