@@ -28,9 +28,18 @@ class KapostConversionHistory extends DataObject {
                                         'Title',
                                         'Created',
                                         'ConverterName',
-                                        'DestinationType',
-                                        'KapostChangeType',
+                                        'DestinationTypeNice',
+                                        'KapostChangeTypeNice',
                                         'KapostAuthor'
+                                    );
+    
+    private static $searchable_fields=array(
+                                        'Title'=>'ParitalMatchFilter',
+                                        'Created'=>'ParitalMatchFilter',
+                                        'ConverterName'=>'ParitalMatchFilter',
+                                        'DestinationType'=>'ParitalMatchFilter',
+                                        'KapostChangeType'=>'ExactMatchFilter',
+                                        'KapostAuthor'=>'ParitalMatchFilter'
                                     );
     
     

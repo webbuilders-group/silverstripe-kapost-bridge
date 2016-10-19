@@ -36,7 +36,7 @@ class KapostFieldCaster extends Enum {
      * @return {string} Non-XML ready result of i18n_singular_name or the raw value
      */
     public function NiceClassName() {
-        if(class_exists($this->value) && $this->value instanceof DataObject) {
+        if(class_exists($this->value) && is_a($this->value, 'DataObject', true)) {
             return singleton($this->value)->i18n_singular_name();
         }
         

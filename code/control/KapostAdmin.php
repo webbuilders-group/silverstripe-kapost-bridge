@@ -42,7 +42,6 @@ class KapostAdmin extends ModelAdmin {
                                 ->getComponentByType('GridFieldDataColumns')
                                     ->setFieldCasting(array(
                                                             'Created'=>'SS_Datetime->FormatFromSettings',
-                                                            'ClassName'=>'KapostFieldCaster->NiceClassName',
                                                             'KapostChangeType'=>'KapostFieldCaster->NiceChangeType',
                                                             'ToPublish'=>'KapostFieldCaster->NiceToPublish'
                                                         ));
@@ -53,12 +52,18 @@ class KapostAdmin extends ModelAdmin {
         }else if($this->modelClass=='KapostConversionHistory' && $gridField=$form->Fields()->dataFieldByName('KapostConversionHistory')) {
             $gridField->getConfig()
                                 ->removeComponentsByType('GridFieldAddNewButton')
-                                ->addComponent(new KapostDestinationAction(), 'GridFieldEditButton')
-                                ->getComponentByType('GridFieldDataColumns')
-                                        ->setFieldCasting(array(
-                                                                'Created'=>'SS_Datetime->FormatFromSettings',
-                                                                'KapostChangeType'=>'KapostFieldCaster->NiceChangeType',
-                                                            ));
+                                ->addComponent(new KapostDestinationAction(), 'GridFieldEditButton');
+            
+            
+            $dataColumns=$gridField->getConfig()->getComponentByType('GridFieldDataColumns');
+            $dataColumns->setFieldCasting(array(
+                                                'Created'=>'SS_Datetime->FormatFromSettings'
+                                            ));
+            
+            $columns=$dataColumns->getDisplayFields($gridField);
+            $columns['DestinationTypeNice']=_t('KapostConversionHistory.db_DestinationType', '_Destination Type');
+            $columns['KapostChangeTypeNice']=_t('KapostConversionHistory.db_KapostChangeType', '_Change Type');
+            $columns=$dataColumns->setDisplayFields($columns);
             
             
             $gridField->getConfig()->getComponentByType('GridFieldDetailForm')->setItemEditFormCallback(function(Form $form) {
