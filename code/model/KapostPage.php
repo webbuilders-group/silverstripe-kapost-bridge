@@ -31,7 +31,7 @@ class KapostPage extends KapostObject {
      * @return {KapostConversionHistory}
      */
     public function createConversionHistory($destinationID) {
-        $obj=new KapostPageConversionHistory();
+        $obj=new KapostConversionHistory();
         $obj->Title=$this->Title;
         $obj->KapostChangeType=$this->KapostChangeType;
         $obj->KapostRefID=$this->KapostRefID;

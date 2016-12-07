@@ -117,7 +117,22 @@ class KapostConversionHistory extends DataObject {
      * @return {string} Relative link to the destination page
      */
     public function getDestinationLink() {
-        user_error('You must implement the getDestinationLink() method on your decendent of KapostConversionHistory: '.$this->class, E_USER_WARNING);
+        $destinationType=$this->DestinationType;
+        if(!empty($destinationType) && class_exists($destinationType) && is_subclass_of($destinationType, 'DataObject')) {
+            $dest=$destinationType::get()->byID($this->DestinationID);
+            if(!empty($dest) && $dest!==false && $dest->exists()) {
+                if($dest->hasMethod('CMSEditLink')) {
+                    return $dest->CMSEditLink();
+                }else {
+                    user_error('You must implement the getDestinationLink() method on a decendent of KapostConversionHistory "'.$this->class.'" or implement the method CMSEditLink on "'.$this->DestinationType.'"', E_USER_WARNING);
+                }
+            }else {
+                user_error('Could not find the destination "'.$this->DestinationType.'" object.', E_USER_NOTICE);
+                return;
+            }
+        }
+        
+        user_error('Destination type "'.$this->DestinationType.'" does not exist', E_USER_NOTICE);
     }
     
     /**
@@ -166,6 +181,14 @@ class KapostConversionHistory extends DataObject {
     }
     
     /**
+     * Gets the edit link for this conversion history record
+     * @return {string}
+     */
+    public function CMSEditLink() {
+        return Controller::join_links(LeftAndMain::config()->url_base, KapostAdmin::config()->url_segment, 'KapostConversionHistory/EditForm/field/KapostConversionHistory/item', $this->ID, 'edit');
+    }
+    
+    /**
      * Cleans up the conversion history records after X days, after writing to the database where X is defined in the config
      */
     protected function onAfterWrite() {
@@ -177,16 +200,6 @@ class KapostConversionHistory extends DataObject {
                 $record->delete();
             }
         }
-    }
-}
-
-class KapostPageConversionHistory extends KapostConversionHistory {
-    /**
-     * Gets the link to the desination in the cms
-     * @return {string} Relative link to the destination page
-     */
-    public function getDestinationLink() {
-        return 'admin/pages/edit/show/'.$this->DestinationID;
     }
 }
 ?>
