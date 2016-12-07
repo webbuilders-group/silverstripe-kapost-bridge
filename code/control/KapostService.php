@@ -418,7 +418,7 @@ class KapostService extends Controller implements PermissionProvider {
         
         
         //Validate the incoming content before writing
-        $valid=$kapostObj->validate_incoming();
+        $valid=$obj->validate_incoming();
         if(!$valid->valid()) {
             return new xmlrpcresp(0, 400, $valid->message());
         }
