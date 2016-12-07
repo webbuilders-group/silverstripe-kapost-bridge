@@ -186,6 +186,49 @@ class KapostObject extends DataObject {
     }
     
     /**
+     * Validation to be performed when object is being ingested from Kapost
+     * @return ValidationResult
+     * @see KapostObject::validate()
+     */
+    public function validate_incoming() {
+        $validator=$this->validate();
+        
+        $this->extend('validate_incoming', $validator);
+        
+        return $validator;
+    }
+    
+    /**
+     * Validates the current object, invalid objects will not be written. By default all Kapost objects are valid if they have a value in the KapostRefID
+     * @return {ValidationResult}
+     * @see DataObject::validate()
+     */
+    protected function validate() {
+        $validator=parent::validate();
+        
+        //Verify we have a KapostRefID
+        $kapostID=$this->KapostRefID;
+        if(empty($kapostID)) {
+            $validator->error(_t('KapostObject.MISSING_KAPOST_ID', '_Kapost Reference ID is missing'), 'missing-kapost-id');
+        }
+        
+        return $validator;
+    }
+    
+    /**
+     * Ensures a title is present for the Kapost Object before writing
+     */
+    protected function onBeforeWrite() {
+        parent::onBeforeWrite();
+        
+        //If the title is not present make one from the translated singular name and the Kapost Reference ID
+        $title=$this->Title;
+        if(empty($title)) {
+            $this->Title=$this->i18n_singular_name().': '.$this->KapostRefID;
+        }
+    }
+    
+    /**
      * Calls the cleanup expired previews after writing
      */
     protected function onAfterWrite() {

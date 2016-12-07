@@ -75,3 +75,6 @@ en:
         DESTINATION_OBJECT: "View Destination Object"
     KapostGridFieldRefreshButton: 
         REFRESH_LIST: "Refresh List"
+    KapostObject:
+        MISSING_TITLE: "Title is missing"
+        MISSING_KAPOST_ID: "Kapost Reference ID is missing"

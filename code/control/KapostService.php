@@ -416,6 +416,14 @@ class KapostService extends Controller implements PermissionProvider {
         //Allow extensions to adjust the new page
         $this->extend('updateNewKapostPage', $obj, $blog_id, $content, $publish, $isPreview);
         
+        
+        //Validate the incoming content before writing
+        $valid=$kapostObj->validate_incoming();
+        if(!$valid->valid()) {
+            return new xmlrpcresp(0, 400, $valid->message());
+        }
+        
+        
         return $obj->KapostRefID;
     }
     
@@ -507,6 +515,14 @@ class KapostService extends Controller implements PermissionProvider {
             //Allow extensions to adjust the existing object
             $this->extend('updateEditKapostPage', $kapostObj, $content_id, $content, $publish, $isPreview);
             
+            
+            //Validate the incoming content
+            $valid=$kapostObj->validate_incoming();
+            if(!$valid->valid()) {
+                return new xmlrpcresp(0, 400, $valid->message());
+            }
+            
+            
             return true;
         }else {
             $className=(array_key_exists('custom_fields', $content) ? 'Kapost'.$content['custom_fields']['kapost_custom_type']:'KapostPage');
@@ -529,6 +545,14 @@ class KapostService extends Controller implements PermissionProvider {
             
             //Allow extensions to adjust the new page
             $this->extend('updateEditKapostPage', $obj, $content_id, $content, $publish, $isPreview);
+            
+            
+            //Validate the incoming content
+            $valid=$obj->validate_incoming();
+            if(!$valid->valid()) {
+                return new xmlrpcresp(0, 400, $valid->message());
+            }
+            
             
             return true;
         }

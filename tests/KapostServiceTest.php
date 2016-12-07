@@ -814,7 +814,8 @@ class KapostServiceTestHook extends Extension implements TestOnly {
     private static $unitTest;
     
     /**
-     * @TODO
+     * Sets the test currently running
+     * @param {SapphireTest} $test
      */
     public static function set_test(SapphireTest $test) {
         self::$unitTest=$test;
