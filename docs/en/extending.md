@@ -3,15 +3,15 @@ Extending the Basics
 This module provides support for basic page types in SilverStripe, aka the default Page class in a raw installer. This documentation will help you get to the point were you have custom page types as well as support for more advanced extensions such as non-page data objects. It assumes you understand how to use the SilverStripe [extensions api](http://docs.silverstripe.org/en/developer_guides/extending/extensions/).
 
 ### Conversion History
-If you are using a custom ``KapostObject`` extension and you want version history you will need to create your own history record see the [custom types documentation](custom-types.md#for-custom-objects) for more information.
+If you are using a custom ``KapostObject`` extension and you will need to have your destination object define ``CMSEditLink`` see the [custom types documentation](custom-types.md#for-custom-objects) for more information.
 
 
 ### Available Extension Points
 #### KapostService
- - ``newPost($blog_id, array $content, int $publish, bool $isPreview)`` Allows for overriding of the metaWeblog.newPost handling & response. What is returned to Kapost is the first non-empty result from extensions. This should return the post's id (for example KapostPage_10) on success, throw an error response or return null. See the [custom types documentation](custom-types.md) for more information. Note you should set the KapostObject->IsPreview based on the $isPreview parameter.
- - ``updateNewKapostPage(KapostObject $obj, $blog_id, array $content, int $publish, bool $isPreview)`` Allows for setting of custom page extension fields based on the data from Kapost. Note that *you must call write* on the KapostObject to save your changes.
- - ``editPost($content_id, array $content, int $publish, bool $isPreview)`` Allows for overriding of the metaWeblog.editPost handling & response. What is returned to Kapost is the first non-empty result from extensions. This should return true on success, throw an error response or return null. Note you should set the KapostObject->IsPreview based on the $isPreview parameter.
- - ``updateEditKapostPage(KapostObject $kapostObj, $content_id, array $content, int $publish, bool $isPreview)`` Allows for setting of custom page extension fields based on the data from Kapost. Note that *you must call write* on the KapostObject to save your changes.
+ - ``newPost($blog_id, array $content, int $publish, bool $isPreview)`` Allows for overriding of the metaWeblog.newPost handling & response. What is returned to Kapost is the first non-empty result from extensions. This should return the post's id (for example KapostPage_10) on success, throw an error response or return null. See the [custom types documentation](custom-types.md) for more information. Note you should set the KapostObject->IsPreview based on the $isPreview parameter. Before or after writing make sure you call ``validate_incoming`` on your Kapost Object before or after writing see [custom types documentation][custom-types.md#validating-incoming-content] for more information.
+ - ``updateNewKapostPage(KapostObject $obj, $blog_id, array $content, int $publish, bool $isPreview)`` Allows for setting of custom page extension fields based on the data from Kapost. Note that *you must call write* on the KapostObject to save your changes. As well it's important to note that the ``KapostObject::validate_incoming()`` method is called after this extension point allowing you to define your own validation rules for the incoming content.
+ - ``editPost($content_id, array $content, int $publish, bool $isPreview)`` Allows for overriding of the metaWeblog.editPost handling & response. What is returned to Kapost is the first non-empty result from extensions. This should return true on success, throw an error response or return null. Note you should set the KapostObject->IsPreview based on the $isPreview parameter. Before or after writing make sure you call ``validate_incoming`` on your Kapost Object before or after writing see [custom types documentation][custom-types.md#validating-incoming-content] for more information.
+ - ``updateEditKapostPage(KapostObject $kapostObj, $content_id, array $content, int $publish, bool $isPreview)`` Allows for setting of custom page extension fields based on the data from Kapost. Note that *you must call write* on the KapostObject to save your changes. As well it's important to note that the ``KapostObject::validate_incoming()`` method is called after this extension point allowing you to define your own validation rules for the incoming content.
  - ``getPost($content_id)`` Allows for overriding the metaWeblog.getPost handling & response to Kapost about the requested content. This can be used for sending information about non-page extension Kapost objects it should return an array similar to what is [defined here](https://gist.github.com/icebreaker/546f4223dc07a9e2e6e9#metawebloggetpost). What is returned to Kapost is the first non-empty result from extensions.
  - ``updatePageMeta(Page $page)`` Allows for modification of the page meta data to be added to the response to Kapost. This should return a map of field's to it's content.
  - ``updateObjectMeta(KapostObject $object)`` Allows for modification of the KapostObject's meta data to be added to the response to Kapost. This should return a map of field's to it's content.
@@ -23,6 +23,8 @@ If you are using a custom ``KapostObject`` extension and you want version histor
 
 #### KapostObject
  - ``updateCMSFields(FieldList $fields)`` Allows extensions to add cms fields to KapostObject and it's decedents.
+ - ``validate_incoming(ValidationResult $validator)`` Allows extensions to perform additional validation checks on incoming Kapost Content.
+
 
 #### KapostGridFieldDetailForm_ItemRequest
  - ``updateConvertObjectForm(Form $form, KapostObject $source)`` Allows extensions to adjust the form in the Convert Object lightbox.

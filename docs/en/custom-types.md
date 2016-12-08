@@ -33,6 +33,19 @@ class KapostResource extends KapostObject {
     private static $db=array(
                             'ResourceContent'=>'Text'
                         );
+
+    /**
+     * Validation to be performed when object is being ingested from Kapost
+     * @return ValidationResult
+     * @see KapostObject::validate()
+     */
+    public function validate_incoming() {
+        $validator=parent::validate_incoming();
+
+        /*** Any validation logic you want to perform when an object is being ingested from Kapost ***/
+
+        return $validator;
+    }
 }
 ```
 
@@ -131,21 +144,19 @@ public function doConvertNewResource(KapostObject $source, $data, Form $form) {
 That should be it, you should now have a new custom object that can have it's content delivered from Kapost. Make sure that you store the ``kapost_post_id`` key under the ``custom_fields`` key in the KapostResource object's ``KapostRefID`` field this is displayed and linked in the audit system.
 
 #### Conversion History Records
-In your custom object if you want conversion history tracking you based on our example you must call ``KapostResource->createConversionHistory($destinationID)`` to create the version record. So we need to create a new class and define this method on our ``KapostResource`` class.
+In your custom object if you want the destination link to appear you must define the ``CMSEditLink`` on our ``Resource`` class.
 
 ```php
-class KapostResourceConversionHistory extends KapostConversionHistory {
-    /**
-     * Gets the link to the desination in the cms
-     * @return {string} Relative link to the destination page
-     */
-    public function getDestinationLink() {
-        return 'admin/resources/Resource/EditForm/field/Resource/item/'.$this->DestinationID.'/edit';
-    }
+/**
+ * Gets the link to the edit screen for the resource
+ * @return {string} Relative link to the edit screen for the resource
+ */
+public function CMSEditLink() {
+    return 'admin/resources/Resource/EditForm/field/Resource/item/'.$this->ID.'/edit';
 }
 ```
 
-In our ``KapostResource`` class we need to add the following method, which handles the creating the conversion history. You will need to call this method in your conversion handler passing in the destination object's ID.
+In some cases there maybe a need to extend the ``KapostConversionHistory`` class for a particular ``KapostObject`` extension. If that is the case you must override the ``KapostObject::createConversionHistory($destinationID)`` method on your ``KapostObject`` extension. It is not necessary to do this all of the time but you may need to store extra information on a particular history record for example.
 
 ```php
 /**
@@ -167,6 +178,7 @@ public function createConversionHistory($destinationID) {
 }
 ```
 
+
 #### Kapost Preview Support
 To enable preview support in Kapost you need to override the ``renderPreview`` method on the custom ``KapostObject`` extension. In the case of the example we've been building we need to add the following method to the ``KapostResource`` class.
 
@@ -186,3 +198,66 @@ public function renderPreview() {
 }
 ```
 Obviously you will need to define the ``KapostResourcePreview_Controller``, you could also simply use the ``Page_Controller`` or just render the object with what ever template you are currently using for rendering your custom object.
+
+#### Validating Incoming Content
+When defining a custom type you may want to perform additional validation on the incoming content. This can be done by overriding the ``KapostObject::validate_incoming()`` method and defining your own rules. However you must call this before or after you write your object in your ``newPost`` or ``editPost`` methods. For example:
+
+```php
+/**
+ * Handle ingestion of a new custom Kapost object
+ * @param {int $blog_id Identifier for the current site
+ * @param {array} $content Content from Kapost to apply to the Kapost Object
+ * @param {int} $publish 0 or 1 depending on whether to publish the post or not
+ * @param {bool} $isPreview Is preview mode or not (defaults to false)
+ * @return {string|xmlrpcresp}
+ */
+public function newPost($blog_id, $content, $publish, $isPreview) {
+    if(array_key_exists('custom_fields', $content) && class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) && ('Kapost'.$content['custom_fields']['kapost_custom_type']=='KapostResource' || is_subclass_of('Kapost'.$content['custom_fields']['kapost_custom_type'], 'KapostResource'))) {
+        $obj=new KapostResource();
+
+        //@TODO Handle populating of your kapost object
+
+        //Write the object
+        $obj->write();
+
+
+        //Validate the incoming content
+        $valid=$obj->validate_incoming();
+        if(!$valid->valid()) {
+            return new xmlrpcresp(0, 400, $valid->message());
+        }
+
+        return (array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:$className.'_'.$obj->ID);
+    }
+}
+
+/**
+ * Handle ingestion of an edit request for a custom Kapost object
+ * @param int $content_id Identifier for the content item
+ * @param array $content Content from Kapost to apply to the Kapost Object
+ * @param int $publish 0 or 1 depending on whether to publish the post or not
+ * @param bool $isPreview Is preview mode or not (defaults to false)
+ */
+protected function editResource($content_id, $content, $publish, $isPreview=false) {
+    if(array_key_exists('custom_fields', $content) && class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) && ('Kapost'.$content['custom_fields']['kapost_custom_type']=='KapostResource' || is_subclass_of('Kapost'.$content['custom_fields']['kapost_custom_type'], 'KapostResource'))) {
+        $obj=KapostResource::get()->filter('KapostRefID', Convert::raw2sql($content_id))->first();
+        if(!empty($obj) && $obj!==false && $obj->exists()) {
+            $obj=new KapostResource();
+        }
+
+        //@TODO Handle populating of your kapost object
+
+        //Write the object
+        $obj->write();
+
+
+        //Validate the incoming content
+        $valid=$obj->validate_incoming();
+        if(!$valid->valid()) {
+            return new xmlrpcresp(0, 400, $valid->message());
+        }
+
+        return true;
+    }
+}
+```
