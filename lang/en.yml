@@ -45,6 +45,8 @@ en:
         db_KapostRefID: "Kapost Reference ID"
         db_KapostAuthor: "Kapost Author"
         CONTENT_TYPE: "Content Type"
+        MISSING_TITLE: "Title is missing"
+        MISSING_KAPOST_ID: "Kapost Reference ID is missing"
     KapostPage:
         SINGULARNAME: "Page"
         db_MenuTitle: "Menu Title"
@@ -75,6 +77,3 @@ en:
         DESTINATION_OBJECT: "View Destination Object"
     KapostGridFieldRefreshButton: 
         REFRESH_LIST: "Refresh List"
-    KapostObject:
-        MISSING_TITLE: "Title is missing"
-        MISSING_KAPOST_ID: "Kapost Reference ID is missing"
