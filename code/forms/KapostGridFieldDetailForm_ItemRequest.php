@@ -118,8 +118,9 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         if($convertToClass!==false && ($convertToClass=='SiteTree' || is_subclass_of($convertToClass, 'SiteTree'))) {
             $obj=SiteTree::get()->filter('KapostRefID', Convert::raw2sql($this->record->KapostRefID))->first();
             if(!empty($obj) && $obj!==false && $obj->ID>0) {
-                $convertModeField->setValue('ReplacePage');
-                $replacePageField->setValue($obj->ID);
+                $form->Fields()->removeByName('kapostConvertTypeWrap');
+                $form->Fields()->push(HiddenField::create('ConvertMode', 'ConvertMode', 'ReplacePage')->setForm($form));
+                $form->Fields()->push(HiddenField::create('ReplacePageID', 'ReplacePageID', $obj->ID)->setForm($form));
                 
                 $recordTitle=$this->record->Title;
                 if(!empty($recordTitle) && $recordTitle!=$obj->Title) {
