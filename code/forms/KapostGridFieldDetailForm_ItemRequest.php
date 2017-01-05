@@ -135,7 +135,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
                                                             ->setForm($form)
                                                             ->setDescription(_t('KapostAdmin.NEW_URL_SEGMENT', '_The new URL Segment will be or will be close to "{newsegment}"', array(
                                                                                                                                             'newsegment'=>$obj->generateURLSegment($recordTitle)
-                                                                                                                                        ))), 'kapostConvertTypeWrap');
+                                                                                                                                        ))), 'ReplacePageID');
                 }
             }
         }
