@@ -15,14 +15,14 @@ class KapostPage extends KapostObject {
      * @return {FieldList} Fields to be used
      */
     public function getCMSFields() {
-        $fields=parent::getCMSFields();
+        $self=$this;
+        $this->beforeUpdateCMSFields(function($fields) use($self) {
+            $fields->insertAfter(new ReadonlyField('MenuTitle', $self->fieldLabel('MenuTitle')), 'Title');
+            $fields->addFieldToTab('Root.Main', new ReadonlyField('MetaDescription', $self->fieldLabel('MetaDescription')));
+        });
         
         
-        $fields->insertAfter(new ReadonlyField('MenuTitle', $this->fieldLabel('MenuTitle')), 'Title');
-        $fields->addFieldToTab('Root.Main', new ReadonlyField('MetaDescription', $this->fieldLabel('MetaDescription')));
-        
-        
-        return $fields;
+        return parent::getCMSFields();
     }
     
     /**
