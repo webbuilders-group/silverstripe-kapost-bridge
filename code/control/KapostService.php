@@ -92,7 +92,10 @@ class KapostService extends Controller implements PermissionProvider {
         //If the request is not a post request 404
         if(!$this->request->isPOST()) {
             if(class_exists('ErrorPage')) {
-                return ErrorPage::response_for(404);
+                $response=ErrorPage::response_for(404);
+                if(!empty($response)) {
+                    return $response;
+                }
             }
             
             return parent::httpError(404);
@@ -101,7 +104,10 @@ class KapostService extends Controller implements PermissionProvider {
         //If the request is not the kapost user agent 404
         if(self::config()->check_user_agent==true && $this->request->getHeader('User-Agent')!='Kapost XMLRPC::Client') {
             if(class_exists('ErrorPage')) {
-                return ErrorPage::response_for(404);
+                $response=ErrorPage::response_for(404);
+                if(!empty($response)) {
+                    return $response;
+                }
             }
             
             return parent::httpError(404);
