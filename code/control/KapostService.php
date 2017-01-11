@@ -119,7 +119,7 @@ class KapostService extends Controller implements PermissionProvider {
         ContentNegotiator::config()->enabled=false;
         $this->response->addHeader('Content-Type', 'text/xml');
         
-        $server=new xmlrpc_server($methods, false);
+        $server=new PhpXmlRpc\Server($methods, false);
         $server->compress_response=true;
         
         
@@ -133,7 +133,7 @@ class KapostService extends Controller implements PermissionProvider {
         
         
         //Force the internal encoding of the XMLRPC library to utf-8
-        $GLOBALS['xmlrpc_internalencoding']=self::config()->database_charset;
+        PhpXmlRpc\PhpXmlRpc::$xmlrpc_internalencoding=self::config()->database_charset;
         
         try {
             return $server->service($this->request->getBody(), true);
@@ -145,7 +145,7 @@ class KapostService extends Controller implements PermissionProvider {
             //Allow exceptions to handle the response
             $results=$this->extend('onException', $e);
             if($results && is_array($results)) {
-                $results=array_filter($results, function($v) {return (!is_null($v) && $v instanceof xmlrpcresp);});
+                $results=array_filter($results, function($v) {return (!is_null($v) && $v instanceof PhpXmlRpc\Response);});
             
                 if(count($results)>0) {
                     $this->generateErrorResponse($server, array_shift($results));
@@ -155,13 +155,13 @@ class KapostService extends Controller implements PermissionProvider {
             
             //If we're in dev mode relay the actual message to the client
             if(Director::isDev()) {
-                $response=new xmlrpcresp(0, $e->getCode()+100, _t('KapostService.ERROR_MESSAGE', '_{message} in {file} line {line_number}', array(
+                $response=new PhpXmlRpc\Response(0, $e->getCode()+100, _t('KapostService.ERROR_MESSAGE', '_{message} in {file} line {line_number}', array(
                                                                                                                                         'message'=>$e->getMessage(),
                                                                                                                                         'file'=>$e->getFile(),
                                                                                                                                         'line_number'=>$e->getLine()
                                                                                                                                     )));
             }else {
-                $response=new xmlrpcresp(0, 17, _t('KapostService.SERVER_ERROR', '_Internal server error'));
+                $response=new PhpXmlRpc\Response(0, 17, _t('KapostService.SERVER_ERROR', '_Internal server error'));
             }
             
             return $this->generateErrorResponse($server, $response);
@@ -202,13 +202,14 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Handles RPC request methods
-     * @param {xmlrpcmsg} $request XML-RPC Request Object
+     * @param {PhpXmlRpc\Request} $request XML-RPC Request Object
      */
-    public function handleRPCMethod(xmlrpcmsg $request) {
-        $username=$request->getParam(1)->getval();
-        $password=$request->getParam(2)->getval();
+    public function handleRPCMethod(PhpXmlRpc\Request $request) {
+        $username=$request->getParam(1)->scalarval();
+        $password=$request->getParam(2)->scalarval();
         
         if($this->authenticate($username, $password)) {
+            $encoder=new PhpXmlRpc\Encoder();
             $method=str_replace(array('blogger.', 'metaWeblog.', 'kapost.'), '', $request->methodname);
             
             if(!in_array($request->methodname, $this->exposed_methods) || !method_exists($this, $method)) {
@@ -220,7 +221,7 @@ class KapostService extends Controller implements PermissionProvider {
             $params=array();
             for($i=0;$i<$request->getNumParams();$i++) {
                 if($i!=1 && $i!=2) {
-                    $params[]=php_xmlrpc_decode($request->getParam($i));
+                    $params[]=$encoder->decode($request->getParam($i));
                 }
             }
             
@@ -239,7 +240,7 @@ class KapostService extends Controller implements PermissionProvider {
             
             //Call the method
             $response=call_user_func_array(array($this, $method), $params);
-            if($response instanceof xmlrpcresp) {
+            if($response instanceof PhpXmlRpc\Response) {
                 //If transactions are supported check the response and rollback in the case of a fault
                 if(($method=='newPost' || $method=='editPost' || $method=='newMediaObject') && DB::getConn()->supportsTransactions()) {
                     if($response->faultCode()!=0) {
@@ -253,9 +254,9 @@ class KapostService extends Controller implements PermissionProvider {
             }
             
             //Encode the response
-            $response=php_xmlrpc_encode($response);
-            if(is_object($response) && $response instanceof xmlrpcval) {
-                $response=new xmlrpcresp($response);
+            $response=$encoder->encode($response);
+            if(is_object($response) && $response instanceof PhpXmlRpc\Value) {
+                $response=new PhpXmlRpc\Response($response);
                 
                 if(($method=='newPost' || $method=='editPost' || $method=='newMediaObject') && DB::getConn()->supportsTransactions()) {
                     if($response->faultCode()!=0) {
@@ -299,10 +300,10 @@ class KapostService extends Controller implements PermissionProvider {
      * Converts an error to an xmlrpc response
      * @param {int} $errorCode Error code number for the error
      * @param {string} $errorMessage Error message string
-     * @return {xmlrpcresp} XML-RPC response object
+     * @return {PhpXmlRpc\Response} XML-RPC response object
      */
     public function httpError($errorCode, $errorMessage=null) {
-        return new xmlrpcresp(0, $errorCode+10000, $errorMessage);
+        return new PhpXmlRpc\Response(0, $errorCode+10000, $errorMessage);
     }
     
     /**
@@ -434,7 +435,7 @@ class KapostService extends Controller implements PermissionProvider {
         //Validate the incoming content before writing
         $valid=$obj->validate_incoming();
         if(!$valid->valid()) {
-            return new xmlrpcresp(0, 400, $valid->message());
+            return new PhpXmlRpc\Response(0, 400, $valid->message());
         }
         
         
@@ -533,7 +534,7 @@ class KapostService extends Controller implements PermissionProvider {
             //Validate the incoming content
             $valid=$kapostObj->validate_incoming();
             if(!$valid->valid()) {
-                return new xmlrpcresp(0, 400, $valid->message());
+                return new PhpXmlRpc\Response(0, 400, $valid->message());
             }
             
             
@@ -564,7 +565,7 @@ class KapostService extends Controller implements PermissionProvider {
             //Validate the incoming content
             $valid=$obj->validate_incoming();
             if(!$valid->valid()) {
-                return new xmlrpcresp(0, 400, $valid->message());
+                return new PhpXmlRpc\Response(0, 400, $valid->message());
             }
             
             
@@ -573,7 +574,7 @@ class KapostService extends Controller implements PermissionProvider {
         
         
         //Can't find the object so return a 404 code
-        return new xmlrpcresp(0, 404, _t('KapostService.INVALID_POST_ID', '_Invalid post ID.'));
+        return new PhpXmlRpc\Response(0, 404, _t('KapostService.INVALID_POST_ID', '_Invalid post ID.'));
     }
     
     /**
@@ -593,7 +594,7 @@ class KapostService extends Controller implements PermissionProvider {
         
         //If we don't have a SiteTree class and extensions didn't handle the request return an invalid post
         if(!class_exists('SiteTree')) {
-            return new xmlrpcresp(0, 404, _t('KapostService.INVALID_POST_ID', '_Invalid post ID.'));
+            return new PhpXmlRpc\Response(0, 404, _t('KapostService.INVALID_POST_ID', '_Invalid post ID.'));
         }
         
         
@@ -655,7 +656,7 @@ class KapostService extends Controller implements PermissionProvider {
             }
         }
         
-        return new xmlrpcresp(0, 404, _t('KapostService.INVALID_POST_ID', '_Invalid post ID.'));
+        return new PhpXmlRpc\Response(0, 404, _t('KapostService.INVALID_POST_ID', '_Invalid post ID.'));
     }
     
     /**
@@ -701,7 +702,7 @@ class KapostService extends Controller implements PermissionProvider {
      * Handles media objects from kapost
      * @param {mixed} $blog_id Site Config related to this content object
      * @param {array} $content Content object to be handled
-     * @return {xmlrpcresp} XML-RPC Response object
+     * @return {PhpXmlRpc\Response} XML-RPC Response object
      */
     protected function newMediaObject($blog_id, $content) {
         $fileName=$content['name'];
@@ -993,11 +994,11 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Takes the xmlrpc object and generates the response to be set back
-     * @param {xmlrpc_server} $server XML-RPC Server instance
-     * @param {xmlrpcresp} $r XML-RPC Response object to relay to client
+     * @param {PhpXmlRpc\Server} $server XML-RPC Server instance
+     * @param {PhpXmlRpc\Response} $r XML-RPC Response object to relay to client
      * @return {string} Response to be sent to the client
      */
-    protected function generateErrorResponse(xmlrpc_server $server, xmlrpcresp $r) {
+    protected function generateErrorResponse(PhpXmlRpc\Server $server, PhpXmlRpc\Response $r) {
         $this->response->addHeader('Content-Type', $r->content_type);
         $this->response->addHeader('Vary', 'Accept-Charset');
         

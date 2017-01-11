@@ -9,7 +9,7 @@ Bridge for Kapost driven content authoring, provides support for basic content p
 
 ## Requirements
 * SilverStripe Framework 3.1+
-* [phpxmlrpc 3.0.x](https://github.com/gggeek/phpxmlrpc)
+* [phpxmlrpc ~4.0](https://github.com/gggeek/phpxmlrpc)
 
 
 ## Installation
@@ -23,7 +23,7 @@ If you prefer you may also install manually:
 * Download the module from here https://github.com/webbuilders-group/silverstripe-kapost-bridge/archive/master.zip
 * Extract the downloaded archive into your site root so that the destination folder is called kapost-bridge, opening the extracted folder should contain _config.php in the root along with other files/folders
 * Run dev/build?flush=all to regenerate the manifest
-* Download phpxmlrpc's [latest 3.0.x release](https://github.com/gggeek/phpxmlrpc/releases) and include in your SilverStripe install note that since you're installing manually you may run into some issues.
+* Download phpxmlrpc's [latest ~4.0 release](https://github.com/gggeek/phpxmlrpc/releases) and include in your SilverStripe install note that since you're installing manually you may run into some issues.
 
 
 ## Documentation

@@ -209,7 +209,7 @@ When defining a custom type you may want to perform additional validation on the
  * @param {array} $content Content from Kapost to apply to the Kapost Object
  * @param {int} $publish 0 or 1 depending on whether to publish the post or not
  * @param {bool} $isPreview Is preview mode or not (defaults to false)
- * @return {string|xmlrpcresp}
+ * @return {string|PhpXmlRpc\Response}
  */
 public function newPost($blog_id, $content, $publish, $isPreview) {
     if(array_key_exists('custom_fields', $content) && class_exists('Kapost'.$content['custom_fields']['kapost_custom_type']) && ('Kapost'.$content['custom_fields']['kapost_custom_type']=='KapostResource' || is_subclass_of('Kapost'.$content['custom_fields']['kapost_custom_type'], 'KapostResource'))) {
@@ -224,7 +224,7 @@ public function newPost($blog_id, $content, $publish, $isPreview) {
         //Validate the incoming content
         $valid=$obj->validate_incoming();
         if(!$valid->valid()) {
-            return new xmlrpcresp(0, 400, $valid->message());
+            return new PhpXmlRpc\Response(0, 400, $valid->message());
         }
 
         return (array_key_exists('custom_fields', $content) ? $content['custom_fields']['kapost_post_id']:$className.'_'.$obj->ID);
@@ -254,7 +254,7 @@ protected function editResource($content_id, $content, $publish, $isPreview=fals
         //Validate the incoming content
         $valid=$obj->validate_incoming();
         if(!$valid->valid()) {
-            return new xmlrpcresp(0, 400, $valid->message());
+            return new PhpXmlRpc\Response(0, 400, $valid->message());
         }
 
         return true;
