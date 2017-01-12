@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.9.0](https://github.com/webbuilders-group/silverstripe-kapost-bridge/tree/0.9.0) (2017-01-12)
+[Full Changelog](https://github.com/webbuilders-group/silverstripe-kapost-bridge/compare/0.8.2...0.9.0)
+
+**Implemented enhancements:**
+
+- Update phpxmlrpc to the 4.x release chain [\#33](https://github.com/webbuilders-group/silverstripe-kapost-bridge/issues/33)
+- Remove the ability to create a new object when conversion identifies as replacing [\#32](https://github.com/webbuilders-group/silverstripe-kapost-bridge/issues/32)
+- Document KapostObject::validate\_incoming\(\) [\#31](https://github.com/webbuilders-group/silverstripe-kapost-bridge/issues/31)
+- Rework Conversion History [\#30](https://github.com/webbuilders-group/silverstripe-kapost-bridge/issues/30)
+- Inbound Content Validation [\#29](https://github.com/webbuilders-group/silverstripe-kapost-bridge/issues/29)
+
 ## [0.8.2](https://github.com/webbuilders-group/silverstripe-kapost-bridge/tree/0.8.2) (2016-12-07)
 [Full Changelog](https://github.com/webbuilders-group/silverstripe-kapost-bridge/compare/0.8.1...0.8.2)
 
