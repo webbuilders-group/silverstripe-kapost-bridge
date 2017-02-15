@@ -17,3 +17,16 @@ SiteTree:
         - "EditorGroups"
     make_safe_wysiwyg_fields:
         - "Content"
+
+
+SS_Backtrace:
+    ignore_function_args:
+        -
+            - 'KapostService'
+            - 'authenticate'
+        -
+            - 'PhpXmlRpc\Server'
+            - 'parseRequest'
+        -
+            - 'PhpXmlRpc\Server'
+            - 'service'
