@@ -1002,7 +1002,7 @@ class KapostService extends Controller implements PermissionProvider {
         $this->response->addHeader('Content-Type', $r->content_type);
         $this->response->addHeader('Vary', 'Accept-Charset');
         
-        $payload=$server->xml_header();
+        $payload='<?xml version="1.0"?>';
         
         if(empty($r->payload)) {
             $r->serialize();
