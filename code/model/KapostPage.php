@@ -1,4 +1,37 @@
 <?php
+/**
+ * Class KapostPage
+ *
+ * @property string $MenuTitle
+ * @property string $MetaDescription
+ * @property string $HTMLTitle
+ * @property string $Abstract
+ * @property string $Panel1Heading
+ * @property string $Subheading
+ * @property string $Segment
+ * @property string $FundingLogos
+ * @property string $ContentValue
+ * @property string $Personas
+ * @property string $BuyingStage
+ * @property string $SocialTitle
+ * @property string $SocialDescription
+ * @property boolean $ShowInMenus
+ * @property boolean $ShowInSearch
+ * @property boolean $ShowInBreadcrumbs
+ * @property string $Priority
+ * @property boolean $HideRepContact
+ * @property boolean $HideSearchForm
+ * @property boolean $HideResourceCenter
+ * @property boolean $MetaNoIndex
+ * @property string $ProductServiceTags
+ * @property int $LinkedPageID
+ * @property int $Panel1BackgroundID
+ * @property int $SocialImageID
+ * @method SiteTree LinkedPage()
+ * @method Image Panel1Background()
+ * @method Image SocialImage()
+ * @mixin LenovoKapostPage
+ */
 class KapostPage extends KapostObject {
     private static $db=array(
                             'MenuTitle'=>'Varchar(100)',

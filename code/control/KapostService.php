@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class KapostService
+ *
+ * @mixin LenovoKapostService
+ */
 class KapostService extends Controller implements PermissionProvider {
     /**
      * If set to true when the service is called the user agent of the request is checked to see if it is Kapost's XML-RPC user agent

@@ -1,4 +1,20 @@
 <?php
+/**
+ * Class KapostObject
+ *
+ * @property string $Title
+ * @property string $Content
+ * @property string $KapostChangeType
+ * @property string $KapostRefID
+ * @property string $KapostAuthor
+ * @property string $KapostAuthorAvatar
+ * @property string $KapostConversionNotes
+ * @property boolean $ToPublish
+ * @property boolean $IsKapostPreview
+ * @method DataList|KapostRelationHint[] RelationHints()
+ * @method DataList|KapostFieldHint[] FieldHints()
+ * @mixin LenovoKapostObject
+ */
 class KapostObject extends DataObject {
     private static $db=array(
                             'Title'=>'Varchar(255)',

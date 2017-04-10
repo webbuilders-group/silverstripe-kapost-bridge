@@ -1,4 +1,10 @@
 <?php
+/**
+ * Class KapostPreviewToken
+ *
+ * @property string $Code
+ * @property string $KapostRefID
+ */
 class KapostPreviewToken extends DataObject {
     private static $db=array(
                             'Code'=>'Varchar(40)',

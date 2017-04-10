@@ -1,4 +1,10 @@
 <?php
+/**
+ * Class KapostSiteTreeExtension
+ *
+ * @property SiteTree|KapostSiteTreeExtension $owner
+ * @property string $KapostRefID
+ */
 class KapostSiteTreeExtension extends DataExtension {
     private static $db=array(
                             'KapostRefID'=>'Varchar(255)'

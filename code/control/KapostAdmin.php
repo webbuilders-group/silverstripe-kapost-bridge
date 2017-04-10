@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class KapostAdmin
+ *
+ */
 class KapostAdmin extends ModelAdmin {
     public $showImportForm=false;
     

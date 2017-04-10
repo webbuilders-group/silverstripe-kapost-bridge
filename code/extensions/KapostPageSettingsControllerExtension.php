@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class KapostPageSettingsControllerExtension
+ *
+ * @property CMSPageSettingsController $owner
+ */
 class KapostPageSettingsControllerExtension extends Extension {
     /**
      * Updates the form to make all of the fields read only with the exception of a few fields

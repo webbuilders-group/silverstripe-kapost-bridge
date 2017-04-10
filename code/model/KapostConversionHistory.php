@@ -1,4 +1,19 @@
 <?php
+/**
+ * Class KapostConversionHistory
+ *
+ * @property string $Title
+ * @property string $KapostChangeType
+ * @property string $KapostRefID
+ * @property string $KapostAuthor
+ * @property string $DestinationType
+ * @property int $DestinationID
+ * @property string $ConverterName
+ * @property string $ConversionEditedDate
+ * @property int $EditedByID
+ * @method Member EditedBy()
+ * @mixin LenovoConversionHistoryExtension
+ */
 class KapostConversionHistory extends DataObject {
     /**
      * Number of days that conversion history records are kept
