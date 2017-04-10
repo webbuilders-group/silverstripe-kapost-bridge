@@ -244,18 +244,26 @@ class KapostService extends Controller implements PermissionProvider {
             
             
             //Call the method
-            $response=call_user_func_array(array($this, $method), $params);
-            if($response instanceof PhpXmlRpc\Response) {
-                //If transactions are supported check the response and rollback in the case of a fault
-                if(($method=='newPost' || $method=='editPost' || $method=='newMediaObject') && DB::getConn()->supportsTransactions()) {
-                    if($response->faultCode()!=0) {
-                        DB::getConn()->transactionRollback();
-                    }else {
-                        DB::getConn()->transactionEnd();
+            try {
+                $response=call_user_func_array(array($this, $method), $params);
+                if($response instanceof PhpXmlRpc\Response) {
+                    //If transactions are supported check the response and rollback in the case of a fault
+                    if(($method=='newPost' || $method=='editPost' || $method=='newMediaObject') && DB::getConn()->supportsTransactions()) {
+                        if($response->faultCode()!=0) {
+                            DB::getConn()->transactionRollback();
+                        }else {
+                            DB::getConn()->transactionEnd();
+                        }
                     }
+                    
+                    return $response; //Response is already encoded so return
+                }
+            }catch(ValidationException $e) {
+                if(DB::getConn()->supportsTransactions()) {
+                    DB::getConn()->transactionRollback();
                 }
                 
-                return $response; //Response is already encoded so return
+                return new PhpXmlRpc\Response(0, 400, $e->getMessage());
             }
             
             //Encode the response
