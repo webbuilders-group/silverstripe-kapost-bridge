@@ -138,16 +138,15 @@ class KapostConversionHistory extends DataObject {
             if(!empty($dest) && $dest!==false && $dest->exists()) {
                 if($dest->hasMethod('CMSEditLink')) {
                     return $dest->CMSEditLink();
+                }else if($dest->hasMethod('getDestinationLink')) {
+                    return $dest->getDestinationLink();
                 }else {
                     user_error('You must implement the getDestinationLink() method on a decendent of KapostConversionHistory "'.$this->class.'" or implement the method CMSEditLink on "'.$this->DestinationType.'"', E_USER_WARNING);
                 }
             }else {
-                user_error('Could not find the destination "'.$this->DestinationType.'" object.', E_USER_NOTICE);
                 return;
             }
         }
-        
-        user_error('Destination type "'.$this->DestinationType.'" does not exist', E_USER_NOTICE);
     }
     
     /**
