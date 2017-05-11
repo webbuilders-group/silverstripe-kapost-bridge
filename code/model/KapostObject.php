@@ -41,8 +41,8 @@ class KapostObject extends DataObject {
     
     /**
      * Prevent creation of the KapostObjects, they are delivered from Kapost
-     * @param {int|Member} $member Member ID or member instance
-     * @return {bool} Returns boolean false
+     * @param int|Member $member Member ID or member instance
+     * @return bool Returns boolean false
      */
     final public function canCreate($member=null) {
         return false;
@@ -50,8 +50,8 @@ class KapostObject extends DataObject {
     
     /**
      * Prevent editing of the KapostObjects, they are delivered from Kapost
-     * @param {int|Member} $member Member ID or member instance
-     * @return {bool} Returns boolean false
+     * @param int|Member $member Member ID or member instance
+     * @return bool Returns boolean false
      */
     final public function canEdit($member=null) {
         return false;
@@ -59,7 +59,7 @@ class KapostObject extends DataObject {
     
     /**
      * Gets fields used in the cms
-     * @return {FieldList} Fields to be used
+     * @return FieldList Fields to be used
      */
     public function getCMSFields() {
         $fields=new FieldList(
@@ -85,7 +85,7 @@ class KapostObject extends DataObject {
     
     /**
      * Gets the change type's friendly label
-     * @return {string} Returns new or edit
+     * @return string Returns new or edit
      */
     public function getKapostChangeTypeNice() {
         switch($this->KapostChangeType) {
@@ -98,7 +98,7 @@ class KapostObject extends DataObject {
     
     /**
      * Gets the publish type's friendly label
-     * @return {string} Returns live or draft
+     * @return string Returns live or draft
      */
     public function getToPublishNice() {
         if($this->ToPublish==true) {
@@ -110,7 +110,7 @@ class KapostObject extends DataObject {
     
     /**
      * Wrapper for the object's i18n_singular_name()
-     * @return {string} Non-XML ready result of i18n_singular_name or the raw value
+     * @return string Non-XML ready result of i18n_singular_name or the raw value
      */
     public function getClassNameNice() {
         return $this->i18n_singular_name();
@@ -118,7 +118,7 @@ class KapostObject extends DataObject {
     
     /**
      * Gets the destination class when converting to the final object, by default this simply removes Kapost form the class name
-     * @return {string} Class to convert to
+     * @return string Class to convert to
      */
     public function getDestinationClass() {
         return preg_replace('/^Kapost/', '', $this->ClassName);
@@ -126,8 +126,8 @@ class KapostObject extends DataObject {
     
     /**
      * Strips out not allowed tags, mainly this is to remove the kapost beacon script so it doesn't conflict with the cms
-     * @param {string} $str String to be sanitized
-     * @return {string} HTML to be used
+     * @param string $str String to be sanitized
+     * @return string HTML to be used
      */
     final public function sanitizeHTML($str) {
         $htmlValue=Injector::inst()->create('HTMLValue', $str);
@@ -139,8 +139,8 @@ class KapostObject extends DataObject {
     
     /**
      * Ensures the content type appears in the searchable fields
-     * @param {array} $_params
-     * @return {FieldList} Form fields to use in searching
+     * @param array $_params
+     * @return FieldList Form fields to use in searching
      */
     public function scaffoldSearchFields($_params=null) {
         $fields=parent::scaffoldSearchFields($_params);
@@ -161,7 +161,7 @@ class KapostObject extends DataObject {
     
     /**
      * Gets the summary fields for this object
-     * @return {array} Map of fields to labels
+     * @return array Map of fields to labels
      */
     public function summaryFields() {
         $fields=parent::summaryFields();
@@ -175,7 +175,7 @@ class KapostObject extends DataObject {
     
     /**
      * Used for recording a conversion history record
-     * @return {KapostConversionHistory}
+     * @return KapostConversionHistory
      */
     public function createConversionHistory($destinationID) {
         user_error('You should implement the createConversionHistory() method on your decendent of KapostObject', E_USER_WARNING);
@@ -183,7 +183,7 @@ class KapostObject extends DataObject {
     
     /**
      * Handles rendering of the preview for this object
-     * @return {string} Preview to be rendered
+     * @return string Preview to be rendered
      */
     public function renderPreview() {
         if(Director::isDev()) {
@@ -195,7 +195,7 @@ class KapostObject extends DataObject {
     
     /**
      * Gets the edit link for the Kapost Object
-     * @return {string} Edit link for the Kapost Object
+     * @return string Edit link for the Kapost Object
      */
     public function CMSEditLink() {
         return Controller::join_links(LeftAndMain::config()->url_base, KapostAdmin::config()->url_segment, 'KapostObject/EditForm/field/KapostObject/item', $this->ID, 'edit');
@@ -216,7 +216,7 @@ class KapostObject extends DataObject {
     
     /**
      * Validates the current object, invalid objects will not be written. By default all Kapost objects are valid if they have a value in the KapostRefID
-     * @return {ValidationResult}
+     * @return ValidationResult
      * @see DataObject::validate()
      */
     protected function validate() {

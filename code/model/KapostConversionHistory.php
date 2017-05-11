@@ -60,8 +60,8 @@ class KapostConversionHistory extends DataObject {
     
     /**
      * Prevent creation of the KapostConversionHistory
-     * @param {int|Member} $member Member ID or member instance
-     * @return {bool} Returns boolean false
+     * @param int|Member $member Member ID or member instance
+     * @return bool Returns boolean false
      */
     final public function canCreate($member=null) {
         return false;
@@ -69,8 +69,8 @@ class KapostConversionHistory extends DataObject {
     
     /**
      * Prevent editing of the KapostConversionHistory
-     * @param {int|Member} $member Member ID or member instance
-     * @return {bool} Returns boolean false
+     * @param int|Member $member Member ID or member instance
+     * @return bool Returns boolean false
      */
     final public function canEdit($member=null) {
         return false;
@@ -78,8 +78,8 @@ class KapostConversionHistory extends DataObject {
     
     /**
      * Prevent deleting of the KapostConversionHistory
-     * @param {int|Member} $member Member ID or member instance
-     * @return {bool} Returns boolean false
+     * @param int|Member $member Member ID or member instance
+     * @return bool Returns boolean false
      */
     final public function canDelete($member=null) {
         return false;
@@ -87,7 +87,7 @@ class KapostConversionHistory extends DataObject {
     
     /**
      * Gets fields used in the cms
-     * @return {FieldList} Fields to be used
+     * @return FieldList Fields to be used
      */
     public function getCMSFields() {
         $kapostBase=KapostAdmin::config()->kapost_base_url;
@@ -129,7 +129,7 @@ class KapostConversionHistory extends DataObject {
     
     /**
      * Gets the link to the desination in the cms
-     * @return {string} Relative link to the destination page
+     * @return string Relative link to the destination page
      */
     public function getDestinationLink() {
         $destinationType=$this->DestinationType;
@@ -151,7 +151,7 @@ class KapostConversionHistory extends DataObject {
     
     /**
      * Gets the change type's friendly label
-     * @return {string} Returns new or edit
+     * @return string Returns new or edit
      */
     public function getKapostChangeTypeNice() {
         switch($this->KapostChangeType) {
@@ -164,7 +164,7 @@ class KapostConversionHistory extends DataObject {
     
     /**
      * Gets the singular name of the destination type or just returs what was stored for the destination type if the class does not have one of i18n_singular_name or singular_name or the class does not exist
-     * @return {string}
+     * @return string
      */
     public function getDestinationTypeNice() {
         $className=$this->DestinationType;
@@ -182,7 +182,7 @@ class KapostConversionHistory extends DataObject {
     
     /**
      * Gets the summary fields for this object
-     * @return {array} Map of fields to labels
+     * @return array Map of fields to labels
      */
     public function summaryFields() {
         $fields=parent::summaryFields();
@@ -196,7 +196,7 @@ class KapostConversionHistory extends DataObject {
     
     /**
      * Gets the edit link for this conversion history record
-     * @return {string}
+     * @return string
      */
     public function CMSEditLink() {
         return Controller::join_links(LeftAndMain::config()->url_base, KapostAdmin::config()->url_segment, 'KapostConversionHistory/EditForm/field/KapostConversionHistory/item', $this->ID, 'edit');

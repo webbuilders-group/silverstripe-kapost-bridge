@@ -8,7 +8,7 @@ class KapostFieldCaster extends Enum {
     
     /**
      * Gets the change type's friendly label
-     * @return {string} Returns new or edit
+     * @return string Returns new or edit
      */
     public function NiceChangeType() {
         switch($this->value) {
@@ -21,7 +21,7 @@ class KapostFieldCaster extends Enum {
     
     /**
      * Gets the publish type's friendly label
-     * @return {string} Returns live or draft
+     * @return string Returns live or draft
      */
     public function NiceToPublish() {
         if($this->value==true) {
@@ -33,7 +33,7 @@ class KapostFieldCaster extends Enum {
     
     /**
      * Wrapper for the object's i18n_singular_name()
-     * @return {string} Non-XML ready result of i18n_singular_name or the raw value
+     * @return string Non-XML ready result of i18n_singular_name or the raw value
      */
     public function NiceClassName() {
         if(class_exists($this->value) && is_a($this->value, 'DataObject', true)) {

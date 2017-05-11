@@ -9,7 +9,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
     
     /**
      * Builds an item edit form. The arguments to getCMSFields() are the popupController and popupFormName, however this is an experimental API and may change.
-     * @return {Form}
+     * @return Form
      */
     public function ItemEditForm() {
         $form=parent::ItemEditForm();
@@ -47,7 +47,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
     
     /**
      * Handles requests for the convert dialog
-     * @return {string} HTML to be sent to the browser
+     * @return string HTML to be sent to the browser
      */
     public function convert() {
         //Verify the record exists before proceeding
@@ -65,7 +65,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
     
     /**
      * Form used for defining the conversion form
-     * @return {Form} Form to be used for configuring the conversion
+     * @return Form Form to be used for configuring the conversion
      */
     public function ConvertObjectForm() {
         //Verify the record exists before proceeding
@@ -163,9 +163,9 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
     
     /**
      * Handles conversion of the current record
-     * @param {array} $data Submitted Data
-     * @param {Form} $form Submitting Form
-     * @return {mixed} Returns an SS_HTTPResponse or an HTML string
+     * @param array $data Submitted Data
+     * @param Form $form Submitting Form
+     * @return mixed Returns an SS_HTTPResponse or an HTML string
      */
     public function doConvertObject($data, Form $form) {
         //Make sure the record still exists
@@ -277,9 +277,9 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
     
     /**
      * Handles creation of a new page from the current record
-     * @param {array} $data Submitted Data
-     * @param {Form} $form Submitting Form
-     * @return {bool} Returns boolean true on success, false otherwise
+     * @param array $data Submitted Data
+     * @param Form $form Submitting Form
+     * @return bool Returns boolean true on success, false otherwise
      */
     public function newPage($data, Form $form) {
         //Start a transaction if supported
@@ -351,9 +351,9 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
     
     /**
      * Handles creation of a new page from the current record
-     * @param {array} $data Submitted Data
-     * @param {Form} $form Submitting Form
-     * @return {bool} Returns boolean true on success, false otherwise
+     * @param array $data Submitted Data
+     * @param Form $form Submitting Form
+     * @return bool Returns boolean true on success, false otherwise
      */
     public function replacePage($data, Form $form) {
         //Start a transaction if supported
@@ -447,14 +447,14 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
      * Caution: Just saves updated has_many/many_many relations to the database, doesn't write the updated object itself (just writes the object-properties).
      * Caution: Does not delete the merged object.
      * Caution: Does now overwrite Created date on the original object.
-     * @param {DataObject} $leftObj Left DataObject to merge into
-     * @param {DataObject} $rightObj Right DataObject to merge from
-     * @param {string} $priority String left|right Determines who wins in case of a conflict (optional)
-     * @param {bool} $includeRelations Boolean Merge any existing relations (optional)
-     * @param {bool} $overwriteWithEmpty Boolean Overwrite existing left values with empty right values. Only applicable with $priority='right'. (optional)
-     * @param {bool} $skipParent Skip the parent has_one relationship or not (defaults to true)
-     * @param {string} $parentRelField Name of the parent has_one relationship field (defaults to Parent)
-     * @return {bool} Returns boolean true on success false otherwise
+     * @param DataObject $leftObj Left DataObject to merge into
+     * @param DataObject $rightObj Right DataObject to merge from
+     * @param string $priority String left|right Determines who wins in case of a conflict (optional)
+     * @param bool $includeRelations Boolean Merge any existing relations (optional)
+     * @param bool $overwriteWithEmpty Boolean Overwrite existing left values with empty right values. Only applicable with $priority='right'. (optional)
+     * @param bool $skipParent Skip the parent has_one relationship or not (defaults to true)
+     * @param string $parentRelField Name of the parent has_one relationship field (defaults to Parent)
+     * @return bool Returns boolean true on success false otherwise
      */
     public function merge($leftObj, $rightObj, $priority='right', $includeRelations=true, $overwriteWithEmpty=false, $skipParent=true, $parentRelField='Parent') {
         if(!$rightObj->ID) {
@@ -549,9 +549,9 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
     
     /**
      * Wrapper for the top level controller's redirect()
-	 * @param {string} $url URL to redirect to
-	 * @param {int} $code HTTP Response Code
-	 * @return {SS_HTTPResponse}
+	 * @param string $url URL to redirect to
+	 * @param int $code HTTP Response Code
+	 * @return SS_HTTPResponse
      */
     public function redirect($url, $code=302) {
         return $this->getToplevelController()->redirect($url, $code);
@@ -559,7 +559,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
     
     /**
      * Wrapper for the top level controller's redirectBack()
-	 * @return {SS_HTTPResponse}
+	 * @return SS_HTTPResponse
      */
     public function redirectBack() {
         return $this->getToplevelController()->redirectBack();
@@ -567,7 +567,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
     
     /**
      * Gets the destination class for the record
-     * @return {string|bool} Returns the destination class name or false if it can't be found
+     * @return string|bool Returns the destination class name or false if it can't be found
      */
     private function getDestinationClass() {
         if(empty($this->record) || $this->record===false) {

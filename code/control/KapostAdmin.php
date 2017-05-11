@@ -27,9 +27,9 @@ class KapostAdmin extends ModelAdmin {
     
     /**
      * Form used for displaying the gridfield in the model admin
-     * @param {string} $id ID of the form
-     * @param {FieldList} $fields Fields to use in the form
-     * @return {Form} Form to be used in the model admin interface
+     * @param string $id ID of the form
+     * @param FieldList $fields Fields to use in the form
+     * @return Form Form to be used in the model admin interface
      */
     public function getEditForm($id=null, $fields=null) {
         $form=parent::getEditForm($id, $fields);
@@ -108,7 +108,7 @@ class KapostAdmin extends ModelAdmin {
     
     /**
      * Gets the list used in the ModelAdmin
-     * @return {SS_List}
+     * @return SS_List
      */
     public function getList() {
         $context=$this->getSearchContext();

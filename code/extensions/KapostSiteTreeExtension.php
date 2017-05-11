@@ -13,7 +13,7 @@ class KapostSiteTreeExtension extends DataExtension {
     
     /**
      * Updates the CMS fields adding the fields defined in this extension
-     * @param {FieldList} $fields Field List that new fields will be added to
+     * @param FieldList $fields Field List that new fields will be added to
      */
     public function updateCMSFields(FieldList $fields) {
         $kapostRefID=$this->owner->KapostRefID;
@@ -54,7 +54,7 @@ class KapostSiteTreeExtension extends DataExtension {
     
     /**
      * Updates the CMS fields adding the fields defined in this extension
-     * @param {FieldList} $fields Field List that new fields will be added to
+     * @param FieldList $fields Field List that new fields will be added to
      */
     public function updateSettingsFields(FieldList $fields) {
     $kapostRefID=$this->owner->KapostRefID;

@@ -45,7 +45,7 @@ class KapostPage extends KapostObject {
     
     /**
      * Gets fields used in the cms
-     * @return {FieldList} Fields to be used
+     * @return FieldList Fields to be used
      */
     public function getCMSFields() {
         $self=$this;
@@ -60,8 +60,8 @@ class KapostPage extends KapostObject {
     
     /**
      * Used for recording a conversion history record
-     * @param {int} $destinationID ID of the destination object when converting
-     * @return {KapostConversionHistory}
+     * @param int $destinationID ID of the destination object when converting
+     * @return KapostConversionHistory
      */
     public function createConversionHistory($destinationID) {
         $obj=new KapostConversionHistory();
@@ -79,7 +79,7 @@ class KapostPage extends KapostObject {
     
     /**
      * Handles rendering of the preview for this object
-     * @return {string} Preview to be rendered
+     * @return string Preview to be rendered
      */
     public function renderPreview() {
         $previewFieldMap=array(

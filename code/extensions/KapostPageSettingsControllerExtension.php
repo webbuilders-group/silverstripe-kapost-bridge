@@ -7,7 +7,7 @@
 class KapostPageSettingsControllerExtension extends Extension {
     /**
      * Updates the form to make all of the fields read only with the exception of a few fields
-     * @param {Form} $form Form to be adjusted
+     * @param Form $form Form to be adjusted
      */
     public function updateEditForm(Form $form) {
         $record=$form->getRecord();

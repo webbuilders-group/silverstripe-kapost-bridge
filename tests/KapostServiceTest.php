@@ -791,8 +791,8 @@ class KapostServiceTest extends FunctionalTest {
     
     /**
      * Calls the api and returns the response
-     * @param {string} $mockRequest Mock Request to load
-     * @return {SS_HTTPResponse} Response Object
+     * @param string $mockRequest Mock Request to load
+     * @return SS_HTTPResponse Response Object
      */
     protected function call_service($mockRequest) {
         return $this->post('kapost-service', array(), array('User-Agent'=>self::USER_AGENT), null, file_get_contents(dirname(__FILE__).'/mock_requests/'.$mockRequest.'.xml'));
@@ -800,8 +800,8 @@ class KapostServiceTest extends FunctionalTest {
     
     /**
      * Parses the response from the api
-     * @param {string} $body XML Response
-     * @return {PhpXmlRpc\Response} XML RPC Response Object
+     * @param string $body XML Response
+     * @return PhpXmlRpc\Response XML RPC Response Object
      */
     final protected function parseRPCResponse($body) {
         $xmlmsg=new PhpXmlRpc\Request('');
@@ -815,7 +815,7 @@ class KapostServiceTestHook extends Extension implements TestOnly {
     
     /**
      * Sets the test currently running
-     * @param {SapphireTest} $test
+     * @param SapphireTest $test
      */
     public static function set_test(SapphireTest $test) {
         self::$unitTest=$test;
@@ -823,11 +823,11 @@ class KapostServiceTestHook extends Extension implements TestOnly {
     
     /**
      * Hooks in to run additional tests during the data processing for newPost
-     * @param {KapostObject} $kapostObj Kapost Object instance to update
-     * @param {string} $site_id ID of the Site to be referenced
-     * @param {array} $content Content from Kapost to apply to the Kapost Object
-     * @param {int} $publish To publish on conversion or not
-     * @param {bool} $isPreview Is preview mode or not (defaults to false)
+     * @param KapostObject $kapostObj Kapost Object instance to update
+     * @param string $site_id ID of the Site to be referenced
+     * @param array $content Content from Kapost to apply to the Kapost Object
+     * @param int $publish To publish on conversion or not
+     * @param bool $isPreview Is preview mode or not (defaults to false)
      */
     public function updateNewKapostPage(KapostObject $kapostObj, $site_id, $content, $publish, $isPreview) {
         //Verify the key SS_TestArray exists
@@ -872,11 +872,11 @@ class KapostServiceTestHook extends Extension implements TestOnly {
     
     /**
      * Hooks in to run additional tests during the data processing for editPost
-     * @param {KapostObject} $kapostObj Kapost Object instance to update
-     * @param {string} $content_id ID of the Kapost Object referenced
-     * @param {array} $content Content from Kapost to apply to the Kapost Object
-     * @param {int} $publish To publish on conversion or not
-     * @param {bool} $isPreview Is preview mode or not (defaults to false)
+     * @param KapostObject $kapostObj Kapost Object instance to update
+     * @param string $content_id ID of the Kapost Object referenced
+     * @param array $content Content from Kapost to apply to the Kapost Object
+     * @param int $publish To publish on conversion or not
+     * @param bool $isPreview Is preview mode or not (defaults to false)
      */
     public function updateEditKapostPage(KapostObject $kapostObj, $content_id, $content, $publish, $isPreview) {
         //Verify the key SS_TestArray exists

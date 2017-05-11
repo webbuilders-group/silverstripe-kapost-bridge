@@ -7,7 +7,7 @@
 class KapostPageEditControllerExtension extends Extension {
     /**
      * Updates the form to make all of the fields read only with the exception of a few fields
-     * @param {Form} $form Form to be adjusted
+     * @param Form $form Form to be adjusted
      */
     public function updateEditForm(Form $form) {
         $record=$form->getRecord();
@@ -43,8 +43,8 @@ class KapostPageEditControllerExtension extends Extension {
     
     /**
      * Strips out not allowed tags, mainly this is to remove the kapost beacon script so it doesn't conflict with the cms
-     * @param {string} $str String to be sanitized
-     * @return {string} HTML to be used
+     * @param string $str String to be sanitized
+     * @return string HTML to be used
      */
     private function sanitizeHTML($str) {
         $htmlValue=Injector::inst()->create('HTMLValue', $str);

@@ -99,7 +99,7 @@ class KapostService extends Controller implements PermissionProvider {
             if(class_exists('ErrorPage')) {
                 $response=ErrorPage::response_for(404);
                 if(!empty($response)) {
-                    return $response;
+                    return parent::httpError(404, $response);
                 }
             }
             
@@ -111,7 +111,7 @@ class KapostService extends Controller implements PermissionProvider {
             if(class_exists('ErrorPage')) {
                 $response=ErrorPage::response_for(404);
                 if(!empty($response)) {
-                    return $response;
+                    return parent::httpError(404, $response);
                 }
             }
             
@@ -175,7 +175,7 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Handles rendering of the preview for an object
-     * @return {string} Response to send to the object
+     * @return string Response to send to the object
      */
     public function preview() {
         $auth=$this->request->getVar('auth');
@@ -198,7 +198,7 @@ class KapostService extends Controller implements PermissionProvider {
         if(class_exists('ErrorPage')) {
             $response=ErrorPage::response_for(404);
             if(!empty($response)) {
-                return $response;
+                return parent::httpError(404, $response);
             }
         }
         
@@ -207,7 +207,7 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Handles RPC request methods
-     * @param {PhpXmlRpc\Request} $request XML-RPC Request Object
+     * @param PhpXmlRpc\Request $request XML-RPC Request Object
      */
     public function handleRPCMethod(PhpXmlRpc\Request $request) {
         $username=$request->getParam(1)->scalarval();
@@ -294,9 +294,9 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Checks the authentication of the api request
-     * @param {string} $username Username to look up
-     * @param {string} $password Password to match against
-     * @return {bool} Returns boolean true if authentication passes false otherwise
+     * @param string $username Username to look up
+     * @param string $password Password to match against
+     * @return bool Returns boolean true if authentication passes false otherwise
      */
     protected function authenticate($username, $password) {
         $authenticator=$this->config()->authenticator_class;
@@ -311,9 +311,9 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Converts an error to an xmlrpc response
-     * @param {int} $errorCode Error code number for the error
-     * @param {string} $errorMessage Error message string
-     * @return {PhpXmlRpc\Response} XML-RPC response object
+     * @param int $errorCode Error code number for the error
+     * @param string $errorMessage Error message string
+     * @return PhpXmlRpc\Response XML-RPC response object
      */
     public function httpError($errorCode, $errorMessage=null) {
         return new PhpXmlRpc\Response(0, $errorCode+10000, $errorMessage);
@@ -321,7 +321,7 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Gets the site config or subsites for the current site
-     * @return {array} Nested array of sites
+     * @return array Nested array of sites
      */
     protected function getUsersBlogs($app_id) {
         if(SiteConfig::has_extension('SiteConfigSubsites')) {
@@ -356,10 +356,10 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Handles creation of a new post
-     * @param {mixed} $blog_id Identifier for the current site
-     * @param {array} $content Post details
-     * @param {int} $publish 0 or 1 depending on whether to publish the post or not
-     * @param {bool} $isPreview Is preview mode or not (defaults to false)
+     * @param mixed $blog_id Identifier for the current site
+     * @param array $content Post details
+     * @param int $publish 0 or 1 depending on whether to publish the post or not
+     * @param bool $isPreview Is preview mode or not (defaults to false)
      */
     protected function newPost($blog_id, $content, $publish, $isPreview=false) {
         //Decode all hash or array keys
@@ -457,10 +457,10 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Handles editing of a given post
-     * @param {mixed} $content_id Identifier for the post
-     * @param {array} $content Post details
-     * @param {int} $publish 0 or 1 depending on whether to publish the post or not
-     * @param {bool} $isPreview Is preview mode or not (defaults to false)
+     * @param mixed $content_id Identifier for the post
+     * @param array $content Post details
+     * @param int $publish 0 or 1 depending on whether to publish the post or not
+     * @param bool $isPreview Is preview mode or not (defaults to false)
      */
     protected function editPost($content_id, $content, $publish, $isPreview=false) {
         //Decode all hash or array keys
@@ -592,7 +592,7 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Gets the details of a post from the system
-     * @param {mixed} $content_id ID of the post in the system
+     * @param mixed $content_id ID of the post in the system
      */
     protected function getPost($content_id) {
         $results=$this->extend('getPost', $content_id);
@@ -674,8 +674,8 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Gets the categories
-     * @param {mixed} $blog_id ID of the blog
-     * @return {array} Array of categories
+     * @param mixed $blog_id ID of the blog
+     * @return array Array of categories
      */
     protected function getCategories($blog_id) {
         $categories=array();
@@ -713,9 +713,9 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Handles media objects from kapost
-     * @param {mixed} $blog_id Site Config related to this content object
-     * @param {array} $content Content object to be handled
-     * @return {PhpXmlRpc\Response} XML-RPC Response object
+     * @param mixed $blog_id Site Config related to this content object
+     * @param array $content Content object to be handled
+     * @return PhpXmlRpc\Response XML-RPC Response object
      */
     protected function newMediaObject($blog_id, $content) {
         $fileName=$content['name'];
@@ -873,9 +873,9 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Handles rendering of the preview
-     * @param {mixed} $blog_id Identifier for the current site
-     * @param {array} $content Post details
-     * @param {mixed} $content_id Identifier for the post
+     * @param mixed $blog_id Identifier for the current site
+     * @param array $content Post details
+     * @param mixed $content_id Identifier for the post
      */
     protected function getPreview($blog_id, $content, $content_id) {
         $results=$this->extend('getPreview', $blog_id, $content, $content_id);
@@ -928,8 +928,8 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Converts a struct to an associtive array based on the key value pair in the struct
-     * @param {array} $struct Input struct to be converted
-     * @return {array} Associtive array matching the struct
+     * @param array $struct Input struct to be converted
+     * @return array Associtive array matching the struct
      */
     final protected function struct_to_assoc($struct) {
         $result=array();
@@ -950,9 +950,9 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Merges two arrays, overwriting the keys in the left array with the right array recurrsivly. Meaning that if a value in the right array is it self an array and the key exists in the left array it recurses into it.
-     * @param {array} $leftArray Left array to merge into
-     * @param {array} $rightArray Right array to merge from
-     * @return {array} Resulting array
+     * @param array $leftArray Left array to merge into
+     * @param array $rightArray Right array to merge from
+     * @return array Resulting array
      */
     private function mergeResultArray($leftArray, $rightArray) {
         foreach($rightArray as $key=>$value) {
@@ -968,10 +968,10 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Gets all of the values who's keys match a given expression
-     * @param {string} $pattern Regular expression patter to run against the keys
-     * @param {array} $input Input array
-     * @param {int} $flags Flags to pass to preg_grep
-     * @return {array} Array of key value pairs who's keys matched the expression
+     * @param string $pattern Regular expression patter to run against the keys
+     * @param array $input Input array
+     * @param int $flags Flags to pass to preg_grep
+     * @return array Array of key value pairs who's keys matched the expression
      * 
      * @see preg_grep()
      */
@@ -981,8 +981,8 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Filters the kapost content to remove the thread tags from a Kapost WYSIWYG
-     * @param {string} $html HTML to filter the tags from
-     * @return {string} HTML with tags filtered
+     * @param string $html HTML to filter the tags from
+     * @return string HTML with tags filtered
      */
     public function filterKapostThreads($html) {
         return preg_replace('/<span(\s+)thread="(.*?)"(\s+)class="thread">(.*?)<\/span>/', '$4', $html);
@@ -990,8 +990,8 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Finds a file record based on the url of the file, this is needed because Kapost doesn't seem to send anything back other than the url in the cms
-     * @param {string} $url Absolute url to the file
-     * @return {File} Returns the file instance representing the url, or boolean false if it's not found
+     * @param string $url Absolute url to the file
+     * @return File Returns the file instance representing the url, or boolean false if it's not found
      */
     public static function find_file_by_url($url) {
         $url=Director::makeRelative($url);
@@ -1007,9 +1007,9 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Takes the xmlrpc object and generates the response to be set back
-     * @param {PhpXmlRpc\Server} $server XML-RPC Server instance
-     * @param {PhpXmlRpc\Response} $r XML-RPC Response object to relay to client
-     * @return {string} Response to be sent to the client
+     * @param PhpXmlRpc\Server $server XML-RPC Server instance
+     * @param PhpXmlRpc\Response $r XML-RPC Response object to relay to client
+     * @return string Response to be sent to the client
      */
     protected function generateErrorResponse(PhpXmlRpc\Server $server, PhpXmlRpc\Response $r) {
         $this->response->addHeader('Content-Type', $r->content_type);
@@ -1028,7 +1028,7 @@ class KapostService extends Controller implements PermissionProvider {
     
     /**
      * Return a map of permission codes to add to the dropdown shown in the Security section of the CMS.
-     * @return {array} Map of permission codes
+     * @return array Map of permission codes
      */
     public function providePermissions() {
         return array(

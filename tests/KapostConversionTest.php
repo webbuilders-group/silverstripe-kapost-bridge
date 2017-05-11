@@ -418,7 +418,7 @@ class KapostConversionTest_KapostTestPage extends KapostPage implements TestOnly
     
     /**
      * Gets the destination class when converting to the final object
-     * @return {string} Class to convert to
+     * @return string Class to convert to
      */
     public function getDestinationClass() {
         return 'KapostConversionTest_TestPage';
