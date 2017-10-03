@@ -108,8 +108,7 @@ class KapostGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequ
         
         $form=new Form($this, 'ConvertObjectForm', $fields, $actions, $validator);
         $form
-            ->addExtraClass('KapostAdmin center')
-            ->setAttribute('data-layout-type', 'border')
+            ->addExtraClass('KapostAdmin kapost-conversion-form')
             ->setTemplate('KapostAdmin_ConvertForm');
         
         

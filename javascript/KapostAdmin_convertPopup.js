@@ -1,16 +1,5 @@
 (function($) {
     $.entwine('kapost', function($) {
-        $('#Form_ConvertObjectForm').entwine({
-            onmatch: function() {
-                $(this).layout();
-            },
-            fromWindow: {
-                onresize: function() {
-                    $(this).layout();
-                }
-            }
-        });
-        
         $('#Form_ConvertObjectForm_ConvertMode').entwine({
             onadd: function(e) {
                 this.updateVisibleFields();
