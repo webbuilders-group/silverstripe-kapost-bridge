@@ -1,6 +1,13 @@
 # Change Log
 
-## [0.9.4](https://github.com/webbuilders-group/silverstripe-kapost-bridge/tree/0.9.3) (2017-05-11)
+## [0.9.5](https://github.com/webbuilders-group/silverstripe-kapost-bridge/tree/0.9.5) (2017-10-03)
+[Full Changelog](https://github.com/webbuilders-group/silverstripe-kapost-bridge/compare/0.9.4...0.9.5)
+
+**Fixed bugs:**
+
+- Chrome Conversion dialog render bug [\#36](https://github.com/webbuilders-group/silverstripe-kapost-bridge/issues/36)
+
+## [0.9.4](https://github.com/webbuilders-group/silverstripe-kapost-bridge/tree/0.9.4) (2017-05-11)
 [Full Changelog](https://github.com/webbuilders-group/silverstripe-kapost-bridge/compare/0.9.3...0.9.4)
 
 ## [0.9.3](https://github.com/webbuilders-group/silverstripe-kapost-bridge/tree/0.9.3) (2017-05-10)
